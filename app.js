@@ -73,6 +73,27 @@ app.get("/crud/update/:id", async (req, res) => {
 app.get("/", (req, res) => {
   res.redirect("/crud");
 });
+
+// Tracking Visits System
+// in model:  visitCount: { type: Number, default: 0 }
+// async function trackVisits(req, res, next) {
+//   if (req.session && req.session._id) {
+//       const id = req.session._id;
+
+//       try {
+//           // Find employee by ID and update visitCount
+//           await Auth.User.findByIdAndUpdate(id, { $inc: { visitCount: 1 } });
+//           next();
+//       } catch (err) {
+//           console.error(err);
+//           res.status(500).send('Server Error');
+//       }
+//   } else {
+//       next();
+//   }
+// }
+
+module.exports = trackVisits;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.listen(port, () => {
   console.log("Started Successfully");
