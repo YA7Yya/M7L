@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const path = require("path");
 const Info = require("./models/productSchema");
+const moment = require("moment");
+moment.locale('ar');
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.json());
@@ -23,6 +25,7 @@ app.get("/crud", async (req, res) => {
   getAll.then((result) => {
     res.render("./crud.ejs", {
       allProducts: result,
+      moment: moment
     });
   });
 });
