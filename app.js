@@ -1,4 +1,3 @@
-
 const express = require("express");
 const app = express();
 let port = 80;
@@ -20,32 +19,57 @@ mongoose
     console.log("DB Started Successfully");
   });
 app.get("/crud", async (req, res) => {
-  getAll =  Info.getAllProducts();
+  getAll = Info.getAllProducts();
   getAll.then((result) => {
     res.render("./crud.ejs", {
       allProducts: result,
     });
   });
 });
-app.post("/productAdd", (req,res) =>{
-    Info.createNewProduct(req.body.PNAME, req.body.WHOLEPRICE, req.body.PNOTES).then(() => {
-        res.redirect("/crud")
-    })
-})
-app.delete("/crud/delete/:id", (req,res) =>{
-   Info.Info.findByIdAndDelete(req.params.id)
+app.post("/productAdd", (req, res) => {
+  Info.createNewProduct(
+    req.body.PNAME,
+    req.body.WHOLEPRICE,
+    req.body.PNOTES
+  ).then(() => {
+    res.redirect("/crud");
+  });
+});
+app.delete("/crud/delete/:id", (req, res) => {
+  Info.Info.findByIdAndDelete(req.params.id)
 
     .then((params) => {
-res.send("Done")
+      res.status(200).json("Done");
     })
 
     .catch((err) => {
       console.log(err);
     });
 });
-app.get("/", (req,res) =>{
+app.post("/crud/update/:id", (req, res) => {
+  Info.Info.findById(req.params.id).then((value) => {
+    console.log(value);
+  });
+});
+app.post("/productUpdate/:id", (req, res) => {
+  Info.Info.findByIdAndUpdate(req.params.id, {
+    PNAME: req.body.PNAME,
+    WHOLEPRICE: req.body.WHOLEPRICE,
+    PNOTES: req.body.PNOTES
+  }).then((value) => {
     res.redirect("/crud")
-})
+  });
+});
+app.get("/crud/update/:id", async (req, res) => {
+  await Info.Info.findById(req.params.id).then((value) => {
+    console.log("Find The Product");
+    console.log(value);
+    res.status(200).json(value);
+  });
+});
+app.get("/", (req, res) => {
+  res.redirect("/crud");
+});
 app.use(bodyParser.urlencoded({ extended: true }));
 app.listen(port, () => {
   console.log("Started Successfully");

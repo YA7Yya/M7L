@@ -3,18 +3,36 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+      integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <!----------------------------- ToastifyJs script ------------------------------->
-    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5.0.16/dark.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.js" integrity="sha512-3PL7jW3xI1EjF2Hfqwv5u6nKG/BnUbWytnJDhsY/q5CbIB5XzoHNhJvgmFeVD7xgC9DbKDm+gPP9uDAAfLAZUA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  
+    <link
+      href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5.0.16/dark.min.css"
+      rel="stylesheet"
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.js"
+      integrity="sha512-3PL7jW3xI1EjF2Hfqwv5u6nKG/BnUbWytnJDhsY/q5CbIB5XzoHNhJvgmFeVD7xgC9DbKDm+gPP9uDAAfLAZUA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
 
     <!--------------------------------Style Files ------------------------------------------>
     <link rel="stylesheet" href="CSS/bootstrap.min.css" type="text/css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
     <link rel="stylesheet" href="CSS/style.css" type="text/css" />
 
-    <title>Curd System</title>
+    <title>Crud System</title>
 
     <!-------------------------------Browser logo------------------------------------------->
     <link
@@ -25,32 +43,44 @@
     />
   </head>
   <body>
-<form action="/productAdd" method="post">
-  <div class="w-75 m-auto shadow-lg p-5 my-5 bg-light">
-    <h1 class="fw-bolder text-uppercase text-center mb-4">Crud system</h1>
-    <label for="pname" class="mt-3">اسم المنتج :</label>
-    <input type="text" class="form-control" id="pname" name="PNAME"/>
-    <!-- <label for="pcategory" class="mt-3">Product Category:</label>
+    <form action="/productAdd" method="post">
+      <div class="w-75 m-auto shadow-lg p-5 my-5 bg-light addingForm">
+        <h1 class="fw-bolder text-uppercase text-center mb-4">Crud system</h1>
+        <label for="pname" class="mt-3">اسم المنتج :</label>
+        <input type="text" class="form-control pname" id="pname" name="PNAME" />
+        <!-- <label for="pcategory" class="mt-3">Product Category:</label>
     <input type="text" class="form-control" id="pcategory" /> -->
-    <label for="price" class="mt-3">سعر الجملة :</label>
-    <input type="text" class="form-control" id="price" name="WHOLEPRICE"/>
-    <label class="mt-3">ملاحظات المنتج :</label>
-    <textarea id="notes" class="form-control" name="PNOTES"> </textarea>
-    <input type="submit" class="btn btn-primary w-100 d-block mt-3" id="addBtn" value="إضافة المنتج">
-  
+        <label for="price" class="mt-3">سعر الجملة :</label>
+        <input type="text" class="form-control wholeprice" id="price" name="WHOLEPRICE" />
+        <label class="mt-3">ملاحظات المنتج :</label>
+        <textarea class="pnotes form-control" id="notes"  name="PNOTES"> </textarea>
+        <input
+          type="submit"
+          class="btn btn-primary w-100 d-block mt-3"
+          id="addBtn"
+          value="إضافة المنتج"
+        />
+      </div>
+    </form>
+    
+   
 
-
-  </div>
-
-</form>
-
-    <!-- <input
-      placeholder="Search by Product Name..."
-      class="form-control w-50 m-auto"
-      id="searchInput"
-    /> -->
-
-    <div>
+    <form action="" method="post" id="updateForm" class="w-75 m-auto shadow-lg p-5 my-5 bg-light updatingForm" style="display: none;">
+      <h1 class="fw-bolder text-uppercase text-center mb-4">Update Product</h1>
+      <label for="puname" class="mt-3">اسم المنتج :</label>
+      <input type="text" class="form-control puname" id="puname" name="PNAME" />
+      <label for="price" class="mt-3">سعر الجملة :</label>
+      <input type="text" class="form-control puwholeprice" id="price" name="WHOLEPRICE" />
+      <label class="mt-3">ملاحظات المنتج :</label>
+      <textarea class="punotes form-control" id="notes" name="PNOTES"></textarea>
+      <input type="submit" class="btn btn-primary w-100 d-block mt-3" id="updateBtn" value="تحديث المنتج">
+    </form>
+    <input
+    placeholder="Search by Product Name..."
+    class="form-control w-50 m-auto"
+    id="searchbar"
+    onkeyup="search_animal()"
+  />
       <table class="table w-75 m-auto my-4 bg-light">
         <thead>
           <tr>
@@ -63,22 +93,34 @@
             <th>حذف</th>
           </tr>
         </thead>
+        
         <tbody id="tableBody">
+       
           <% allProducts.forEach(product => { %> 
-            <%let price = product.WHOLEPRICE * 1.25 %>
-            <tr class="">
-              <td><%= product.PNAME%></td>
-              <td><%= product.WHOLEPRICE%></td>
-              <td><%= price %> </td>
-              <td><%= price - product.WHOLEPRICE  %></td>
-              <td><%= product.PNOTES%></td>
-              <td><button class="btn btn-outline-warning"><i class="fa-solid fa-edit"></i></button></td>
-              <td><button class="btn btn-outline-danger delete"data-idlink="<%= product._id %> "><i class="fa-solid fa-trash"></i></button></td>
-            </tr>
-            <% }); %> 
+            
+
+          <%let price = product.WHOLEPRICE * 1.25 %>
+          <tr class="productsdata">
+            <td><%= product.PNAME%></td>
+            <td><%= product.WHOLEPRICE%></td>
+            <td><%= price %></td>
+            <td><%= price - product.WHOLEPRICE %></td>
+            <td><%= product.PNOTES%></td>
+            <td>
+              <button class="btn btn-outline-warning update" id="fire" onclick="updateP()" data-updateid="<%= product._id %>">
+                <i class="fa-solid fa-edit"></i>
+              </button>
+            </td>
+            <td class="delete">
+              <button class="btn btn-outline-danger delete" data-idlink="<%= product._id %>">
+                <i class="fa-solid fa-trash delete"></i>
+              </button>
+            </td>
+          </tr>
+          <% }); %>
         </tbody>
       </table>
-    </div>
-    <script src="../js/Delete.js"></script>
+
+    <script src="../js/Crud.js"></script>
   </body>
 </html>
