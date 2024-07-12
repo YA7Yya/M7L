@@ -39,16 +39,17 @@ document.addEventListener("DOMContentLoaded", () => {
               url: `http://localhost:80/crud/delete/${deleteId}`,
               type: "DELETE",
               success: function (result) {
-                Swal.fire({
-                  title: "Success !",
-                  text: "تم حذف المنتج بنجاح",
-                  icon: "success",
-                  confirmButtonText: "Ok",
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    window.location.reload();
-                  }
-                });
+                Swal.mixin({
+                  toast: !0,
+                  position: "top-end",
+                  showConfirmButton: !1,
+                  timer: 1000,
+                  timerProgressBar: !1,
+                  background: "#07bc0c",
+                }).fire({ icon: "success", title:  `تم حذف المنتج بنجاح` });
+                setTimeout(() => {
+                  window.location.reload()
+                }, 2000);
               },
               error: function (err) {
                 console.log(err); // Debugging statement

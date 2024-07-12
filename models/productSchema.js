@@ -53,7 +53,6 @@ exports.createNewProduct = async (PNAME, WHOLEPRICE, PNOTES) => {
         resolve();
       });
   }).catch((err) => {
-    reject(err);
     console.log(err);
   });
 };

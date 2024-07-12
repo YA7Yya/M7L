@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logs</title>
+    <!-- Include Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Include any additional CSS or JS libraries you need -->
+    <!-- Example: Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Example: Include DataTables -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.11.2/datatables.min.css"/>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.11.2/datatables.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+
+<body class="bg-gray-100">
+  <a href="/crud" class="btn btn-success" style="position: fixed; margin: 20px 0 0 15px; padding: 5px; z-index: 5; border-radius: 50%;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+      <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"></path>
+    </svg>
+  </a>  
+    <div class="container mx-auto py-6">
+        <h1 class="text-3xl font-semibold text-center mb-6">Logs</h1>
+        <div class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr>
+                        <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                            Action
+                        </th>
+                        <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                            User
+                        </th>
+                        <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                            Product Name
+                        </th>
+                        <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                            Timestamp
+                        </th>
+                        <!-- Add more headers as needed -->
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <% logs.forEach(log => { %>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
+                                <%= log.action %>
+                            </td>
+                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
+                                <%= log.username %>
+                            </td>
+                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
+                                <% if (log.details && log.details.PNAME) { %>
+                                    <%= log.details.PNAME %>
+                                <% } else { %>
+                                    N/A <!-- Display default text or handle as needed -->
+                                <% } %>
+                            </td>
+                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
+                                <%= moment(log.createdAt).format('LLLL'); %>
+                            </td>
+                            <!-- Add more columns as needed -->
+                        </tr>
+                    <% }); %>
+                    <% if (logs.length === 0) { %>
+                      <div class="alert alert-info" role="alert">
+                          No logs available.
+                      </div>
+                  <% } %>
+                  
+
+              
+                </tbody>
+            </table>
+        </div>
+    </div>
+   
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+Wy2FzKXmebzjWv4pPuskUnjmw13PbWREC" crossorigin="anonymous"></script>
+</body>
+
+</html>

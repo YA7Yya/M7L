@@ -58,7 +58,7 @@
         <!-- <label for="pcategory" class="mt-3">Product Category:</label>
     <input type="text" class="form-control" id="pcategory" /> -->
         <label for="price" class="mt-3">سعر الجملة :</label>
-        <input type="text" class="form-control wholeprice" id="price" name="WHOLEPRICE" />
+        <input type="number" class="form-control wholeprice" id="price" name="WHOLEPRICE" />
         <label class="mt-3">ملاحظات المنتج :</label>
         <textarea class="pnotes form-control" id="notes"  name="PNOTES"> </textarea>
         <input
@@ -70,24 +70,30 @@
       </div>
     </form>
     
-   
+<% if(isManager){ %>
+  <center>
+    <form action="/logs" method="post">
+      <button type="submit" class="btn btn-danger my-2">Delete Collection</button>
+    </form>
+        </center>
+        <% } %> 
 
     <form action="" method="post" id="updateForm" class="w-75 m-auto shadow-lg p-5 my-5 bg-light updatingForm" style="display: none;">
       <h1 class="fw-bolder text-uppercase text-center mb-4">Update Product</h1>
       <label for="puname" class="mt-3">اسم المنتج :</label>
       <input type="text" class="form-control puname" id="puname" name="PNAME" />
       <label for="price" class="mt-3">سعر الجملة :</label>
-      <input type="text" class="form-control puwholeprice" id="price" name="WHOLEPRICE" />
+      <input type="number" class="form-control puwholeprice" id="price" name="WHOLEPRICE" />
       <label class="mt-3">ملاحظات المنتج :</label>
       <textarea class="punotes form-control" id="notes" name="PNOTES"></textarea>
       <input type="submit" class="btn btn-primary w-100 d-block mt-3" id="updateBtn" value="تعديل المنتج">
     </form>
-    <input
+    <!-- <input
     placeholder="Search by Product Name..."
     class="form-control w-50 m-auto"
     id="searchbar"
     onkeyup="search_animal()"
-  />
+  /> -->
       <table class="table w-75 m-auto my-4 bg-light table-hover">
         <thead>
           <tr>
