@@ -43,11 +43,13 @@
     />
   </head>
   <body>
+  <% if(isUser){ %>
     <center>
       <a href="/logout">
         <button class="btn btn-danger my-2">Logout</button>
       </a>
     </center>
+    <% } %>  
     <form action="/productAdd" method="post">
       <div class="w-75 m-auto shadow-lg p-5 my-5 bg-light addingForm">
         <h1 class="fw-bolder text-uppercase text-center mb-4">Crud system</h1>

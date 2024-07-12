@@ -35,9 +35,7 @@ exports.createNewEmployee = async (username, password,role) => {
                     password: hashedPassword,
                     role: role
                 });
-                await user.save();
-                console.log("Employee created");
-                resolve(user);
+                return user.save();
             }
         }).catch((error) => {
             console.error("Error in createNewEmployee:", error);
@@ -45,7 +43,7 @@ exports.createNewEmployee = async (username, password,role) => {
         });
     });
 };
-exports.login = (username, password,role, visits) => {
+exports.login = (username, password) => {
     return new Promise((resolve, reject) => {
         Employee.findOne({ username: username })
             .then(user => {
@@ -58,7 +56,7 @@ exports.login = (username, password,role, visits) => {
                                 reject("Password Incorrect");
                             } else {
                                 resolve({
-                                    userId: user.id,
+                                    id: user._id,
                                     username: user.username,
                                     role: user.role,
                                     visits: user.visits

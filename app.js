@@ -27,6 +27,7 @@ mongoose
   .then(() => {
     console.log("DB Started Successfully");
   });
+  
   let day = 3600000 * 24;
 const STORE = new SessionStore({
   uri: process.env.DB,
@@ -40,32 +41,55 @@ app.use(
     store: STORE,
   })
 );
-// app.use(async (req, res, next) => {
-//   try {
-//     const user = await Employee.Employee.findOne({
-//       _id: req.session._id,
-//     });
-//     if (user) {
-//       // user found
-//       req.session = user;
-//     }
+app.use(async (req, res, next) => {
+  
 
-//     next();
-//   } catch (error) {
-//     // error handling
-//     console.error(error);
-//     res.status(500).send("Internal Server Error");
-//   }
-// });
-app.get("/crud",authGuard.isAuth, async (req, res) => {
-  getAll = Info.getAllProducts();
-  getAll.then((result) => {
-    res.render("./crud.ejs", {
-      allProducts: result,
-      moment: moment
+
+  try { 
+    const user = await Employee.Employee.findOne({
+      _id: req.session.userId,
     });
-  });
+    if (user) {
+      // user found
+      req.session.username = user.username
+      req.session.role = user.role
+    }
+    next();
+
+   
+  
+  } catch (error) {
+    // error handling
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
 });
+app.get("/crud", authGuard.isAuth, async (req, res) => {
+  if (req.session && req.session.userId) {
+    const id = req.session.userId;
+
+    try {
+      // Find employee by ID and update visitCount
+      await Employee.Employee.findByIdAndUpdate(id, { $inc: { visits: 1 } });
+
+      // Fetch all products after updating the visit count
+      const allProducts = await Info.getAllProducts();
+
+      res.render("./crud.ejs", {
+        allProducts: allProducts,
+        isUser: req.session.userId,
+        moment: moment
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Server Error');
+    }
+  } else {
+    // If there's no session userId, redirect to login or handle accordingly
+    res.redirect("/login");
+  }
+});
+
 app.post("/productAdd", (req, res) => {
   Info.createNewProduct(
     req.body.PNAME,
@@ -117,19 +141,23 @@ res.render("./auth/createEmployee.ejs")
 app.get("/login", (req,res) =>{ 
 res.render("./auth/login.ejs")
 });
+
 app.post("/createEmployee",managerGuard.isManager, async (req,res) =>{
-  Employee.createNewEmployee(req.body.username, req.body.password).then((user) =>{
+  await Employee.createNewEmployee(req.body.username, req.body.password).then((user) =>{
 res.redirect("/login")
   }).catch((err) => {
     console.log(err)
   })
 })
+app.get('/session-check', (req, res) => {
+  res.json(req.session);
+});
 app.post("/login", async(req,res) =>{
- await Employee.login(req.body.username, req.body.password).then((result) =>{
-    req.session.userId = result.userId
-    req.session.username = result.username
-    req.session.role = result.role
-    req.session.visits = result.visits
+ await Employee.login(req.body.username, req.body.password).then(async(result) =>{
+  req.session.userId = result.id;
+  req.session.username = result.username;
+  req.session.role = result.role;
+  req.session.visits = result.visits;
 res.redirect("/crud")
   }).catch((err) => {
     console.log(err)
@@ -143,7 +171,7 @@ app.all("/logout", async(req,res) =>{
 
   })
 });
-
+ 
 app.use((req,res) =>{
   res.status(404).send(
     `
@@ -234,24 +262,10 @@ app.use((req,res) =>{
 
 // Tracking Visits System
 // in model:  visitCount: { type: Number, default: 0 }
-// async function trackVisits(req, res, next) {
-//   if (req.session && req.session._id) {
-//       const id = req.session._id;
 
-//       try {
-//           // Find employee by ID and update visitCount
-//           await Auth.User.findByIdAndUpdate(id, { $inc: { visitCount: 1 } });
-//           next();
-//       } catch (err) {
-//           console.error(err);
-//           res.status(500).send('Server Error');
-//       }
-//   } else {
-//       next();
-//   }
-// }
 
-// module.exports = trackVisits;
+
+
 
 app.listen(port, () => {
   console.log("Started Successfully");
