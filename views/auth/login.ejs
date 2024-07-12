@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link
+  rel="icon"
+  href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADgCAMAAADCMfHtAAABUFBMVEX///8DqfXY2Nj7zbUkJi0iJCzPz8/5u56ztLXU1NTw8PDe3t4ApfUAp/UAqPbc2dejyuDF1Nrh29Ybq/T5uJn70b0wMjgArvz5wab6ybDj4+P/1LsAAAAAovT7z7odHycYGyQAABElGhglIST/z7HaqI8AAA3O7P0QEx4ADR4ssvb6xaq+vr//uZMlGxofQFa44/z83c9Tvffi9P6V1Prv29HlybwHneMdTmtoxPik2vqDzfl1dnn+9PBIuffdtqIAABrI6fwXbJthVE8UeKtXWFz/9/MLktMPh8LQxcMiLDWUssoZYort+P6qq62RkZRtbnJQUleIc2qcgndXTEuxkoTiuaVngZKjiHw+ODtdUE/EoZEAFB5zYVkuLjCJjJBfrd13o74AI0MVNVWQcGGssr/Ts60AXovTx8AmFAl+uN2nsskAUHWxg23UnYQ9MjJ6DkRfAAAOPElEQVR4nO2d61viSBbGQRJQDEzPiAQQBMRREETxfmm0tb2N7aV1ul1p27Z3drt37O2d/f+/bVUq5EZVJXFSFXeeej8oRoj5eU6dc+qWRCJCQkJCQkJCQkJCQkJWzW5tb25ubq/shX0hbLS3OaYoKShFiW4uhn05gWt5qZRKR/tKp0o7s2FfUrDaTqWidqWUzbAvKkCd7yjRQSlzy2FfWFA6n3MaUDfj2F8FkQAIEc/DvrZAtIlzUR1xJ+yLC0KLJSIgaIsrYV9eABpLUwijqWfVFJOFoTiQvw9tkX1UI9xmc61+Fb94OMyW6/V6tVq89PfROaoJo+lo+MGmcPG2PlOvV8qypsrb1uXD5fCQx0/P0lqh1hLDrt/ihwBOtqpS1WyZvUx6+fwKKVMYbhpuaZN8W7TjmSrXZ7z4644bYXqMOQVFhWydwKepeuVuxii9GUI35QBCUlImGVBXPeuK6GZCQBhivnhJtaDWJt0Qzz0QhteNKlTdAIEV39LPwZ2wM7nq/c0XHgjlmRb9JJy9tJtIZI48v/vS1Umhn17RT0Kv2TTCPwllUzeRS3Q8vjc5fFX2QCgX6S1xyTVbzP15LqijrvY1l8uNe/vARb3qCVCeoRO6lKWBFabAPTUyQNj09IGRojc+uZyln2jZrWorBVO1dYB7QsR8LpfQrBnpdqju+mBrg87CrS7VG/obKi7B1K2oCcpJu5mchjgOjKiRdSYnJ2mIb02k8sfK3e79q0b/SLny6jp2c/errDHWH1z+9CLdTQPrAgMjwiADv+U1wPHxcXfCSqPxUX53G4vFJmLv30mNBqi5G9n7mwl4ZOK6Ad/yN7feD9WIAValCHEV2DBxhAApIWdx83sNGEu6vtu9uZmAPBDpZvfu9vp2N6b/HJu4/ijL7f30zhYVktp/CqgVdrs6ItJqVwMkJcbl7aiSPoOEu30WQxP2I72y3D5QU0pqiTYTsUL204BGhbuZRB4wdhBfswnxxie7+DfvaaPv6kFbLvecfAO6ewUJwZWmSnMUQxIH24IaajuCDprvdiFfXjMfsREuzilaq1FPpuTyuwETDpj0dQURggaljJET2xIeUQkojgIjQrYE4Gz2+fCNcHGu1K+xjmty5YM74a/1PiFkTBPj4raCKd6CnLjo6g5q8I1jCvDlpZJ5GesgSt77I9TsSAoci1GnGVOpreAA+4imBQdNeL5dskZ19VSuXPslhIw7pJ7CSlox/wAITtsBj7FBxLwJOBBmFsfs/2N1Qa7feiLcV20fTCmk5ni+tZQqKUg7W8F37AFijGjC8yVnO1E3ao33boCx2O0AIWheY8Qu7fne1tbK1tYemyHSrsVJHa1wLzpQdqhntcYd2XYTemJ836idOQmBq4Y0GdE1vdSeKlYwgU7dbzd2TRy7v95dv353fweP3eEIgRmXQkI0jThiOYxNViDlN26QmT6UG596NxZAaebjp97Hmdfg5S6eMJoieypToXJ0vLP2oWp0W5fx05eA8BWkyfdmPr2+f/dp10J4fQt4b65nPoCvcm0DRwg8NZzB+o5G+Gu9XH+pH9kbWEGgE55MNaAbvqveEuPofQxWpnhCgBjOpFJnvPO1V5ckqVjQft7C1RraBZ5MSRrh+4lYPp+3seWRYB9j4r6ygD8B6DaEMyGxdt+QAaCEuuaUqv94qjdh5bFC5pvNpn7gfeOUeIpw4s1DVdIkV+MAkNJzOy6+nkCAoJidbJqI4NVk96g73szH4KHepxRxvFAJY5a+UJERYvmQOgymHL++1XmOCvHkkWlFABhpHT5EOsiMicTXz8TzhGLFlxVEKM38nQI49iWTySGH7CaLr7KR1aZhxGY3kv2t2IqgI5lMZv4bGTGEtjha1AmlU3wQ1LQ7bxAeDRX/UU0e5QAPsmNzNdL7rRgHhDFEmJkfI56oFEJEPSzrhFMHJETlDQA0bBi5Kr5EPtlM5DW/7az98323YyF8QxmnCLSP5EnxqmFE4lXtZgzCPACZbuZgqMnnEk2NEIRSdKRPOExx+IDGmvzoqm/EwW6BrrEbkzCWR7kBOmkukbOkj7xpQxphmv+KmZZhxPY64aI0wkSsj6jj5BMJ3a557XDMIPxGm2BKBTYa41lZPWFI+KoZeOmXeYNQN5r2HRAaWbH/Swh44zKszT2gXtT7RqwRjDiWsRIapLlcc6A8nQeAc1TAMJpiwyAklc07N/PzmQEanL7+8s11uQX3prj1r1ofceqYcE3Rz1++THsAXCuRanerOC+yXFbWDcLaAiknphXFQThQgEP97jYBilTimhWXUuqGacQTYmVTGrfxja92gVY741bI6ZY3wnSa4/o8OJ93/GgakXhVis1NzaGdrgVxmlLN2MRz9RqMC+qCaURi7Zb+bCXM36ytrUKtWYdspnc8tEL0/+K2T0br9KonhhHJtVs0umZ105/7shKueQUMbDbbVed6aLcYkVS7OY3YJ7Sa0KuTRvklxW10SepB2zCiREj7wLNaGESrXb2bkJsRzWVmJmCbULtB/W7LGPmbpi1bTH/2QchpMbAx9KSe1UxEohHT0V8oaX+a3LfHiU/aN1eZrU8ZhLXvZCOmW0REn4CgJXIYB7eMPanfTSM+Emo3KOUNCZE8AEVQisO4lHVpy7HFiIQCHCF+wyJOYrejuSAyL2yWrRdlyfq02g0gfsZ46JrLNgr8mZjPum3b5rFPLEYkFuBQ6bk1hxmnf3FfNoo9EWtC+ySMeipZ/PRYpYSbMUdP6s1T+KLsY82eY6r+YMqC+LhwEiUzlr5YevfNr24rKklivclp0zmRZjEiYJxaOCHaUfl3JqeNccMhxQxtaI2qdJQtobPtqPtTkp3x9IBgR0CYMJTxUY06xNZNZwevyxJO9aB6ur+OY1TeBEOYYhpNMZOF66dORKktnWEYgyJkG00xK1lVDCIIOmfHA2tk7IRPDKUQkeWoG27CHoso1drO5KHa2uGFQkufVLHs6pOW6n6fGkS0Jw9VPf7+n4RFf8wAT34aJMt8QZrxBZ1hjBm15IEY1ZONqbqN8OdKu71BS58UQobV90A2NBCPF3Bm1JOHGt2YqkmNP6yEif/K8LcDrdWDWO6npJTK6sFpG8eoJY8F8Cs5u2pth7GLqvYfeApiiVn/4pw2u6BGzx5xrgqTBzxeb8FdN33APNyZCBFPn+Co7MYylulbV9R16Iwk1Qtwz1RGtyA8nTZXXpP8W5HdrDemonEwHm8Q7ChJlVF4ihhEzExqp7tEM3Q134jsgqnrHjKNsTbAiFZQFbSVfp1MH9CYgyTNQJIJmQXTbffNnNBXz2qYmCOXk2gtYyeDVhcXIsN9QvK8B17s6jZPhJBxvzaQH2U5mUQr/S60r+AHtBhApix3IBEySxfEdDjAGD1YcAQdWUpGRqEVL4uH8BvwWXPNyiNtjAcnVoSuu1WtjCcbj22DDqbDZKQAjHhZlepXwIQg7gwZhH6bIrOZRNe7N9gYgbOemoaEhMnRpLausdJLjgLY0bpJ6K8pMpvT9zzR14cEhmy3TcJIMvkSEsr1IRh2ChWDkDJ7xZXQ//gmMOQBGsmReyiUwhRRR7dtKZRlE/Hx2MfJnxEhhERrGuSefpIqaJboVVKyEPry02fjpUho6L+sEyaLklTVX2blctmwo5+U8bwI9SHVsn7fhOSMJBX182XLV1dXvbLhp54R2RH6iaUG4X7bSliAhPpOjZ6sIyM/pawG4EXoIx9aCNE8ap9wFADNoOImclXOAhmNkTaRbBezfOi5prERbtgIhyChfgusQ+2eC5aU4bm0YQTotS51CGWL8iE6xwhIiFX9dm1vy5JdHv2UXV1K2TxCUdtGCIvRqn4/mpcVB6FHP2XXt3C5eQNe64/o3hc6Yasqy33Ch4Gb17Q9xVN2y78offzUGEkn/81q0u/u0QLRpTyMXl9KWYc+Ldg+m8anJ3YzF5RxmhdDP5E0qmtE0xB8OYRej2Jk/eQPL/BVFMPdCaSxttS3n4ZY6IcX2P8pw2F9UmGqvPiBCeHQj9g/yG68lJgu+BKynF4jDbbxJWS5kpZ0wya+hEyX1BCWwHAmZDmRT6i9uRKmmd7emtAQuRKyXbxHyPlcCRnvRiQUGTwJS2y3B+Fv6cuTkPXSPXy+4EnIfPklNl9wJWS9hw3bC+ZIyH4tO/aWtxwJOezrxg1H8SNMp5kDOtfQcibk8pAATErkR8g4GSJhxqO4EXLagjiYMJ5E2Boejvsl5HRn8sHy+ymE8WEgn4Q8dsxoGmiJTyFsQcIRf4RcWiHUwHNtvBOOtABZC3rnE2zIcSOwc5rNM6FmOCjAGG+13ExoJ+T5sBXn4LdHwpFhUy1P/xEbIdcbDW4rTyEctso1jjoJue1zRrJnDG+ELYOs5aUNOgk5P8Nir+SfUAdstVotr0a0EHK//57NTz0RasFzeLTlpyWahJx9FMqaFH0QmuHUi5uahDw2ADtk3UzqibDlsKEvwlBu2LpVeooNn0YY0iOrzKboiRBlQx3UXzsM4UZYSEZp4yeWjsbjcZ+xNB0N63FOxrNBvREi67V0Qk9FjUaYDvFpTud64vdY05hN0GPCR4ShPhlvGd141GvlbUF0LboNwhDummjVrIbouW8R9xFldMJS2E8ZnYVrXnz0gEfgMzq9GRASpp7BY1RnoymGI1F8b2FGEIio7AjDfvymrp0SK0KvTyplrk1WhKNhkxn6kQ3gMyIsCEJBKAhDlyAUhIIwfAlCQSgIw5cg/P8njLABHKE/zZqvkiwUNpRVuE1aAej5MBbibPRsxmkio4wIR9z/NCf99QmT+p7JoPV82qGQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJAQR/0P35gZIZG5+x0AAAAASUVORK5CYII="
+/>
+  <!-- Custom styles -->
+  <style>
+    body {
+      background-color: #f8f9fa;
+      direction: rtl;
+        text-align: right;
+    }
+    .container {
+      max-width: 400px;
+      margin-top: 100px;
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+      transition: 0.5s ;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+.create:hover {
+    color: white;
+}
+    .form-group label {
+      font-weight: 600;
+    }
+    .btn-signup {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+    }
+    .btn-signup:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+  <center>  <h2 class="mb-4">تسجيل الدخول</h2></center>
+    <form action="/login" method="post">
+      <div class="form-group">
+        <label for="username">اسم الموظف :</label>
+        <input type="text" class="form-control" id="username" name="username" required>
+      </div>
+      <div class="form-group">
+        <label for="password">الباسورد :</label>
+        <input type="password" class="form-control" id="password" name="password" required>
+      </div>
+      <button type="submit" class="btn btn-signup btn-block create">تسجيل الدخول</button>
+    </form>
+  </div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
