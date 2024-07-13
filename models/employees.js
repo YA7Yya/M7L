@@ -26,7 +26,7 @@ const employeeData = new mongoose.Schema({
 });
 const Employee = mongoose.model("Employee", employeeData);
 
-exports.createNewEmployee = async (username, password,role) => {
+exports.createNewEmployee = async (username, password,role, visits,addations,deleteations,updateations) => {
     return new Promise((resolve, reject) => {
         mongoose.connect(process.env.DB, {
             useNewUrlParser: true,
@@ -45,7 +45,11 @@ exports.createNewEmployee = async (username, password,role) => {
                 let user = new Employee({
                     username: username,
                     password: hashedPassword,
-                    role: role
+                    role: role,
+                    visits: visits,
+                    addations: addations,
+                    deleteations: deleteations,
+                    updateations: updateations
                 });
                 return user.save();
             }

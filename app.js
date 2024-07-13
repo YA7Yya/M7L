@@ -230,12 +230,12 @@ app.get("/login", (req, res) => {
 app.post("/createEmployee", managerGuard.isManager, async (req, res) => {
   await Employee.createNewEmployee(req.body.username, req.body.password)
     .then((user) => {
-      // logAction(
-      //   req.session.userId,
-      //   "Employee Create",
-      //   req.body,
-      //   req.session.username
-      // );
+      logAction(
+        req.session.userId,
+        "Employee Create",
+        req.body,
+        req.session.username
+      );
       res.redirect("/login");
     })
     .catch((err) => {
