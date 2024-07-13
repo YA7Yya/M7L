@@ -37,10 +37,13 @@ exports.createNewEmployee = async (
 ) => {
   return new Promise((resolve, reject) => {
     mongoose
-      .connect(process.env.DB, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      })
+      .connect(
+        "mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/?retryWrites=true&w=majority&appName=AppTest",
+        {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+        }
+      )
       .then(() => {
         return Employee.findOne({ username: username });
       })
