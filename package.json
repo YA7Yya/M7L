@@ -9,7 +9,7 @@
     "build": "echo 'Build step not required for this project'"
   },
   "engines": {
-    "node": "18.16.0"
+    "node": "18.x"
   },
   "keywords": [],
   "author": "",
