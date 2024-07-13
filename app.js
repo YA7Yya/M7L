@@ -216,9 +216,7 @@ app.get("/crud/update/:id", async (req, res) => {
     res.status(200).json(value);
   });
 });
-app.get("/", authGuard.isAuth, (req, res) => {
-  res.redirect("/crud");
-});
+app.get("/", (req, res) => res.send("Express on Vercel"));;
 
 app.get("/createEmployee", managerGuard.isManager, (req, res) => {
   res.render("./auth/createEmployee.ejs");
