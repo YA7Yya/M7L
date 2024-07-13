@@ -50,8 +50,12 @@
       </a>
     </center>
     <% } %>  
+
     <form action="/productAdd" method="post">
-      <div class="w-75 m-auto shadow-lg p-5 my-5 bg-light addingForm">
+      <div class="w-75 m-auto shadow-lg p-5 my-5 bg-light addingForm position-relative">
+        <a href="/logs" class="position-absolute top-0 start-0" style=" margin: 20px 0 0 15px; padding: 10px;direction: rtl;">
+          <i class="fa fa-history fa-2x" aria-hidden="true" ></i>
+          </a>
         <h1 class="fw-bolder text-uppercase text-center mb-4">Crud system</h1>
         <label for="pname" class="mt-3">اسم المنتج :</label>
         <input type="text" class="form-control pname" id="pname" name="PNAME" />

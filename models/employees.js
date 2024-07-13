@@ -10,6 +10,18 @@ const employeeData = new mongoose.Schema({
     visits: {
         type: Number,
         default: 0
+    },
+    addations: {
+        type: Number,
+        default: 0
+    },
+    deleteations: {
+        type: Number,
+        default: 0
+    },
+    updateations: {
+        type: Number,
+        default: 0
     }
 });
 const Employee = mongoose.model("Employee", employeeData);

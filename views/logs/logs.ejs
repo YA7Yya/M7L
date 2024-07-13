@@ -14,31 +14,46 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.11.2/datatables.min.css"/>
     <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.11.2/datatables.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <style>
+        * {
+          direction: rtl;
+          text-align: right;
+          align-items: right;
+        }
+        .fixed-button {
+          position: fixed;
+          top: 20px;
+          left: 15px;
+          padding: 5px;
+          z-index: 9999; /* Ensure it's on top of other elements */
+          border-radius: 50%;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-100">
-  <a href="/crud" class="btn btn-success" style="position: fixed; margin: 20px 0 0 15px; padding: 5px; z-index: 5; border-radius: 50%;">
+  <a href="/crud" class="btn btn-success fixed-button">
     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
       <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"></path>
     </svg>
   </a>  
     <div class="container mx-auto py-6">
         <h1 class="text-3xl font-semibold text-center mb-6">Logs</h1>
-        <div class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative">
+        <div class="bg-white rounded-lg shadow relative">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead>
                     <tr>
-                        <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                            Action
+                        <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                            النشاط
                         </th>
-                        <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                            User
+                        <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                            الموظف
                         </th>
-                        <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                            Product Name
+                        <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                            اسم المنتج
                         </th>
-                        <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                            Timestamp
+                        <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 whitespace-no-wrap font-medium text-gray-500 uppercase tracking-wider">
+                            تاريخ النشاط
                         </th>
                         <!-- Add more headers as needed -->
                     </tr>
@@ -60,19 +75,16 @@
                                 <% } %>
                             </td>
                             <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
-                                <%= moment(log.createdAt).format('LLLL'); %>
+                                <%= moment(log.createdAt).format('LL'); %>
                             </td>
                             <!-- Add more columns as needed -->
                         </tr>
                     <% }); %>
                     <% if (logs.length === 0) { %>
-                      <div class="alert alert-info" role="alert">
+                      <div class="alert alert-danger text-center" role="alert">
                           No logs available.
                       </div>
                   <% } %>
-                  
-
-              
                 </tbody>
             </table>
         </div>

@@ -53,6 +53,9 @@ app.use(async (req, res, next) => {
       req.session.username = user.username;
       req.session.role = user.role;
       req.session.visits = user.visits;
+      req.session.addations = user.addations;
+      req.session.deleteations = user.deleteations;
+      req.session.updateations = user.updateations;
     }
     next();
   } catch (error) {
@@ -130,20 +133,22 @@ app.post("/logs", async (req, res) => {
 
 
 app.post("/productAdd", async(req, res) => {
-
-  logAction(req.session.userId, "Add Product", req.body, req.session.username)
   Info.createNewProduct(
     req.body.PNAME,
     req.body.WHOLEPRICE,
     req.body.PNOTES
   ).then(async() => {
-    res.redirect("/logs");
+  await Employee.Employee.findByIdAndUpdate(req.session.userId, { $inc: { addations: 1 } });
+  logAction(req.session.userId, "إضافة منتج", req.body, req.session.username)
+    res.redirect("/crud");
   });
 });
 app.delete("/crud/delete/:id", (req, res) => {
   Info.Info.findByIdAndDelete(req.params.id)
 
-    .then((params) => {
+    .then(async(body) => {
+  await Employee.Employee.findByIdAndUpdate(req.session.userId, { $inc: { deleteations: 1 } });
+  logAction(req.session.userId, "حذف منتج", body, req.session.username)
       res.status(200).json("Done");
     })
 
@@ -151,17 +156,14 @@ app.delete("/crud/delete/:id", (req, res) => {
       console.log(err);
     });
 });
-app.post("/crud/update/:id", (req, res) => {
-  Info.Info.findById(req.params.id).then((value) => {
-    console.log(value);
-  });
-});
 app.post("/productUpdate/:id", (req, res) => {
   Info.Info.findByIdAndUpdate(req.params.id, {
     PNAME: req.body.PNAME,
     WHOLEPRICE: req.body.WHOLEPRICE,
     PNOTES: req.body.PNOTES,
-  }).then((value) => {
+  }).then(async(value) => {
+  await Employee.Employee.findByIdAndUpdate(req.session.userId, { $inc: { updateations: 1 } });
+  logAction(req.session.userId, "تحديث المنتج", req.body, req.session.username)
     res.redirect("/crud");
   });
 });
@@ -186,6 +188,7 @@ app.get("/login", (req, res) => {
 app.post("/createEmployee", managerGuard.isManager, async (req, res) => {
   await Employee.createNewEmployee(req.body.username, req.body.password)
     .then((user) => {
+  logAction(req.session.userId, "Employee Create", req.body, req.session.username)
       res.redirect("/login");
     })
     .catch((err) => {
