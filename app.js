@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const corsConfig = {
-  origin: "*",
+  origin: "https://m7l.vercel.app",
   credential: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
