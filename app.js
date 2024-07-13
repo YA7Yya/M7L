@@ -6,8 +6,7 @@ const corsConfig = {
   credential: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
-app.options("", cors(corsConfig));
-app.use(cors(corsConfig));
+
 let port = 80;
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -53,6 +52,7 @@ app.use(
     store: STORE,
   })
 );
+app.use(cors(corsConfig));
 app.use(async (req, res, next) => {
   try {
     const user = await Employee.Employee.findOne({
