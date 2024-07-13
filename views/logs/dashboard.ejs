@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard - Dark Style</title>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" />
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="../../CSS/dashboard.css" />
+</head>
+
+<body>
+  <div id="wrapper">
+    <div class="content-area">
+      <div class="container-fluid">
+        <div class="text-left mt-3 mb-3 d-fixed">
+        </div>
+        <div class="main">
+          <div class="row sparkboxes mt-4">
+            <div class="col-md-3">
+              <div class="box box1">
+                <div class="details">
+                  <h3><%= visits %> </h3>
+                  <h4>VISITS</h4>
+                </div>
+                <div id="spark1"></div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="box box2">
+                <div class="details">
+                  <h3 class="Adds"></h3>
+                  <h4>Adds</h4>
+                </div>
+                <div id="spark2"></div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="box box3">
+                <div class="details">
+                  <h3 class="Updates"></h3>
+                  <h4>Updates</h4>
+                </div>
+                <div id="spark3"></div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="box box4">
+                <div class="details">
+                  <h3 class="Deletes"></h3>
+                  <h4>Deletes</h4>
+                </div>
+                <div id="spark4"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col-md-6 offset-md-3">
+              <div class="box shadow mt-4">
+                <div id="radialBarBottom"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.slim.min.js"></script>
+  <script src="../../js/apexcharts.js"></script>
+
+  <script>
+    const Adds = document.querySelector(".Adds");
+    const Updates = document.querySelector(".Updates")
+    const Deletes = document.querySelector(".Deletes");
+    async function fetchEmployeeData() {
+      const response = await fetch(`/api/employee-stats/<%= username %>`);
+      const data = await response.json();
+      return data;
+    }
+
+    async function renderChart() {
+      let employeeData = await fetchEmployeeData();
+      Adds.innerHTML = employeeData.addations
+      Updates.innerHTML = employeeData.updateations
+      Deletes.innerHTML = employeeData.deleteations
+      
+window.Apex = {
+    chart: {
+      foreColor: '#ccc',
+      toolbar: {
+        show: false
+      },
+    },
+    stroke: {
+      width: 3
+    },
+    dataLabels: {
+      enabled: false
+    },
+    tooltip: {
+      theme: 'dark'
+    },
+    grid: {
+      borderColor: "#535A6C",
+      xaxis: {
+        lines: {
+          show: true
+        }
+      }
+    }
+  };
+  
+  var spark1 = {
+    chart: {
+      id: 'spark1',
+      group: 'sparks',
+      type: 'line',
+      height: 80,
+      sparkline: {
+        enabled: true
+      },
+      dropShadow: {
+        enabled: true,
+        top: 1,
+        left: 1,
+        blur: 2,
+        opacity: 0.2,
+      }
+    },
+    series: [{
+      data: [employeeData.visits]
+    }],
+    stroke: {
+      curve: 'smooth'
+    },
+    markers: {
+      size: 0
+    },
+    grid: {
+      padding: {
+        top: 20,
+        bottom: 10,
+        left: 110
+      }
+    },
+    colors: ['#fff'],
+    tooltip: {
+      x: {
+        show: false
+      },
+      y: {
+        title: {
+          formatter: function formatter(val) {
+            return '';
+          }
+        }
+      }
+    }
+  }
+  
+  var spark2 = {
+    chart: {
+      id: 'spark2',
+      group: 'sparks',
+      type: 'line',
+      height: 80,
+      sparkline: {
+        enabled: true
+      },
+      dropShadow: {
+        enabled: true,
+        top: 1,
+        left: 1,
+        blur: 2,
+        opacity: 0.2,
+      }
+    },
+    series: [{
+      data: [employeeData.addations]
+    }],
+    stroke: {
+      curve: 'smooth'
+    },
+    grid: {
+      padding: {
+        top: 20,
+        bottom: 10,
+        left: 110
+      }
+    },
+    markers: {
+      size: 0
+    },
+    colors: ['#fff'],
+    tooltip: {
+      x: {
+        show: false
+      },
+      y: {
+        title: {
+          formatter: function formatter(val) {
+            return '';
+          }
+        }
+      }
+    }
+  }
+  
+  var spark3 = {
+    chart: {
+      id: 'spark3',
+      group: 'sparks',
+      type: 'line',
+      height: 80,
+      sparkline: {
+        enabled: true
+      },
+      dropShadow: {
+        enabled: true,
+        top: 1,
+        left: 1,
+        blur: 2,
+        opacity: 0.2,
+      }
+    },
+    series: [{
+      data: [employeeData.updateations]
+    }],
+    stroke: {
+      curve: 'smooth'
+    },
+    markers: {
+      size: 0
+    },
+    grid: {
+      padding: {
+        top: 20,
+        bottom: 10,
+        left: 110
+      }
+    },
+    colors: ['#fff'],
+    xaxis: {
+      crosshairs: {
+        width: 1
+      },
+    },
+    tooltip: {
+      x: {
+        show: false
+      },
+      y: {
+        title: {
+          formatter: function formatter(val) {
+            return '';
+          }
+        }
+      }
+    }
+  }
+  
+  var spark4 = {
+    chart: {
+      id: 'spark4',
+      group: 'sparks',
+      type: 'line',
+      height: 80,
+      sparkline: {
+        enabled: true
+      },
+      dropShadow: {
+        enabled: true,
+        top: 1,
+        left: 1,
+        blur: 2,
+        opacity: 0.2,
+      }
+    },
+    series: [{
+      data: [employeeData.deleteations]
+    }],
+    stroke: {
+      curve: 'smooth'
+    },
+    markers: {
+      size: 0
+    },
+    grid: {
+      padding: {
+        top: 20,
+        bottom: 10,
+        left: 110
+      }
+    },
+    colors: ['#fff'],
+    xaxis: {
+      crosshairs: {
+        width: 1
+      },
+    },
+    tooltip: {
+      x: {
+        show: false
+      },
+      y: {
+        title: {
+          formatter: function formatter(val) {
+            return '';
+          }
+        }
+      }
+    }
+  }
+  
+  new ApexCharts(document.querySelector("#spark1"), spark1).render();
+  new ApexCharts(document.querySelector("#spark2"), spark2).render();
+  new ApexCharts(document.querySelector("#spark3"), spark3).render();
+  new ApexCharts(document.querySelector("#spark4"), spark4).render();
+  
+      var options = {
+        series: [employeeData.updateations, employeeData.deleteations, employeeData.addations],
+        chart: {
+          height: 350,
+          type: 'radialBar',
+        },
+        plotOptions: {
+          radialBar: {
+            dataLabels: {
+              name: {
+                fontSize: '22px',
+              },
+              value: {
+                fontSize: '16px',
+              },
+              total: {
+                show: true,
+                value: 0,
+                label: 'Total',
+                formatter: function (w) {
+                  return employeeData.updateations + employeeData.deleteations + employeeData.addations;
+                }
+              }
+            }
+          }
+        },
+        labels: ['Updates', 'Deletes', 'Adds'],
+      };
+
+      var chart = new ApexCharts(document.querySelector("#radialBarBottom"), options);
+      chart.render();
+    }
+
+    document.addEventListener('DOMContentLoaded', renderChart);
+  </script>
+  <script src="../../js/dashboard.js"></script>
+</body>
+</html>

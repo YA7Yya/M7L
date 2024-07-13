@@ -7,15 +7,15 @@ const path = require("path");
 const Info = require("./models/productSchema");
 const Employee = require("./models/employees");
 const authGuard = require("./middlewares/auth.guard");
-const adminGuard = require("./middlewares/admin.guard");  
+const adminGuard = require("./middlewares/admin.guard");
 const managerGuard = require("./middlewares/manager.guard");
 const MongoClient = require("mongodb").MongoClient;
-const Log = require("./models/logs")
-const logAction = require('./middlewares/logAction');
+const Log = require("./models/logs");
+const logAction = require("./middlewares/logAction");
 const moment = require("moment");
 const session = require("express-session");
 const SessionStore = require("connect-mongodb-session")(session);
-const compression = require('compression');
+const compression = require("compression");
 app.use(compression());
 moment.locale("ar");
 require("dotenv").config();
@@ -24,11 +24,9 @@ app.use(express.static("public"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
-mongoose
-  .connect(process.env.DB)
-  .then(() => {
-    console.log("DB Started Successfully");
-  });
+mongoose.connect(process.env.DB).then(() => {
+  console.log("DB Started Successfully");
+});
 
 let day = 3600000 * 24;
 const STORE = new SessionStore({
@@ -64,7 +62,7 @@ app.use(async (req, res, next) => {
     res.status(500).send("Internal Server Error");
   }
 });
-app.get("/crud", authGuard.isAuth,adminGuard.isEmployee, async (req, res) => {
+app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
   if (req.session && req.session.userId) {
     const id = req.session.userId;
 
@@ -91,23 +89,58 @@ app.get("/crud", authGuard.isAuth,adminGuard.isEmployee, async (req, res) => {
   }
 });
 
-app.get('/logs', async (req, res) => {
+app.get("/logs", async (req, res) => {
   try {
-    const logs = await Log.find().sort({ timestamp: -1 })
-    res.render('logs/logs', { logs, moment: moment });
+    const logs = await Log.find().sort({ timestamp: -1 });
+    res.render("logs/logs", { logs, moment: moment });
   } catch (error) {
-    res.status(500).send('Error retrieving logs');
+    res.status(500).send("Error retrieving logs");
+  }
+});
+app.get("/api/employee-stats/:username", async (req, res) => {
+  try {
+    const username = req.params.username;
+
+    const employee = await Employee.Employee.findOne(
+      { username: new RegExp(`^${username}$`, "i") },
+      "addations deleteations updateations"
+    );
+
+    if (!employee) {
+      console.log(`Employee with username ${username} not found`);
+      return res.status(404).send("Employee not found");
+    }
+
+    res.json({
+      addations: employee.addations,
+      deleteations: employee.deleteations,
+      updateations: employee.updateations,
+      visits: employee.visits,
+    });
+  } catch (error) {
+    console.error("Error fetching employee data:", error);
+    res.status(500).send("Internal Server Error");
   }
 });
 
+app.get("/employee/:username/stats", async (req, res) => {
+  const username = req.params.username;
 
-app.post("/logs", async (req, res) => {
+  res.render("logs/dashboard", {
+ username,
+visits: req.session.visits
+   });
+});
+app.post("/logs", managerGuard.isManager, async (req, res) => {
   const url = process.env.DB;
 
   console.log("Connecting to database...");
 
   try {
-    const client = await MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
+    const client = await MongoClient.connect(url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
     console.log("Connected to database");
 
     const dbo = client.db("test");
@@ -116,39 +149,40 @@ app.post("/logs", async (req, res) => {
     const result = await dbo.collection("products").drop();
     console.log("Collection successfully deleted.");
     res.redirect("/crud");
-    
+
     client.close();
   } catch (error) {
-    if (error.codeName === 'NamespaceNotFound') {
+    if (error.codeName === "NamespaceNotFound") {
       console.log("Collection not found or already deleted.");
       res.redirect("/crud");
     } else {
-      console.error('Error:', error);
-      res.status(500).send('Error processing request');
+      console.error("Error:", error);
+      res.status(500).send("Error processing request");
     }
   }
 });
 
-
-
-
-app.post("/productAdd", async(req, res) => {
+app.post("/productAdd", async (req, res) => {
   Info.createNewProduct(
     req.body.PNAME,
     req.body.WHOLEPRICE,
     req.body.PNOTES
-  ).then(async() => {
-  await Employee.Employee.findByIdAndUpdate(req.session.userId, { $inc: { addations: 1 } });
-  logAction(req.session.userId, "إضافة منتج", req.body, req.session.username)
+  ).then(async () => {
+    await Employee.Employee.findByIdAndUpdate(req.session.userId, {
+      $inc: { addations: 1 },
+    });
+    logAction(req.session.userId, "إضافة منتج", req.body, req.session.username);
     res.redirect("/crud");
   });
 });
 app.delete("/crud/delete/:id", (req, res) => {
   Info.Info.findByIdAndDelete(req.params.id)
 
-    .then(async(body) => {
-  await Employee.Employee.findByIdAndUpdate(req.session.userId, { $inc: { deleteations: 1 } });
-  logAction(req.session.userId, "حذف منتج", body, req.session.username)
+    .then(async (body) => {
+      await Employee.Employee.findByIdAndUpdate(req.session.userId, {
+        $inc: { deleteations: 1 },
+      });
+      logAction(req.session.userId, "حذف منتج", body, req.session.username);
       res.status(200).json("Done");
     })
 
@@ -161,9 +195,16 @@ app.post("/productUpdate/:id", (req, res) => {
     PNAME: req.body.PNAME,
     WHOLEPRICE: req.body.WHOLEPRICE,
     PNOTES: req.body.PNOTES,
-  }).then(async(value) => {
-  await Employee.Employee.findByIdAndUpdate(req.session.userId, { $inc: { updateations: 1 } });
-  logAction(req.session.userId, "تحديث المنتج", req.body, req.session.username)
+  }).then(async (value) => {
+    await Employee.Employee.findByIdAndUpdate(req.session.userId, {
+      $inc: { updateations: 1 },
+    });
+    logAction(
+      req.session.userId,
+      "تحديث المنتج",
+      req.body,
+      req.session.username
+    );
     res.redirect("/crud");
   });
 });
@@ -188,7 +229,12 @@ app.get("/login", (req, res) => {
 app.post("/createEmployee", managerGuard.isManager, async (req, res) => {
   await Employee.createNewEmployee(req.body.username, req.body.password)
     .then((user) => {
-  logAction(req.session.userId, "Employee Create", req.body, req.session.username)
+      logAction(
+        req.session.userId,
+        "Employee Create",
+        req.body,
+        req.session.username
+      );
       res.redirect("/login");
     })
     .catch((err) => {
