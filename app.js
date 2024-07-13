@@ -24,13 +24,17 @@ app.use(express.static("public"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
-mongoose.connect(process.env.DB).then(() => {
-  console.log("DB Started Successfully");
-});
+mongoose
+  .connect(
+    "mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/?retryWrites=true&w=majority&appName=AppTest"
+  )
+  .then(() => {
+    console.log("DB Started Successfully");
+  });
 
 let day = 3600000 * 24;
 const STORE = new SessionStore({
-  uri: process.env.DB,
+  uri: "mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/?retryWrites=true&w=majority&appName=AppTest",
   collection: "sessions",
 });
 app.use(
@@ -102,9 +106,9 @@ app.get("/api/employee-stats/:username", async (req, res) => {
   try {
     const username = req.params.username;
 
-    const employee = await Employee.Employee.findOne(
-      { username: new RegExp(`^${username}$`, "i") }
-    );
+    const employee = await Employee.Employee.findOne({
+      username: new RegExp(`^${username}$`, "i"),
+    });
 
     if (!employee) {
       console.log(`Employee with username ${username} not found`);
@@ -128,12 +132,13 @@ app.get("/employee/:username/stats", async (req, res) => {
   const username = req.params.username;
 
   res.render("logs/dashboard", {
- username,
-   });
+    username,
+  });
 });
 
 app.post("/logs", managerGuard.isManager, async (req, res) => {
-  const url = process.env.DB;
+  const url =
+    "mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/?retryWrites=true&w=majority&appName=AppTest";
 
   console.log("Connecting to database...");
 
@@ -216,7 +221,7 @@ app.get("/crud/update/:id", async (req, res) => {
     res.status(200).json(value);
   });
 });
-app.get("/", (req, res) => res.send("Express on Vercel"));;
+app.get("/", (req, res) => res.send("Express on Vercel"));
 
 app.get("/createEmployee", managerGuard.isManager, (req, res) => {
   res.render("./auth/createEmployee.ejs");
