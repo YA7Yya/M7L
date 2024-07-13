@@ -32,13 +32,13 @@ app.use(express.static("public"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
-// mongoose
-//   .connect(
-//     "mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/?retryWrites=true&w=majority&appName=AppTest"
-//   )
-//   .then(() => {
-//     console.log("DB Started Successfully");
-//   });
+mongoose
+  .connect(
+    "mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/?retryWrites=true&w=majority&appName=AppTest"
+  )
+  .then(() => {
+    console.log("DB Started Successfully");
+  });
 
 let day = 3600000 * 24;
 const STORE = new SessionStore({
