@@ -1,7 +1,13 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-app.use(cors())
+const corsConfig = {
+  origin: "*",
+  credential: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+};
+app.options("", cors(corsConfig));
+app.use(cors(corsConfig));
 let port = 80;
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -26,17 +32,13 @@ app.use(express.static("public"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
-mongoose
-  .connect(
-    "mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/?retryWrites=true&w=majority&appName=AppTest"
-  )
-  .then(() => {
-    console.log("DB Started Successfully");
-  });
+mongoose.connect(process.env.DB).then(() => {
+  console.log("DB Started Successfully");
+});
 
 let day = 3600000 * 24;
 const STORE = new SessionStore({
-  uri: "mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/?retryWrites=true&w=majority&appName=AppTest",
+  uri: process.env.DB,
   collection: "sessions",
 });
 app.use(
@@ -139,8 +141,7 @@ app.get("/employee/:username/stats", async (req, res) => {
 });
 
 app.post("/logs", managerGuard.isManager, async (req, res) => {
-  const url =
-    "mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/?retryWrites=true&w=majority&appName=AppTest";
+  const url = process.env.DB;
 
   console.log("Connecting to database...");
 
