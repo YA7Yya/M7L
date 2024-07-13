@@ -97,13 +97,13 @@ app.get("/logs", async (req, res) => {
     res.status(500).send("Error retrieving logs");
   }
 });
+
 app.get("/api/employee-stats/:username", async (req, res) => {
   try {
     const username = req.params.username;
 
     const employee = await Employee.Employee.findOne(
-      { username: new RegExp(`^${username}$`, "i") },
-      "addations deleteations updateations"
+      { username: new RegExp(`^${username}$`, "i") }
     );
 
     if (!employee) {
@@ -116,6 +116,7 @@ app.get("/api/employee-stats/:username", async (req, res) => {
       deleteations: employee.deleteations,
       updateations: employee.updateations,
       visits: employee.visits,
+      username: employee.username,
     });
   } catch (error) {
     console.error("Error fetching employee data:", error);
@@ -128,9 +129,9 @@ app.get("/employee/:username/stats", async (req, res) => {
 
   res.render("logs/dashboard", {
  username,
-visits: req.session.visits
    });
 });
+
 app.post("/logs", managerGuard.isManager, async (req, res) => {
   const url = process.env.DB;
 
@@ -229,12 +230,12 @@ app.get("/login", (req, res) => {
 app.post("/createEmployee", managerGuard.isManager, async (req, res) => {
   await Employee.createNewEmployee(req.body.username, req.body.password)
     .then((user) => {
-      logAction(
-        req.session.userId,
-        "Employee Create",
-        req.body,
-        req.session.username
-      );
+      // logAction(
+      //   req.session.userId,
+      //   "Employee Create",
+      //   req.body,
+      //   req.session.username
+      // );
       res.redirect("/login");
     })
     .catch((err) => {

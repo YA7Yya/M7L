@@ -23,7 +23,7 @@
             <div class="col-md-3">
               <div class="box box1">
                 <div class="details">
-                  <h3><%= visits %> </h3>
+                  <h3 class="Visits"> </h3>
                   <h4>VISITS</h4>
                 </div>
                 <div id="spark1"></div>
@@ -61,7 +61,7 @@
           <div class="row mt-4">
             <div class="col-md-6 offset-md-3">
               <div class="box shadow mt-4">
-                <div id="radialBarBottom"></div>
+                <div id="chart"></div>
               </div>
             </div>
           </div>
@@ -77,9 +77,11 @@
     const Adds = document.querySelector(".Adds");
     const Updates = document.querySelector(".Updates")
     const Deletes = document.querySelector(".Deletes");
+    const Visits = document.querySelector(".Visits");
     async function fetchEmployeeData() {
       const response = await fetch(`/api/employee-stats/<%= username %>`);
       const data = await response.json();
+      console.log(data)
       return data;
     }
 
@@ -88,273 +90,309 @@
       Adds.innerHTML = employeeData.addations
       Updates.innerHTML = employeeData.updateations
       Deletes.innerHTML = employeeData.deleteations
+      Visits.innerHTML = employeeData.visits
       
-window.Apex = {
-    chart: {
-      foreColor: '#ccc',
-      toolbar: {
-        show: false
-      },
-    },
-    stroke: {
-      width: 3
-    },
-    dataLabels: {
-      enabled: false
-    },
-    tooltip: {
-      theme: 'dark'
-    },
-    grid: {
-      borderColor: "#535A6C",
-      xaxis: {
-        lines: {
-          show: true
-        }
+      // Sorting function to order data in descending order
+      function sortDataDescending(data) {
+        return Object.keys(data).map(key => ({ name: key, value: data[key] }))
+                              .sort((a, b) => b.value - a.value);
       }
-    }
-  };
-  
-  var spark1 = {
-    chart: {
-      id: 'spark1',
-      group: 'sparks',
-      type: 'line',
-      height: 80,
-      sparkline: {
-        enabled: true
-      },
-      dropShadow: {
-        enabled: true,
-        top: 1,
-        left: 1,
-        blur: 2,
-        opacity: 0.2,
-      }
-    },
-    series: [{
-      data: [employeeData.visits]
-    }],
-    stroke: {
-      curve: 'smooth'
-    },
-    markers: {
-      size: 0
-    },
-    grid: {
-      padding: {
-        top: 20,
-        bottom: 10,
-        left: 110
-      }
-    },
-    colors: ['#fff'],
-    tooltip: {
-      x: {
-        show: false
-      },
-      y: {
-        title: {
-          formatter: function formatter(val) {
-            return '';
-          }
-        }
-      }
-    }
-  }
-  
-  var spark2 = {
-    chart: {
-      id: 'spark2',
-      group: 'sparks',
-      type: 'line',
-      height: 80,
-      sparkline: {
-        enabled: true
-      },
-      dropShadow: {
-        enabled: true,
-        top: 1,
-        left: 1,
-        blur: 2,
-        opacity: 0.2,
-      }
-    },
-    series: [{
-      data: [employeeData.addations]
-    }],
-    stroke: {
-      curve: 'smooth'
-    },
-    grid: {
-      padding: {
-        top: 20,
-        bottom: 10,
-        left: 110
-      }
-    },
-    markers: {
-      size: 0
-    },
-    colors: ['#fff'],
-    tooltip: {
-      x: {
-        show: false
-      },
-      y: {
-        title: {
-          formatter: function formatter(val) {
-            return '';
-          }
-        }
-      }
-    }
-  }
-  
-  var spark3 = {
-    chart: {
-      id: 'spark3',
-      group: 'sparks',
-      type: 'line',
-      height: 80,
-      sparkline: {
-        enabled: true
-      },
-      dropShadow: {
-        enabled: true,
-        top: 1,
-        left: 1,
-        blur: 2,
-        opacity: 0.2,
-      }
-    },
-    series: [{
-      data: [employeeData.updateations]
-    }],
-    stroke: {
-      curve: 'smooth'
-    },
-    markers: {
-      size: 0
-    },
-    grid: {
-      padding: {
-        top: 20,
-        bottom: 10,
-        left: 110
-      }
-    },
-    colors: ['#fff'],
-    xaxis: {
-      crosshairs: {
-        width: 1
-      },
-    },
-    tooltip: {
-      x: {
-        show: false
-      },
-      y: {
-        title: {
-          formatter: function formatter(val) {
-            return '';
-          }
-        }
-      }
-    }
-  }
-  
-  var spark4 = {
-    chart: {
-      id: 'spark4',
-      group: 'sparks',
-      type: 'line',
-      height: 80,
-      sparkline: {
-        enabled: true
-      },
-      dropShadow: {
-        enabled: true,
-        top: 1,
-        left: 1,
-        blur: 2,
-        opacity: 0.2,
-      }
-    },
-    series: [{
-      data: [employeeData.deleteations]
-    }],
-    stroke: {
-      curve: 'smooth'
-    },
-    markers: {
-      size: 0
-    },
-    grid: {
-      padding: {
-        top: 20,
-        bottom: 10,
-        left: 110
-      }
-    },
-    colors: ['#fff'],
-    xaxis: {
-      crosshairs: {
-        width: 1
-      },
-    },
-    tooltip: {
-      x: {
-        show: false
-      },
-      y: {
-        title: {
-          formatter: function formatter(val) {
-            return '';
-          }
-        }
-      }
-    }
-  }
-  
-  new ApexCharts(document.querySelector("#spark1"), spark1).render();
-  new ApexCharts(document.querySelector("#spark2"), spark2).render();
-  new ApexCharts(document.querySelector("#spark3"), spark3).render();
-  new ApexCharts(document.querySelector("#spark4"), spark4).render();
-  
-      var options = {
-        series: [employeeData.updateations, employeeData.deleteations, employeeData.addations],
+      
+      const sortedData = sortDataDescending({
+        Adds: employeeData.addations,
+        Updates: employeeData.updateations,
+        Deletes: employeeData.deleteations
+      });
+      
+      const sortedLabels = sortedData.map(item => item.name);
+      const sortedValues = sortedData.map(item => item.value);
+      
+      window.Apex = {
         chart: {
-          height: 350,
-          type: 'radialBar',
+          foreColor: '#ccc',
+          toolbar: {
+            show: false
+          },
         },
-        plotOptions: {
-          radialBar: {
-            dataLabels: {
-              name: {
-                fontSize: '22px',
-              },
-              value: {
-                fontSize: '16px',
-              },
-              total: {
-                show: true,
-                value: 0,
-                label: 'Total',
-                formatter: function (w) {
-                  return employeeData.updateations + employeeData.deleteations + employeeData.addations;
-                }
+        stroke: {
+          width: 3
+        },
+        dataLabels: {
+          enabled: false
+        },
+        tooltip: {
+          theme: 'dark'
+        },
+        grid: {
+          borderColor: "#535A6C",
+          xaxis: {
+            lines: {
+              show: true
+            }
+          }
+        }
+      };
+      
+      var spark1 = {
+        chart: {
+          id: 'spark1',
+          group: 'sparks',
+          type: 'line',
+          height: 80,
+          sparkline: {
+            enabled: true
+          },
+          dropShadow: {
+            enabled: true,
+            top: 1,
+            left: 1,
+            blur: 2,
+            opacity: 0.2,
+          }
+        },
+        series: [{
+          data: [employeeData.visits]
+        }],
+        stroke: {
+          curve: 'smooth'
+        },
+        markers: {
+          size: 0
+        },
+        grid: {
+          padding: {
+            top: 20,
+            bottom: 10,
+            left: 110
+          }
+        },
+        colors: ['#fff'],
+        tooltip: {
+          x: {
+            show: false
+          },
+          y: {
+            title: {
+              formatter: function formatter(val) {
+                return '';
               }
             }
           }
+        }
+      }
+      
+      var spark2 = {
+        chart: {
+          id: 'spark2',
+          group: 'sparks',
+          type: 'line',
+          height: 80,
+          sparkline: {
+            enabled: true
+          },
+          dropShadow: {
+            enabled: true,
+            top: 1,
+            left: 1,
+            blur: 2,
+            opacity: 0.2,
+          }
         },
-        labels: ['Updates', 'Deletes', 'Adds'],
-      };
-
-      var chart = new ApexCharts(document.querySelector("#radialBarBottom"), options);
+        series: [{
+          data: [employeeData.addations]
+        }],
+        stroke: {
+          curve: 'smooth'
+        },
+        grid: {
+          padding: {
+            top: 20,
+            bottom: 10,
+            left: 110
+          }
+        },
+        markers: {
+          size: 0
+        },
+        colors: ['#fff'],
+        tooltip: {
+          x: {
+            show: false
+          },
+          y: {
+            title: {
+              formatter: function formatter(val) {
+                return '';
+              }
+            }
+          }
+        }
+      }
+      
+      var spark3 = {
+        chart: {
+          id: 'spark3',
+          group: 'sparks',
+          type: 'line',
+          height: 80,
+          sparkline: {
+            enabled: true
+          },
+          dropShadow: {
+            enabled: true,
+            top: 1,
+            left: 1,
+            blur: 2,
+            opacity: 0.2,
+          }
+        },
+        series: [{
+          data: [employeeData.updateations]
+        }],
+        stroke: {
+          curve: 'smooth'
+        },
+        markers: {
+          size: 0
+        },
+        grid: {
+          padding: {
+            top: 20,
+            bottom: 10,
+            left: 110
+          }
+        },
+        colors: ['#fff'],
+        xaxis: {
+          crosshairs: {
+            width: 1
+          },
+        },
+        tooltip: {
+          x: {
+            show: false
+          },
+          y: {
+            title: {
+              formatter: function formatter(val) {
+                return '';
+              }
+            }
+          }
+        }
+      }
+      
+      var spark4 = {
+        chart: {
+          id: 'spark4',
+          group: 'sparks',
+          type: 'line',
+          height: 80,
+          sparkline: {
+            enabled: true
+          },
+          dropShadow: {
+            enabled: true,
+            top: 1,
+            left: 1,
+            blur: 2,
+            opacity: 0.2,
+          }
+        },
+        series: [{
+          data: [employeeData.deleteations]
+        }],
+        stroke: {
+          curve: 'smooth'
+        },
+        markers: {
+          size: 0
+        },
+        grid: {
+          padding: {
+            top: 20,
+            bottom: 10,
+            left: 110
+          }
+        },
+        colors: ['#fff'],
+        xaxis: {
+          crosshairs: {
+            width: 1
+          },
+        },
+        tooltip: {
+          x: {
+            show: false
+          },
+          y: {
+            title: {
+              formatter: function formatter(val) {
+                return '';
+              }
+            }
+          }
+        }
+      }
+      
+      new ApexCharts(document.querySelector("#spark1"), spark1).render();
+      new ApexCharts(document.querySelector("#spark2"), spark2).render();
+      new ApexCharts(document.querySelector("#spark3"), spark3).render();
+      new ApexCharts(document.querySelector("#spark4"), spark4).render();
+      
+      var options = {
+        series: [
+          {
+            name: "",
+            data: sortedValues,
+          },
+        ],
+        chart: {
+          type: 'bar',
+          height: 350,
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 0,
+            horizontal: true,
+            distributed: true,
+            barHeight: '80%',
+            isFunnel: false,
+          },
+        },
+        colors: [
+          '#F44F5E',
+          '#E55A89',
+          '#D863B1',
+          '#CA6CD8',
+          '#B57BED',
+          '#8D95EB',
+          '#62ACEA',
+          '#4BC3E6',
+        ],
+        dataLabels: {
+          enabled: true,
+          formatter: function (val, opt) {
+            return opt.w.globals.labels[opt.dataPointIndex] + ' ' + `(${val})`
+          },
+          dropShadow: {
+            enabled: true,
+          },
+        },
+        title: {
+          text: `${employeeData.username}'s' Charts`,
+          align: 'middle',
+        },
+        xaxis: {
+          categories: sortedLabels,
+        },
+        legend: {
+          show: false,
+        },
+      }
+      var chart = new ApexCharts(document.querySelector("#chart"), options);
       chart.render();
     }
-
     document.addEventListener('DOMContentLoaded', renderChart);
   </script>
   <script src="../../js/dashboard.js"></script>
