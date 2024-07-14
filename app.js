@@ -89,6 +89,7 @@ app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
         allProducts: allProducts,
         isUser: req.session.userId,
         isManager: req.session.role === "Manager",
+        Dev: req.session.role === "Developer",
         moment: moment,
       });
     } catch (err) {

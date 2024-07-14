@@ -1,5 +1,5 @@
 exports.isEmployee = (req, res, next) => {
-  if (req.session.role === "Employee" || req.session.role === "Manager") next();
+  if (req.session.role === "Employee" || req.session.role === "Manager" || req.session.role === "Developer") next();
   else
     res.status(404).send(
       `
