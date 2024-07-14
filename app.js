@@ -56,7 +56,7 @@ app.use((err, req, res, next) => {
 app.use(async (req, res, next) => {
   try {
     const user = await Employee.Employee.findOne({
-      _id: req.session.userId,
+      userId: req.session.userId,
     });
     if (user) {
       // user found
@@ -67,9 +67,6 @@ app.use(async (req, res, next) => {
       req.session.deleteations = user.deleteations;
       req.session.updateations = user.updateations;
       next();
-    }else{
-      return false;
-      
     }
   } catch (error) {
     // error handling
