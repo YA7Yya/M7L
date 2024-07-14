@@ -37,10 +37,13 @@ exports.createNewEmployee = async (
 ) => {
   return new Promise((resolve, reject) => {
     mongoose
-      .connect("mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/", {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      })
+      .connect(
+        "mongodb+srv://Scriptat:Scriptat12349_99_9@cluster0.s5mgvqz.mongodb.net/",
+        {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+        }
+      )
       .then(() => {
         return Employee.findOne({ username: username });
       })
