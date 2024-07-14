@@ -37,7 +37,7 @@ exports.createNewEmployee = async (
 ) => {
   return new Promise((resolve, reject) => {
     mongoose
-      .connect("mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/", {
+      .connect(process.env.DB, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       })
