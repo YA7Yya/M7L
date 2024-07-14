@@ -1,12 +1,12 @@
 const express = require("express");
 const app = express();
-const cors = require("cors");
-const corsConfig = {
-  origin: "*",
-  credential: true,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-};
-app.use(cors(corsConfig));
+// const cors = require("cors");
+// const corsConfig = {
+//   origin: "*",
+//   credential: true,
+//   methods: ["GET", "POST", "PUT", "DELETE"],
+// };
+// app.use(cors(corsConfig));
 let port = 80;
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -52,10 +52,6 @@ app.use(
     store: STORE,
   })
 );
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
-});
 app.use(async (req, res, next) => {
   try {
     const user = await Employee.Employee.findOne({
