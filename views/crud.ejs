@@ -1,134 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crud System</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+      integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <!----------------------------- ToastifyJs script ------------------------------->
+    <link
+      href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5.0.16/dark.min.css"
+      rel="stylesheet"
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.js"
+      integrity="sha512-3PL7jW3xI1EjF2Hfqwv5u6nKG/BnUbWytnJDhsY/q5CbIB5XzoHNhJvgmFeVD7xgC9DbKDm+gPP9uDAAfLAZUA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
 
-  <!-- CSS Stylesheets -->
-  <link rel="stylesheet" href="CSS/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer">
-  <link rel="stylesheet" href="CSS/style.css">
+    <!--------------------------------Style Files ------------------------------------------>
+    <link rel="stylesheet" href="CSS/bootstrap.min.css" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="CSS/style.css" type="text/css" />
 
-  <!-- Browser logo -->
-  <link rel="icon" type="image/png" sizes="32x32" href="https://logopond.com/logos/70a5a28358a0f80718ac4f6737f018ae.png">
+    <title>Crud System</title>
 
-  <!-- jQuery -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-  <!-- SweetAlert2 -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5.0.16/dark.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.js" integrity="sha512-3PL7jW3xI1EjF2Hfqwv5u6nKG/BnUbWytnJDhsY/q5CbIB5XzoHNhJvgmFeVD7xgC9DbKDm+gPP9uDAAfLAZUA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-</head>
-<body>
+    <!-------------------------------Browser logo------------------------------------------->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="https://logopond.com/logos/70a5a28358a0f80718ac4f6737f018ae.png"
+    />
+  </head>
+  <body>
   <% if(isUser){ %>
-  <div class="container-fluid">
-    <div class="row justify-content-center">
-      <div class="col-12 col-md-6 text-center">
-        <a href="/logout">
-          <button class="btn btn-danger my-2">Logout</button>
-        </a>
-      </div>
-    </div>
-  </div>
-  <% } %>
+    <center>
+      <a href="/logout">
+        <button class="btn btn-danger my-2">Logout</button>
+      </a>
+    </center>
+    <% } %>  
 
-  <form action="/productAdd" method="post">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-12 col-md-8 col-lg-6">
-          <div class="shadow-lg p-5 my-5 bg-light addingForm position-relative">
-            <a href="/logs" class="position-absolute top-0 start-0 m-3">
-              <i class="fa fa-history fa-2x" aria-hidden="true"></i>
-            </a>
-            <h1 class="fw-bolder text-uppercase text-center mb-4">Crud system</h1>
-            <label for="pname" class="mt-3">اسم المنتج :</label>
-            <input type="text" class="form-control pname" id="pname" name="PNAME" />
-            <label for="price" class="mt-3">سعر الجملة :</label>
-            <input type="number" class="form-control wholeprice" id="price" name="WHOLEPRICE" />
-            <label class="mt-3">ملاحظات المنتج :</label>
-            <textarea class="pnotes form-control" id="notes" name="PNOTES"></textarea>
-            <input type="submit" class="btn btn-primary w-100 d-block mt-3" id="addBtn" value="إضافة المنتج" />
-          </div>
-        </div>
+    <form action="/productAdd" method="post">
+      <div class="w-75 m-auto shadow-lg p-5 my-5 bg-light addingForm position-relative">
+        <a href="/logs" class="position-absolute top-0 start-0" style=" margin: 20px 0 0 15px; padding: 10px;direction: rtl;">
+          <i class="fa fa-history fa-2x" aria-hidden="true" ></i>
+          </a>
+        <h1 class="fw-bolder text-uppercase text-center mb-4">Crud system</h1>
+        <label for="pname" class="mt-3">اسم المنتج :</label>
+        <input type="text" class="form-control pname" id="pname" name="PNAME" />
+        <!-- <label for="pcategory" class="mt-3">Product Category:</label>
+    <input type="text" class="form-control" id="pcategory" /> -->
+        <label for="price" class="mt-3">سعر الجملة :</label>
+        <input type="number" class="form-control wholeprice" id="price" name="WHOLEPRICE" />
+        <label class="mt-3">ملاحظات المنتج :</label>
+        <textarea class="pnotes form-control" id="notes"  name="PNOTES"> </textarea>
+        <input
+          type="submit"
+          class="btn btn-primary w-100 d-block mt-3"
+          id="addBtn"
+          value="إضافة المنتج"
+        />
       </div>
-    </div>
-  </form>
+    </form>
+    
+<% if(Dev){ %>
+  <center>
+    <form action="/logs" method="post">
+      <button type="submit" class="btn btn-danger my-2">Delete Collection</button>
+    </form>
+        </center>
+        <% } %> 
 
-  <% if(Dev){ %>
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-12 col-md-6 text-center">
-        <form action="/logs" method="post">
-          <button type="submit" class="btn btn-danger my-2">Delete Collection</button>
-        </form>
-      </div>
-    </div>
-  </div>
-  <% } %>
+    <form action="" method="post" id="updateForm" class="w-75 m-auto shadow-lg p-5 my-5 bg-light updatingForm" style="display: none;">
+      <h1 class="fw-bolder text-uppercase text-center mb-4">Update Product</h1>
+      <label for="puname" class="mt-3">اسم المنتج :</label>
+      <input type="text" class="form-control puname" id="puname" name="PNAME" />
+      <label for="price" class="mt-3">سعر الجملة :</label>
+      <input type="number" class="form-control puwholeprice" id="price" name="WHOLEPRICE" />
+      <label class="mt-3">ملاحظات المنتج :</label>
+      <textarea class="punotes form-control" id="notes" name="PNOTES"></textarea>
+      <input type="submit" class="btn btn-primary w-100 d-block mt-3" id="updateBtn" value="تعديل المنتج">
+    </form>
+    <!-- <input
+    placeholder="Search by Product Name..."
+    class="form-control w-50 m-auto"
+    id="searchbar"
+    onkeyup="search_animal()"
+  /> -->
+      <table class="table w-75 m-auto my-4 bg-light table-hover">
+        <thead>
+          <tr>
+            <th>اسم المنتج</th>
+            <th>سعر الجملة</th>
+            <th>السعر</th>
+            <th>الربح</th>
+            <th>الملاحظات</th>
+            <th>اخر تعديل</th>
+            <th>تعديل المنتج</th>
+            <th>حذف</th>
+          </tr>
+        </thead>
+        
+        <tbody id="tableBody">
+       
+          <% allProducts.forEach(product => { %> 
+            
 
-  <form action="" method="post" id="updateForm" class="container" style="display: none;">
-    <div class="row justify-content-center">
-      <div class="col-12 col-md-8 col-lg-6">
-        <div class="shadow-lg p-5 my-5 bg-light updatingForm">
-          <h1 class="fw-bolder text-uppercase text-center mb-4">Update Product</h1>
-          <label for="puname" class="mt-3">اسم المنتج :</label>
-          <input type="text" class="form-control puname" id="puname" name="PNAME" />
-          <label for="price" class="mt-3">سعر الجملة :</label>
-          <input type="number" class="form-control puwholeprice" id="price" name="WHOLEPRICE" />
-          <label class="mt-3">ملاحظات المنتج :</label>
-          <textarea class="punotes form-control" id="notes" name="PNOTES"></textarea>
-          <input type="submit" class="btn btn-primary w-100 d-block mt-3" id="updateBtn" value="تعديل المنتج">
-        </div>
-      </div>
-    </div>
-  </form>
+          <%let price = product.WHOLEPRICE * 1.50 %>
+          <tr class="productsdata">
+            <td><%= product.PNAME%></td>
+            <td><%= product.WHOLEPRICE%></td>
+            <td><%= price %></td>
+            <td><%= price - product.WHOLEPRICE %></td>
+            <td><%= product.PNOTES%></td>
+            <td><%= moment(product.updatedAt).format('LL');%></td>
+            <td>
+              <button class="btn btn-outline-warning update" id="fire" data-updateid="<%= product._id %>">
+                <i class="fa-solid fa-edit"></i>
+              </button>
+            </td>
+            <td class="delete">
+              <button class="btn btn-outline-danger delete" data-idlink="<%= product._id %>">
+                <i class="fa-solid fa-trash delete"></i>
+              </button>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
 
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-12 col-md-10">
-        <table class="table bg-light table-hover">
-          <thead>
-            <tr>
-              <th>اسم المنتج</th>
-              <th>سعر الجملة</th>
-              <th>السعر</th>
-              <th>الربح</th>
-              <th>ملاحظات المنتج</th>
-              <th>اخر تعديل</th>
-              <th>تعديل المنتج</th>
-              <th>حذف</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody">
-            <% allProducts.forEach(product => { %> 
-            <% let price = product.WHOLEPRICE * 1.50 %>
-            <tr class="productsdata">
-              <td><%= product.PNAME %></td>
-              <td><%= product.WHOLEPRICE %></td>
-              <td><%= price %></td>
-              <td><%= price - product.WHOLEPRICE %></td>
-              <td><%= product.PNOTES %></td>
-              <td><%= moment(product.updatedAt).format('LL') %></td>
-              <td>
-                <button class="btn btn-outline-warning update" data-updateid="<%= product._id %>">
-                  <i class="fa fa-edit"></i>
-                </button>
-              </td>
-              <td class="delete">
-                <button class="btn btn-outline-danger delete" data-idlink="<%= product._id %>">
-                  <i class="fa fa-trash delete"></i>
-                </button>
-              </td>
-            </tr>
-            <% }); %>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- JavaScript -->
-  <script src="../js/Crud.js"></script>
-</body>
+    <script src="../js/Crud.js"></script>
+  </body>
 </html>
