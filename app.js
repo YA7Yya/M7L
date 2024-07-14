@@ -68,7 +68,7 @@ app.use(async (req, res, next) => {
       req.session.updateations = user.updateations;
     }else{
       return false
-    }
+    };
     next();
   } catch (error) {
     // error handling
