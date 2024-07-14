@@ -143,9 +143,6 @@ app.get("/api/employee-stats/:username", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
-
-
 app.post("/logs", managerGuard.isManager, async (req, res) => {
   const url = process.env.DB;
 
