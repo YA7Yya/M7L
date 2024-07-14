@@ -111,7 +111,7 @@ app.get("/logs", async (req, res) => {
   }
 });
 
-app.get("/employee/:username/stats", async (req, res) => {
+app.get("/dashboard/:username", async (req, res) => {
   const username = req.params.username;
 
   res.render("logs/dashboard", {
