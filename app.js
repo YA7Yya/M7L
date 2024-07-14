@@ -52,6 +52,11 @@ app.use(
     store: STORE,
   })
 );
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+
 // app.use(async (req, res, next) => {
 //   try {
 //     const user = await Employee.Employee.findOne({
