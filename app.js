@@ -66,9 +66,9 @@ app.use(async (req, res, next) => {
       req.session.addations = user.addations;
       req.session.deleteations = user.deleteations;
       req.session.updateations = user.updateations;
-    next();
-  }
-} catch (error) {
+      next();
+    }
+  } catch (error) {
     // error handling
     console.error(error);
     res.status(500).send("Internal Server Error");
@@ -228,12 +228,12 @@ app.get("/crud/update/:id", async (req, res) => {
     res.status(200).json(value);
   });
 });
-app.get("/", (req, res) => res.send("Express on Vercel"));
+app.get("/", (req, res) => res.redirect("/crud"));
 
 app.get("/createEmployee", managerGuard.isManager, (req, res) => {
   res.render("./auth/createEmployee.ejs");
 });
-app.get("/login", (req, res) => {
+app.get("/login", authGuard.notAuth, (req, res) => {
   res.render("auth/login.ejs");
 });
 
@@ -246,7 +246,7 @@ app.post("/createEmployee", managerGuard.isManager, async (req, res) => {
         req.body,
         req.session.username
       );
-      res.redirect("/login");
+      res.redirect("/crud");
     })
     .catch((err) => {
       console.log(err);

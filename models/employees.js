@@ -61,9 +61,11 @@ exports.createNewEmployee = async (
             addations: addations,
             deleteations: deleteations,
             updateations: updateations,
-          });
-          return user.save();
+          })
+          await user.save();
         }
+      }).then(() => {
+        resolve();
       })
       .catch((error) => {
         console.error("Error in createNewEmployee:", error);
