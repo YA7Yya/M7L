@@ -1,12 +1,12 @@
 const express = require("express");
 const app = express();
-// const cors = require("cors");
-// const corsConfig = {
-//   origin: "*",
-//   credential: true,
-//   methods: ["GET", "POST", "PUT", "DELETE"],
-// };
-// app.use(cors(corsConfig));
+const cors = require("cors");
+const corsConfig = {
+  origin: "*",
+  credential: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+};
+app.use(cors(corsConfig));
 let port = 80;
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -66,9 +66,6 @@ app.use(
 //       req.session.addations = user.addations;
 //       req.session.deleteations = user.deleteations;
 //       req.session.updateations = user.updateations;
-//     }else{
-//       return false
-//     };
 //     next();
 //   } catch (error) {
 //     // error handling
