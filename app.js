@@ -6,7 +6,6 @@ const corsConfig = {
   credential: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
-
 let port = 80;
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
