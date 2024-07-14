@@ -29,19 +29,17 @@ app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.set('views', path.join(__dirname, 'views'));
+app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 mongoose
-  .connect(
-    "mongodb+srv://Scriptat:Scriptat12349_99_9@cluster0.s5mgvqz.mongodb.net/"
-  )
+  .connect("mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/")
   .then(() => {
     console.log("DB Started Successfully");
   });
 app.use(cors(corsConfig));
 let day = 3600000 * 24;
 const STORE = new SessionStore({
-  uri: "mongodb+srv://Scriptat:Scriptat12349_99_9@cluster0.s5mgvqz.mongodb.net/",
+  uri: "mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/",
   collection: "sessions",
 });
 app.use(
@@ -149,8 +147,7 @@ app.get("/employee/:username/stats", async (req, res) => {
 });
 
 app.post("/logs", managerGuard.isManager, async (req, res) => {
-  const url =
-    "mongodb+srv://Scriptat:Scriptat12349_99_9@cluster0.s5mgvqz.mongodb.net/";
+  const url = "mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/";
 
   console.log("Connecting to database...");
 
