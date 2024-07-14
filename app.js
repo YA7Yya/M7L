@@ -111,6 +111,13 @@ app.get("/logs", async (req, res) => {
   }
 });
 
+app.get("/employee/:username/stats", async (req, res) => {
+  const username = req.params.username;
+
+  res.render("logs/dashboard", {
+    username,
+  });
+});
 app.get("/api/employee-stats/:username", async (req, res) => {
   try {
     const username = req.params.username;
@@ -137,13 +144,7 @@ app.get("/api/employee-stats/:username", async (req, res) => {
   }
 });
 
-app.get("/employee/:username/stats", async (req, res) => {
-  const username = req.params.username;
 
-  res.render("logs/dashboard", {
-    username,
-  });
-});
 
 app.post("/logs", managerGuard.isManager, async (req, res) => {
   const url = process.env.DB;
