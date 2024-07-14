@@ -11,9 +11,7 @@ const Info = mongoose.model("Product", productInfo);
 exports.getAllProducts = async () => {
   return new Promise(async (resolve, reject) => {
     await mongoose
-      .connect(
-        "mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/?retryWrites=true&w=majority&appName=AppTest"
-      )
+      .connect("mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/")
       .then(() => {
         return Info.find();
       })
@@ -29,9 +27,7 @@ exports.getAllProducts = async () => {
 exports.createNewProduct = async (PNAME, WHOLEPRICE, PNOTES) => {
   return new Promise(async (resolve, reject) => {
     await mongoose
-      .connect(
-        "mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/?retryWrites=true&w=majority&appName=AppTest"
-      )
+      .connect("mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/")
       .then(() => {
         return Info.findOne({ PNAME: PNAME });
       })

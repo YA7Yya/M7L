@@ -32,16 +32,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 mongoose
-  .connect(
-    "mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/?retryWrites=true&w=majority&appName=AppTest"
-  )
+  .connect("mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/")
   .then(() => {
     console.log("DB Started Successfully");
   });
-  app.use(cors(corsConfig));
+app.use(cors(corsConfig));
 let day = 3600000 * 24;
 const STORE = new SessionStore({
-  uri: "mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/?retryWrites=true&w=majority&appName=AppTest",
+  uri: "mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/",
   collection: "sessions",
 });
 app.use(
@@ -54,7 +52,7 @@ app.use(
 );
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send('Something broke!');
+  res.status(500).send("Something broke!");
 });
 
 // app.use(async (req, res, next) => {
@@ -149,8 +147,7 @@ app.get("/employee/:username/stats", async (req, res) => {
 });
 
 app.post("/logs", managerGuard.isManager, async (req, res) => {
-  const url =
-    "mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/?retryWrites=true&w=majority&appName=AppTest";
+  const url = "mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/";
 
   console.log("Connecting to database...");
 
