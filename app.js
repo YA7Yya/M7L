@@ -238,7 +238,7 @@ app.get("/createEmployee", managerGuard.isManager, (req, res) => {
   res.render("./auth/createEmployee.ejs");
 });
 app.get("/login", (req, res) => {
-  res.render("./auth/login.ejs");
+  res.render("auth/login.ejs");
 });
 
 app.post("/createEmployee", managerGuard.isManager, async (req, res) => {
