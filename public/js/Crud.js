@@ -46,9 +46,9 @@ document.addEventListener("DOMContentLoaded", () => {
                   timer: 1000,
                   timerProgressBar: !1,
                   background: "#07bc0c",
-                }).fire({ icon: "success", title:  `تم حذف المنتج بنجاح` });
+                }).fire({ icon: "success", title: `تم حذف المنتج بنجاح` });
                 setTimeout(() => {
-                  window.location.reload()
+                  window.location.reload();
                 }, 2000);
               },
               error: function (err) {
@@ -95,7 +95,7 @@ updateBtns.forEach((btn) => {
 
   function updateP(updateId) {
     if (!updateId) {
-      alert("Error While Getting updateid")
+      alert("Error While Getting updateid");
       return;
     }
 
@@ -127,9 +127,14 @@ updateBtns.forEach((btn) => {
         pNotesInput.value = response.PNOTES;
         $(".swal2-container").css("display", "none");
         $(".swal2-shown").css("overflow", "visible");
-      let addingForm = document.querySelector(".addingForm").style.display = "none"
-      let updatingForm = document.querySelector(".updatingForm").style.display = "block"
-      document.getElementById("updateForm").action = `/productUpdate/${updateId}`;
+        let addingForm = (document.querySelector(".addingForm").style.display =
+          "none");
+        let updatingForm = (document.querySelector(
+          ".updatingForm"
+        ).style.display = "block");
+        document.getElementById(
+          "updateForm"
+        ).action = `/productUpdate/${updateId}`;
       },
 
       error: function (err) {
@@ -143,4 +148,3 @@ updateBtns.forEach((btn) => {
     });
   }
 });
-
