@@ -1,12 +1,12 @@
 const express = require("express");
 const app = express();
-const cors = require("cors");
-const corsConfig = {
-  origin: "*",
-  credential: true,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-};
-app.use(cors(corsConfig));
+// const cors = require("cors");
+// const corsConfig = {
+//   origin: "*",
+//   credential: true,
+//   methods: ["GET", "POST", "PUT", "DELETE"],
+// };
+// app.use(cors(corsConfig));
 let port = 80;
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -52,27 +52,31 @@ app.use(
     store: STORE,
   })
 );
-
-// app.use(async (req, res, next) => {
-//   try {
-//     const user = await Employee.Employee.findOne({
-//       _id: req.session.userId,
-//     });
-//     if (user) {
-//       // user found
-//       req.session.username = user.username;
-//       req.session.role = user.role;
-//       req.session.visits = user.visits;
-//       req.session.addations = user.addations;
-//       req.session.deleteations = user.deleteations;
-//       req.session.updateations = user.updateations;
-//     next();
-//   } catch (error) {
-//     // error handling
-//     console.error(error);
-//     res.status(500).send("Internal Server Error");
-//   }
-// });
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+app.use(async (req, res, next) => {
+  try {
+    const user = await Employee.Employee.findOne({
+      _id: req.session.userId,
+    });
+    if (user) {
+      // user found
+      req.session.username = user.username;
+      req.session.role = user.role;
+      req.session.visits = user.visits;
+      req.session.addations = user.addations;
+      req.session.deleteations = user.deleteations;
+      req.session.updateations = user.updateations;
+    next();
+  }
+} catch (error) {
+    // error handling
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
 app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
   if (req.session && req.session.userId) {
     const id = req.session.userId;
