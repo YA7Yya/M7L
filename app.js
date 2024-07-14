@@ -53,29 +53,29 @@ app.use(
   })
 );
 
-app.use(async (req, res, next) => {
-  try {
-    const user = await Employee.Employee.findOne({
-      _id: req.session.userId,
-    });
-    if (user) {
-      // user found
-      req.session.username = user.username;
-      req.session.role = user.role;
-      req.session.visits = user.visits;
-      req.session.addations = user.addations;
-      req.session.deleteations = user.deleteations;
-      req.session.updateations = user.updateations;
-    }else{
-      return false
-    };
-    next();
-  } catch (error) {
-    // error handling
-    console.error(error);
-    res.status(500).send("Internal Server Error");
-  }
-});
+// app.use(async (req, res, next) => {
+//   try {
+//     const user = await Employee.Employee.findOne({
+//       _id: req.session.userId,
+//     });
+//     if (user) {
+//       // user found
+//       req.session.username = user.username;
+//       req.session.role = user.role;
+//       req.session.visits = user.visits;
+//       req.session.addations = user.addations;
+//       req.session.deleteations = user.deleteations;
+//       req.session.updateations = user.updateations;
+//     }else{
+//       return false
+//     };
+//     next();
+//   } catch (error) {
+//     // error handling
+//     console.error(error);
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
 app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
   if (req.session && req.session.userId) {
     const id = req.session.userId;
