@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const employeeData = new mongoose.Schema({
+  userId: mongoose.Types.ObjectId,
   username: String,
   password: String,
   role: {

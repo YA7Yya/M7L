@@ -56,7 +56,7 @@ app.use((err, req, res, next) => {
 app.use(async (req, res, next) => {
   try {
     const user = await Employee.Employee.findOne({
-      userId: req.session.userId,
+      _id: req.session.userId,
     });
     if (user) {
       // user found
