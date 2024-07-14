@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((result) => {
           if (result.isConfirmed) {
             $.ajax({
-              url: `http://localhost:80/crud/delete/${deleteId}`,
+              url: `/crud/delete/${deleteId}`,
               type: "DELETE",
               success: function (result) {
                 Swal.mixin({
@@ -118,7 +118,7 @@ updateBtns.forEach((btn) => {
     });
 
     $.ajax({
-      url: `http://localhost:80/crud/update/${updateId}`,
+      url: `/crud/update/${updateId}`,
       type: "GET",
       success: function (response) {
         console.log("Response:", response); // Debugging statement
