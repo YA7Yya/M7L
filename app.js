@@ -31,13 +31,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
-mongoose.connect(process.env.DB).then(() => {
-  console.log("DB Started Successfully");
-});
+mongoose
+  .connect("mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/")
+  .then(() => {
+    console.log("DB Started Successfully");
+  });
 app.use(cors(corsConfig));
 let day = 3600000 * 24;
 const STORE = new SessionStore({
-  uri: process.env.DB,
+  uri: "mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/",
   collection: "sessions",
 });
 app.use(
@@ -97,7 +99,7 @@ app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
   }
 });
 
-app.get("/logs",authGuard.isAuth,managerGuard.isManager, async (req, res) => {
+app.get("/logs", authGuard.isAuth, managerGuard.isManager, async (req, res) => {
   try {
     const logs = await Log.find().sort({ timestamp: -1 });
     res.render("logs/logs", { logs, moment: moment });
@@ -139,7 +141,7 @@ app.get("/api/employee-stats/:username", async (req, res) => {
   }
 });
 app.post("/logs", managerGuard.isManager, async (req, res) => {
-  const url = process.env.DB;
+  const url = "mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/";
 
   console.log("Connecting to database...");
 

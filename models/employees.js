@@ -37,7 +37,7 @@ exports.createNewEmployee = async (
 ) => {
   return new Promise((resolve, reject) => {
     mongoose
-      .connect(process.env.DB, {
+      .connect("mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/", {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       })
@@ -61,10 +61,11 @@ exports.createNewEmployee = async (
             addations: addations,
             deleteations: deleteations,
             updateations: updateations,
-          })
+          });
           await user.save();
         }
-      }).then(() => {
+      })
+      .then(() => {
         resolve();
       })
       .catch((error) => {
