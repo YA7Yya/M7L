@@ -48,10 +48,6 @@ app.use(
     store: STORE,
   })
 );
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send("Something broke!");
-});
 
 app.use(async (req, res, next) => {
   try {
@@ -74,7 +70,7 @@ app.use(async (req, res, next) => {
     res.status(500).send("Internal Server Error");
   }
 });
-app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
+app.get("/crud", authGuard.isAuth, async (req, res) => {
   if (req.session && req.session.userId) {
     const id = req.session.userId;
 
