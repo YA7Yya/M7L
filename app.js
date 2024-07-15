@@ -31,7 +31,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
-mongoose.connect(process.env.DB).then(() => {
+mongoose.connect(process.env.DB,
+  { useUnifiedTopology: true }
+).then(() => {
   console.log("DB Started Successfully");
 });
 app.use(cors(corsConfig));
