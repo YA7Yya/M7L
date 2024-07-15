@@ -40,6 +40,7 @@ const STORE = new SessionStore({
   uri: process.env.DB,
   collection: "sessions",
 });
+
 app.use(
   session({
     secret: "this is my secret for ENcryPt",
