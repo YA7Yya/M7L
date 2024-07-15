@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,17 +27,8 @@
           z-index: 9999; /* Ensure it's on top of other elements */
           border-radius: 50%;
         }
-        /* Adjustments for small screens */
-        @media (max-width: 768px) {
-            .table-responsive {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                -ms-overflow-style: -ms-autohiding-scrollbar;
-                min-width: 100%;
-                max-width: 100%;
-                width: 100%;
-                margin-bottom: 15px;
-            }
+        .details-column {
+          white-space: nowrap;
         }
     </style>
 </head>
@@ -51,63 +41,60 @@
   </a>  
     <div class="container mx-auto py-6">
         <h1 class="text-3xl font-semibold text-center mb-6">Logs</h1>
+
+        <!-- Logs Table -->
         <div class="bg-white rounded-lg shadow relative">
-            <div class="table-responsive">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead>
+            <table id="logsTable" class="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr>
+                        <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                            النشاط
+                        </th>
+                        <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                            الموظف
+                        </th>
+                        <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                          التغيير
+                        </th>
+                        <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 whitespace-no-wrap font-medium text-gray-500 uppercase tracking-wider">
+                            تاريخ النشاط
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="logsBody" class="bg-white divide-y divide-gray-200">
+                    <% logs.forEach(log => { %>
                         <tr>
-                            <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                النشاط
-                            </th>
-                            <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                الموظف
-                            </th>
-                            <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                اسم المنتج
-                            </th>
-                            <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 whitespace-no-wrap font-medium text-gray-500 uppercase tracking-wider">
-                                تاريخ النشاط
-                            </th>
-                            <!-- Add more headers as needed -->
+                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
+                                <%= log.action %>
+                            </td>
+                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
+                                <%= log.username %>
+                            </td>
+                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900 details-column">
+                                <% if (log.details.before) { %>
+                                    <%= log.details.before %> => <%= log.details.after %> 
+                                <% } else { %>
+                                    N/A <!-- Display default text or handle as needed -->
+                                <% } %>
+                            </td>
+                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
+                                <%= moment(log.createdAt).format('LLLL'); %>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        <% logs.forEach(log => { %>
-                            <tr>
-                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
-                                    <%= log.action %>
-                                </td>
-                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
-                                    <%= log.username %>
-                                </td>
-                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
-                                    <% if (log.details.before && log.details.after) { %>
-                                        <span class="hidden lg:inline">
-                                            <%= log.details.before %> =>
-                                        </span>
-                                        <%= log.details.after %> 
-                                    <% } else { %>
-                                        N/A <!-- Display default text or handle as needed -->
-                                    <% } %>
-                                </td>
-                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
-                                    <%= moment(log.createdAt).format('LLLL'); %>
-                                </td>
-                                <!-- Add more columns as needed -->
-                            </tr>
-                        <% }); %>
-                        <% if (logs.length === 0) { %>
-                          <div class="alert alert-danger text-center" role="alert">
-                              No logs available.
-                          </div>
-                      <% } %>
-                    </tbody>
-                </table>
-            </div>
+                    <% }); %>
+                    <% if (logs.length === 0) { %>
+                      <tr>
+                        <td colspan="4" class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900 text-center">
+                            No logs available.
+                        </td>
+                      </tr>
+                  <% } %>
+                </tbody>
+            </table>
         </div>
     </div>
    
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+Wy2FzKXmebzjWv4pPuskUnjmw13PbWREC" crossorigin="anonymous"></script>
-</body>
 
+</body>
 </html>

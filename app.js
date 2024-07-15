@@ -177,10 +177,11 @@ app.post("/productAdd", async (req, res) => {
     req.body.PNAME,
     req.body.WHOLEPRICE,
     req.body.PNOTES
-  ).then(async () => {
+  ).then(async (body) => {
     await Employee.Employee.findByIdAndUpdate(req.session.userId, {
       $inc: { addations: 1 },
     });
+    console.log(req.body);
     logAction(req.session.userId, "إضافة منتج", req.body, req.session.username);
     res.redirect("/crud");
   });
@@ -268,7 +269,7 @@ app.post("/createEmployee", managerGuard.isManager, async (req, res) => {
     .then((user) => {
       logAction(
         req.session.userId,
-        "Employee Create",
+        "إنشاء موظف",
         req.body,
         req.session.username
       );
