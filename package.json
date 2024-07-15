@@ -1,7 +1,6 @@
 {
   "name": "m7l",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -43,5 +42,6 @@
     "@babel/preset-env": "^7.24.7",
     "babel-loader": "^9.1.3",
     "terser-webpack-plugin": "^5.3.10"
-  }
+  },
+  "description": ""
 }
