@@ -1,7 +1,7 @@
 let button = document.querySelectorAll(".delete");
-let pNameInput = document.querySelector(".puname");
-let wholePriceInput = document.querySelector(".puwholeprice");
-let pNotesInput = document.querySelector(".punotes");
+let pNameInput = document.querySelector("#puname");
+let wholePriceInput = document.querySelector("#puprice");
+let pNotesInput = document.querySelector("#punotes");
 let updateBtns = document.querySelectorAll(".update");
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("No delete ID found.");
         return;
       }
-
       const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
           confirmButton: "btn btn-success",
@@ -35,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then((result) => {
           if (result.isConfirmed) {
+            loading()
             $.ajax({
               url: `/crud/delete/${deleteId}`,
               type: "DELETE",
@@ -85,7 +85,26 @@ function search_animal() {
     }
   }
 }
-
+function loading() {
+  
+  let timerInterval;
+  Swal.fire({
+    title: "تحميل البيانات...",
+    html: "يتم الان تحميل بيانات المنتج...",
+    timer: 99999,
+    timerProgressBar: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+    willClose: () => {
+      clearInterval(timerInterval);
+    },
+  }).then((result) => {
+    if (result.dismiss === Swal.DismissReason.timer) {
+      console.log("I was closed by the timer");
+    }
+  });
+}
 updateBtns.forEach((btn) => {
   btn.addEventListener("click", function () {
     let updateId = this.getAttribute("data-updateid");
@@ -98,25 +117,7 @@ updateBtns.forEach((btn) => {
       alert("Error While Getting updateid");
       return;
     }
-
-    let timerInterval;
-    Swal.fire({
-      title: "تحميل البيانات...",
-      html: "يتم الان تحميل بيانات المنتج...",
-      timer: 99999,
-      timerProgressBar: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-      willClose: () => {
-        clearInterval(timerInterval);
-      },
-    }).then((result) => {
-      if (result.dismiss === Swal.DismissReason.timer) {
-        console.log("I was closed by the timer");
-      }
-    });
-
+loading();
     $.ajax({
       url: `/crud/update/${updateId}`,
       type: "GET",
@@ -127,11 +128,11 @@ updateBtns.forEach((btn) => {
         pNotesInput.value = response.PNOTES;
         $(".swal2-container").css("display", "none");
         $(".swal2-shown").css("overflow", "visible");
-        let addingForm = (document.querySelector(".addingForm").style.display =
-          "none");
-        let updatingForm = (document.querySelector(
-          ".updatingForm"
-        ).style.display = "block");
+        let addingForm = document.querySelector(".addingForm").style.display =
+          "none";
+        let updatingForm = document.querySelector(
+          "#updateForm"
+        ).style.display = "block";
         document.getElementById(
           "updateForm"
         ).action = `/productUpdate/${updateId}`;

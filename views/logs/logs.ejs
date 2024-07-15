@@ -28,6 +28,18 @@
           z-index: 9999; /* Ensure it's on top of other elements */
           border-radius: 50%;
         }
+        /* Adjustments for small screens */
+        @media (max-width: 768px) {
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                -ms-overflow-style: -ms-autohiding-scrollbar;
+                min-width: 100%;
+                max-width: 100%;
+                width: 100%;
+                margin-bottom: 15px;
+            }
+        }
     </style>
 </head>
 
@@ -40,53 +52,58 @@
     <div class="container mx-auto py-6">
         <h1 class="text-3xl font-semibold text-center mb-6">Logs</h1>
         <div class="bg-white rounded-lg shadow relative">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead>
-                    <tr>
-                        <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                            النشاط
-                        </th>
-                        <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                            الموظف
-                        </th>
-                        <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                            اسم المنتج
-                        </th>
-                        <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 whitespace-no-wrap font-medium text-gray-500 uppercase tracking-wider">
-                            تاريخ النشاط
-                        </th>
-                        <!-- Add more headers as needed -->
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    <% logs.forEach(log => { %>
+            <div class="table-responsive">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead>
                         <tr>
-                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
-                                <%= log.action %>
-                            </td>
-                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
-                                <%= log.username %>
-                            </td>
-                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
-                                <% if (log.details && log.details.PNAME) { %>
-                                    <%= log.details.PNAME %>
-                                <% } else { %>
-                                    N/A <!-- Display default text or handle as needed -->
-                                <% } %>
-                            </td>
-                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
-                                <%= moment(log.createdAt).format('LLLL'); %>
-                            </td>
-                            <!-- Add more columns as needed -->
+                            <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                النشاط
+                            </th>
+                            <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                الموظف
+                            </th>
+                            <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                اسم المنتج
+                            </th>
+                            <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 whitespace-no-wrap font-medium text-gray-500 uppercase tracking-wider">
+                                تاريخ النشاط
+                            </th>
+                            <!-- Add more headers as needed -->
                         </tr>
-                    <% }); %>
-                    <% if (logs.length === 0) { %>
-                      <div class="alert alert-danger text-center" role="alert">
-                          No logs available.
-                      </div>
-                  <% } %>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <% logs.forEach(log => { %>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
+                                    <%= log.action %>
+                                </td>
+                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
+                                    <%= log.username %>
+                                </td>
+                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
+                                    <% if (log.details.before && log.details.after) { %>
+                                        <span class="hidden lg:inline">
+                                            <%= log.details.before %> =>
+                                        </span>
+                                        <%= log.details.after %> 
+                                    <% } else { %>
+                                        N/A <!-- Display default text or handle as needed -->
+                                    <% } %>
+                                </td>
+                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
+                                    <%= moment(log.createdAt).format('LLLL'); %>
+                                </td>
+                                <!-- Add more columns as needed -->
+                            </tr>
+                        <% }); %>
+                        <% if (logs.length === 0) { %>
+                          <div class="alert alert-danger text-center" role="alert">
+                              No logs available.
+                          </div>
+                      <% } %>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
    

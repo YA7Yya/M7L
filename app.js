@@ -23,7 +23,7 @@ const session = require("express-session");
 const SessionStore = require("connect-mongodb-session")(session);
 const compression = require("compression");
 app.use(compression());
-moment.locale("ar");
+moment.locale("ar-EG");
 require("dotenv").config();
 app.set("view engine", "ejs");
 app.use(express.static("public"));
@@ -102,7 +102,7 @@ app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
 
 app.get("/logs", authGuard.isAuth, managerGuard.isManager, async (req, res) => {
   try {
-    const logs = await Log.find().sort({ timestamp: -1 });
+    const logs = await Log.find().sort({ createdAt: -1 });
     res.render("logs/logs", { logs, moment: moment });
   } catch (error) {
     res.status(500).send("Error retrieving logs");
@@ -200,24 +200,53 @@ app.delete("/crud/delete/:id", (req, res) => {
       console.log(err);
     });
 });
-app.post("/productUpdate/:id", (req, res) => {
-  Info.Info.findByIdAndUpdate(req.params.id, {
-    PNAME: req.body.PNAME,
-    WHOLEPRICE: req.body.WHOLEPRICE,
-    PNOTES: req.body.PNOTES,
-  }).then(async (value) => {
-    await Employee.Employee.findByIdAndUpdate(req.session.userId, {
-      $inc: { updateations: 1 },
-    });
-    logAction(
-      req.session.userId,
-      "تحديث المنتج",
-      req.body,
-      req.session.username
-    );
-    res.redirect("/crud");
-  });
+
+app.post('/productUpdate/:id', async (req, res) => {
+    try {
+        // Fetch the original document before update
+        const originalProduct = await Info.Info.findById(req.params.id);
+
+        if (!originalProduct) {
+            return res.status(404).send('Product not found');
+        }
+
+        // Create an object with the updated fields
+        const updatedFields = {
+            PNAME: req.body.PNAME,
+            WHOLEPRICE: req.body.WHOLEPRICE,
+            PNOTES: req.body.PNOTES,
+        };
+
+        // Update the document
+        const updatedProduct = await Info.Info.findByIdAndUpdate(req.params.id, updatedFields, { new: true });
+
+        // Log the changes
+        const logDetails = {};
+        for (const key in updatedFields) {
+            if (originalProduct[key] !== updatedFields[key]) {
+                logDetails.before = originalProduct[key];
+                logDetails.after = updatedFields[key];
+                let ss = await Log.create({
+                    action: `Update ${key}`,
+                    userId: req.session.userId,
+                    username: req.session.username,
+                    details: logDetails
+                  });
+                  console.log(ss);
+            }
+        }
+console.log("DETAILS:", logDetails);
+        // Increment the updates counter for the employee
+        await Employee.Employee.findByIdAndUpdate(req.session.userId, { $inc: { updateations: 1 } });
+
+        res.redirect('/crud');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
 });
+
+
 app.get("/crud/update/:id", async (req, res) => {
   await Info.Info.findById(req.params.id).then((value) => {
     console.log("Find The Product");
