@@ -1,11 +1,11 @@
 const express = require("express");
 const app = express();
-const cors = require("cors");
-const corsConfig = {
-  origin: "*",
-  credential: true,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-};
+// const cors = require("cors");
+// const corsConfig = {
+//   origin: "*",
+//   credential: true,
+//   methods: ["GET", "POST", "PUT", "DELETE"],
+// };
 let port = 80;
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -34,7 +34,7 @@ app.use(express.static(path.join(__dirname, "public")));
 mongoose.connect(process.env.DB).then(() => {
   console.log("DB Started Successfully");
 });
-app.use(cors(corsConfig));
+// app.use(cors(corsConfig));
 let day = 3600000 * 24;
 const STORE = new SessionStore({
   uri: process.env.DB,
