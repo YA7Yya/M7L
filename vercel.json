@@ -1,26 +1,21 @@
 {
   "version": 2,
   "builds": [
-      {
-          "src": "app.js",
-          "use": "@vercel/node"
-      }
+    {
+      "src": "app.js",
+      "use": "@vercel/node"
+    }
   ],
   "routes": [
-      {
-          "src": "/(.*)",
-          "dest": "app.js",
-          "methods": [
-              "GET",
-              "POST",
-              "PUT",
-              "PATCH",
-              "DELETE",
-              "OPTIONS"
-          ],
-"headers": {
-  "Access-Control-Allow-Origin": "*"
-}
-        }
+    {
+      "src": "/(.*)",
+      "dest": "app.js",
+      "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Authorization"
+      }
+    }
   ]
 }
