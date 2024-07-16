@@ -1,16 +1,20 @@
-const Log = require("../models/logs");
-const {Employee} = require("../models/employees");
+// middlewares/logAction.js
 
-async function logAction(userId, action, details, username) {
+const Log = require('../models/logs');
 
-  const log = new Log({
-action,
-userId,
-username,
-details,
-  })
-  await log.save()
-}
-
+const logAction = async (action, userId, username, details,update) => {
+  console.log('Logging action:', action, userId, username, details,update); 
+  try {
+    await Log.create({
+      action,
+      userId,
+      username,
+      details,
+      update
+    });
+  } catch (error) {
+    console.error('Error logging action:', error);
+  }
+};
 
 module.exports = logAction;

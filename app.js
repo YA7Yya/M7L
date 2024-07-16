@@ -31,9 +31,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
-mongoose.connect(process.env.DB,
-  { useUnifiedTopology: true }
-).then(() => {
+mongoose.connect(process.env.DB, { useUnifiedTopology: true }).then(() => {
   console.log("DB Started Successfully");
 });
 app.use(cors(corsConfig));
@@ -99,7 +97,11 @@ app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
     res.redirect("/login");
   }
 });
-
+app.get("/products/api", (req,res) =>{
+  Info.Info.find().then((api) => {
+    res.json(api)
+  })
+})
 app.get("/logs", authGuard.isAuth, managerGuard.isManager, async (req, res) => {
   try {
     const logs = await Log.find().sort({ createdAt: -1 });
@@ -156,7 +158,7 @@ app.post("/logs", managerGuard.isManager, async (req, res) => {
     const dbo = client.db("test");
 
     // Drop the collection
-    const result = await dbo.collection("products").drop();
+    const result = await dbo.collection("logs").drop();
     console.log("Collection successfully deleted.");
     res.redirect("/crud");
 
@@ -178,22 +180,37 @@ app.post("/productAdd", async (req, res) => {
     req.body.WHOLEPRICE,
     req.body.PNOTES
   ).then(async (body) => {
+    console.log(body);
+
     await Employee.Employee.findByIdAndUpdate(req.session.userId, {
       $inc: { addations: 1 },
     });
-    console.log(req.body);
-    logAction(req.session.userId, "إضافة منتج", req.body, req.session.username);
+    logAction(
+      "إضافة منتج",
+      req.session.userId,
+      req.session.username,{
+
+  PNAME: req.body.PNAME,
+  WHOLEPRICE: req.body.WHOLEPRICE,
+  PNOTES: req.body.PNOTES
+}
+    )
     res.redirect("/crud");
   });
 });
-app.delete("/crud/delete/:id", (req, res) => {
-  Info.Info.findByIdAndDelete(req.params.id)
-
+app.delete("/crud/delete/:id", async (req, res) => {
+  let deleted = Info.Info.findByIdAndDelete(req.params.id)
     .then(async (body) => {
+      console.log("Body:" + body + deleted);
       await Employee.Employee.findByIdAndUpdate(req.session.userId, {
         $inc: { deleteations: 1 },
       });
-      logAction(req.session.userId, "حذف منتج", body, req.session.username);
+      await logAction("حذف منتج", req.session.userId, req.session.username,{
+      PNAME: body.PNAME,
+      WHOLEPRICE: body.WHOLEPRICE,
+      PNOTES: body.PNOTES,
+    
+      });
       res.status(200).json("Done");
     })
 
@@ -202,51 +219,60 @@ app.delete("/crud/delete/:id", (req, res) => {
     });
 });
 
-app.post('/productUpdate/:id', async (req, res) => {
-    try {
-        // Fetch the original document before update
-        const originalProduct = await Info.Info.findById(req.params.id);
+app.post("/productUpdate/:id", async (req, res) => {
+  try {
+    // Fetch the original document before update
+    const originalProduct = await Info.Info.findById(req.params.id);
 
-        if (!originalProduct) {
-            return res.status(404).send('Product not found');
-        }
+    if (!originalProduct) {
+      return res.status(404).send("Product not found");
+    }
 
-        // Create an object with the updated fields
-        const updatedFields = {
+    // Create an object with the updated fields
+    const updatedFields = {
+      PNAME: req.body.PNAME,
+      WHOLEPRICE: req.body.WHOLEPRICE,
+      PNOTES: req.body.PNOTES,
+    };
+
+    // Update the document
+    const updatedProduct = await Info.Info.findByIdAndUpdate(
+      req.params.id,
+      updatedFields,
+      { new: true }
+    );
+
+    // Log the changes
+    const logDetails = {};
+    for (const key in updatedFields) {
+      if (originalProduct[key] !== updatedFields[key]) {
+        logDetails.before = originalProduct[key];
+        logDetails.after = updatedFields[key];
+        let ss = await Log.create({
+          action: `Update ${key}`,
+          userId: req.session.userId,
+          username: req.session.username,
+          details: {
             PNAME: req.body.PNAME,
             WHOLEPRICE: req.body.WHOLEPRICE,
             PNOTES: req.body.PNOTES,
-        };
-
-        // Update the document
-        const updatedProduct = await Info.Info.findByIdAndUpdate(req.params.id, updatedFields, { new: true });
-
-        // Log the changes
-        const logDetails = {};
-        for (const key in updatedFields) {
-            if (originalProduct[key] !== updatedFields[key]) {
-                logDetails.before = originalProduct[key];
-                logDetails.after = updatedFields[key];
-                let ss = await Log.create({
-                    action: `Update ${key}`,
-                    userId: req.session.userId,
-                    username: req.session.username,
-                    details: logDetails
-                  });
-                  console.log(ss);
-            }
-        }
-console.log("DETAILS:", logDetails);
-        // Increment the updates counter for the employee
-        await Employee.Employee.findByIdAndUpdate(req.session.userId, { $inc: { updateations: 1 } });
-
-        res.redirect('/crud');
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Internal Server Error');
+          },
+          update: logDetails,
+        });
+      }
     }
-});
+    console.log("DETAILS:", logDetails);
+    // Increment the updates counter for the employee
+    await Employee.Employee.findByIdAndUpdate(req.session.userId, {
+      $inc: { updateations: 1 },
+    });
 
+    res.redirect("/crud");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 app.get("/crud/update/:id", async (req, res) => {
   await Info.Info.findById(req.params.id).then((value) => {
@@ -268,10 +294,10 @@ app.post("/createEmployee", managerGuard.isManager, async (req, res) => {
   await Employee.createNewEmployee(req.body.username, req.body.password)
     .then((user) => {
       logAction(
-        req.session.userId,
         "إنشاء موظف",
-        req.body,
-        req.session.username
+        req.session.userId,
+        req.session.username,
+        req.body
       );
       res.redirect("/crud");
     })

@@ -19,6 +19,7 @@
           text-align: right;
           align-items: right;
         }
+
         .fixed-button {
           position: fixed;
           top: 20px;
@@ -29,6 +30,9 @@
         }
         .details-column {
           white-space: nowrap;
+        }
+        .backhover:hover{
+            background-color: rgba(0, 0, 0, 0.075);
         }
     </style>
 </head>
@@ -54,7 +58,7 @@
                             الموظف
                         </th>
                         <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                          التغيير
+                          المنتج
                         </th>
                         <th class="px-6 py-3 bg-gray-50 text-right text-xs leading-4 whitespace-no-wrap font-medium text-gray-500 uppercase tracking-wider">
                             تاريخ النشاط
@@ -63,19 +67,24 @@
                 </thead>
                 <tbody id="logsBody" class="bg-white divide-y divide-gray-200">
                     <% logs.forEach(log => { %>
-                        <tr>
+                        <tr class="backhover">
                             <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
                                 <%= log.action %>
                             </td>
                             <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
                                 <%= log.username %>
-                            </td>
+                            </td>   
                             <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900 details-column">
-                                <% if (log.details.before) { %>
-                                    <%= log.details.before %> => <%= log.details.after %> 
-                                <% } else { %>
-                                    N/A <!-- Display default text or handle as needed -->
-                                <% } %>
+                                <% if (log.update && log.update.before && log.update.after) { %>
+                                    <%= log.update.before %> => <%= log.update.after %>
+                                  <% } else if (log.action === "إضافة منتج" || log.action === "حذف منتج") { %> 
+                                    <%= log.details.PNAME %>
+                                  <% } else if (log.action === "إنشاء موظف") { %> 
+                                    <%= log.details.username %> 
+                                  <% } else { %>
+                                    N/A
+                                  <% } %>
+                                   
                             </td>
                             <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
                                 <%= moment(log.createdAt).format('LLLL'); %>
