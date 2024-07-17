@@ -113,6 +113,23 @@ label{
 display: flex;
 justify-content: center;
 }
+
+  .spinner-option::before {
+    content: "";
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border: 2px solid #ccc;
+    border-top: 2px solid #000;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
   </style>
 </head>
 <body>
@@ -134,7 +151,7 @@ justify-content: center;
       <div class="modal-body">
           <label for="price"><strong>: Employee Name</strong></label>
           <select class="sel form-control">
-            <option class="opt"></option>
+            <option class="opt" disabled selected></option>
           </select>
       </div>
       <div class="modal-footer">

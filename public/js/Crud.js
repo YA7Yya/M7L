@@ -10,27 +10,35 @@ let selectElement = document.querySelector(".sel");
 let updateBtns = document.querySelectorAll(".update");
 getEmp.addEventListener("click", (e) => {
   async function fetchEmployeeData() {
+    // Clear existing options and show loading message
+    selectElement.innerHTML = `<option >Loading...⏳</option>`;
+
     const response = await fetch(`/allEmployees`, { method: "POST" });
     const data = await response.json();
-    console.log(data);
 
-    // Clear existing options
-    selectElement.innerHTML = '';
+    // Clear loading message
+    selectElement.innerHTML = "";
 
+    if (!data || data.length === 0) {
+      // If no data received, show "No employees found" message
+      selectElement.innerHTML = "<option>No employees found</option>";
+      return;
+    }
+
+    // Populate the select element with employee data
     data.forEach((emp) => {
       // Create a new option element
       let option = document.createElement("option");
       option.text = emp.username;
-      option.value = emp.username; // Assuming each employee has a unique _id
+      option.value = emp.username; // Assuming each employee has a unique username
       // Append the option to the select element
       selectElement.appendChild(option);
     });
-
-    return data;
   }
 
   fetchEmployeeData();
 });
+
 document.addEventListener("DOMContentLoaded", () => {
   const deleteBtns = document.querySelectorAll(".delete");
 
