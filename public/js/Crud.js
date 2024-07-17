@@ -2,8 +2,35 @@ let button = document.querySelectorAll(".delete");
 let pNameInput = document.querySelector("#puname");
 let wholePriceInput = document.querySelector("#puprice");
 let pNotesInput = document.querySelector("#punotes");
+let empname = document.getElementById("empname");
+let check = document.querySelector(".check");
+let getEmp = document.querySelector(".getEmp");
+let opt = document.querySelector(".opt");
+let selectElement = document.querySelector(".sel");
 let updateBtns = document.querySelectorAll(".update");
+getEmp.addEventListener("click", (e) => {
+  async function fetchEmployeeData() {
+    const response = await fetch(`/allEmployees`, { method: "POST" });
+    const data = await response.json();
+    console.log(data);
 
+    // Clear existing options
+    selectElement.innerHTML = '';
+
+    data.forEach((emp) => {
+      // Create a new option element
+      let option = document.createElement("option");
+      option.text = emp.username;
+      option.value = emp.username; // Assuming each employee has a unique _id
+      // Append the option to the select element
+      selectElement.appendChild(option);
+    });
+
+    return data;
+  }
+
+  fetchEmployeeData();
+});
 document.addEventListener("DOMContentLoaded", () => {
   const deleteBtns = document.querySelectorAll(".delete");
 

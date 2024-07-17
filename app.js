@@ -278,7 +278,11 @@ await Promise.all([originalProduct,updatedProduct,updateU])
     res.status(500).send("Internal Server Error");
   }
 });
-
+app.post("/allEmployees", async(req,res) =>{
+  await Employee.Employee.find().lean().then((rs) => {
+    res.send(rs)
+  });
+})
 app.get("/crud/update/:id", async (req, res) => {
   await Info.Info.findById(req.params.id).lean().then((value) => {
     console.log("Find The Product");
