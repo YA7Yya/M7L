@@ -53,7 +53,7 @@ app.use(async (req, res, next) => {
   try {
     const user = await Employee.Employee.findOne({
       _id: req.session.userId,
-    });
+    }).lean();
     if (user) {
       // user found
       req.session.username = user.username;
@@ -71,40 +71,39 @@ app.use(async (req, res, next) => {
   }
 });
 app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
-  if (req.session && req.session.userId) {
-    const id = req.session.userId;
+  const id = req.session.userId;
 
-    try {
-      // Find employee by ID and update visitCount
-      await Employee.Employee.findByIdAndUpdate(id, { $inc: { visits: 1 } });
+  try {
+    // Find employee by ID and update visitCount
+    const updateVisitCount = Employee.Employee.findByIdAndUpdate(id, { $inc: { visits: 1 } }).lean();
 
-      // Fetch all products after updating the visit count
-      const allProducts = await Info.getAllProducts();
+    // Fetch all products after updating the visit count
+    const fetchProducts = Info.Info.find().lean();
 
-      res.render("./crud.ejs", {
-        allProducts: allProducts,
-        isUser: req.session.userId,
-        isManager: req.session.role === "Manager",
-        Dev: req.session.role === "Developer",
-        moment: moment,
-      });
-    } catch (err) {
-      console.error(err);
-      res.status(500).send("Server Error");
-    }
-  } else {
-    // If there's no session userId, redirect to login or handle accordingly
-    res.redirect("/login");
+    // Run queries in parallel
+    const [updateResult, allProducts] = await Promise.all([updateVisitCount, fetchProducts]);
+
+    res.render("./crud.ejs", {
+      allProducts: allProducts,
+      isUser: req.session.userId,
+      isManager: req.session.role === "Manager",
+      Dev: req.session.role === "Developer",
+      moment: moment,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
   }
 });
+
 app.get("/products/api", (req,res) =>{
-  Info.Info.find().then((api) => {
+  Info.Info.find().lean().then((api) => {
     res.json(api)
   })
 })
 app.get("/logs", authGuard.isAuth, managerGuard.isManager, async (req, res) => {
   try {
-    const logs = await Log.find().sort({ createdAt: -1 });
+    const logs = await Log.find().sort({ createdAt: -1 }).lean();
     res.render("logs/logs", { logs, moment: moment });
   } catch (error) {
     res.status(500).send("Error retrieving logs");
@@ -124,7 +123,7 @@ app.get("/api/employee-stats/:username", async (req, res) => {
 
     const employee = await Employee.Employee.findOne({
       username: new RegExp(`^${username}$`, "i"),
-    });
+    }).lean();
 
     if (!employee) {
       console.log(`Employee with username ${username} not found`);
@@ -175,16 +174,20 @@ app.post("/logs", managerGuard.isManager, async (req, res) => {
 });
 
 app.post("/productAdd", async (req, res) => {
-  Info.createNewProduct(
+  const create = Info.createNewProduct(
     req.body.PNAME,
     req.body.WHOLEPRICE,
     req.body.PNOTES
-  ).then(async (body) => {
+  )
+  const emp =Employee.Employee.findByIdAndUpdate(req.session.userId, {
+    $inc: { addations: 1 },
+  }).lean()
+await Promise.all([create,emp])
+  .then(async (body) => {
+
     console.log(body);
 
-    await Employee.Employee.findByIdAndUpdate(req.session.userId, {
-      $inc: { addations: 1 },
-    });
+
     logAction(
       "إضافة منتج",
       req.session.userId,
@@ -200,11 +203,12 @@ app.post("/productAdd", async (req, res) => {
 });
 app.delete("/crud/delete/:id", async (req, res) => {
   let deleted = Info.Info.findByIdAndDelete(req.params.id)
+  let updateD = Employee.Employee.findByIdAndUpdate(req.session.userId, {
+    $inc: { deleteations: 1 },
+  })
+  await Promise.all([deleted,updateD])
     .then(async (body) => {
       console.log("Body:" + body + deleted);
-      await Employee.Employee.findByIdAndUpdate(req.session.userId, {
-        $inc: { deleteations: 1 },
-      });
       await logAction("حذف منتج", req.session.userId, req.session.username,{
       PNAME: body.PNAME,
       WHOLEPRICE: body.WHOLEPRICE,
@@ -222,7 +226,7 @@ app.delete("/crud/delete/:id", async (req, res) => {
 app.post("/productUpdate/:id", async (req, res) => {
   try {
     // Fetch the original document before update
-    const originalProduct = await Info.Info.findById(req.params.id);
+    const originalProduct = Info.Info.findById(req.params.id).lean();
 
     if (!originalProduct) {
       return res.status(404).send("Product not found");
@@ -230,18 +234,21 @@ app.post("/productUpdate/:id", async (req, res) => {
 
     // Create an object with the updated fields
     const updatedFields = {
-      PNAME: req.body.PNAME,
-      WHOLEPRICE: req.body.WHOLEPRICE,
-      PNOTES: req.body.PNOTES,
+      PNAME: req.body.PNAME !== originalProduct.PNAME ? req.body.PNAME : originalProduct.PNAME,
+      WHOLEPRICE: req.body.WHOLEPRICE !== originalProduct.WHOLEPRICE ? req.body.WHOLEPRICE : originalProduct.WHOLEPRICE,
+      PNOTES: req.body.PNOTES !== originalProduct.PNOTES ? req.body.PNOTES : originalProduct.PNOTES,
     };
 
     // Update the document
-    const updatedProduct = await Info.Info.findByIdAndUpdate(
+    const updatedProduct =  Info.Info.findByIdAndUpdate(
       req.params.id,
       updatedFields,
       { new: true }
-    );
-
+    ).lean();
+    let updateU =  Employee.Employee.findByIdAndUpdate(req.session.userId, {
+      $inc: { updateations: 1 },
+    }).lean();
+await Promise.all([originalProduct,updatedProduct,updateU])
     // Log the changes
     const logDetails = {};
     for (const key in updatedFields) {
@@ -263,9 +270,7 @@ app.post("/productUpdate/:id", async (req, res) => {
     }
     console.log("DETAILS:", logDetails);
     // Increment the updates counter for the employee
-    await Employee.Employee.findByIdAndUpdate(req.session.userId, {
-      $inc: { updateations: 1 },
-    });
+
 
     res.redirect("/crud");
   } catch (error) {
@@ -275,7 +280,7 @@ app.post("/productUpdate/:id", async (req, res) => {
 });
 
 app.get("/crud/update/:id", async (req, res) => {
-  await Info.Info.findById(req.params.id).then((value) => {
+  await Info.Info.findById(req.params.id).lean().then((value) => {
     console.log("Find The Product");
     console.log(value);
     res.status(200).json(value);

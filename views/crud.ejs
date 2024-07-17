@@ -126,6 +126,9 @@ justify-content: center;
         <i class="fa fa-history fa-2x" aria-hidden="true"></i>
       </a>
       <h1 class="fw-bolder text-uppercase text-center mb-4">Crud system</h1>
+      <a class="position-absolute top-0 start-4 m-4">
+        <i class="fa fa-user fa-2x" aria-hidden="true"></i>
+      </a>
       <div class="row">
         <div class="col-md-6 mb-3">
           <label for="pname">اسم المنتج :</label>
@@ -190,7 +193,7 @@ justify-content: center;
         </thead>
         <tbody id="tableBody">
           <% allProducts.forEach(product => { %> 
-            <% let price = product.WHOLEPRICE * 1.30 %>
+            <% let price = product.WHOLEPRICE * 1.50 %>
             <tr class="productsdata">
               <td><%= product.PNAME %></td>
               <td><%= product.WHOLEPRICE %></td>
