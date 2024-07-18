@@ -78,7 +78,7 @@ app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
     const updateVisitCount = Employee.Employee.findByIdAndUpdate(id, { $inc: { visits: 1 } }).lean();
 
     // Fetch all products after updating the visit count
-    const fetchProducts = Info.Info.find().lean();
+    const fetchProducts = Info.Info.find().sort({ updatedAt: -1 }).lean();
 
     // Run queries in parallel
     const [updateResult, allProducts] = await Promise.all([updateVisitCount, fetchProducts]);
@@ -177,7 +177,9 @@ app.post("/productAdd", async (req, res) => {
   const create = Info.createNewProduct(
     req.body.PNAME,
     req.body.WHOLEPRICE,
-    req.body.PNOTES
+    req.body.PNOTES,
+    req.session.username,
+    "Not Updated Yet"
   )
   const emp =Employee.Employee.findByIdAndUpdate(req.session.userId, {
     $inc: { addations: 1 },
@@ -186,8 +188,6 @@ await Promise.all([create,emp])
   .then(async (body) => {
 
     console.log(body);
-
-
     logAction(
       "إضافة منتج",
       req.session.userId,
@@ -202,19 +202,20 @@ await Promise.all([create,emp])
   });
 });
 app.delete("/crud/delete/:id", async (req, res) => {
-  let deleted = Info.Info.findByIdAndDelete(req.params.id)
-  let updateD = Employee.Employee.findByIdAndUpdate(req.session.userId, {
+  let deleted = await Info.Info.findByIdAndDelete(req.params.id)
+  let updateD = await Employee.Employee.findByIdAndUpdate(req.session.userId, {
     $inc: { deleteations: 1 },
   })
   await Promise.all([deleted,updateD])
     .then(async (body) => {
-      console.log("Body:" + body + deleted);
-      await logAction("حذف منتج", req.session.userId, req.session.username,{
-      PNAME: body.PNAME,
-      WHOLEPRICE: body.WHOLEPRICE,
-      PNOTES: body.PNOTES,
-    
-      });
+      console.log("Body:" + deleted);
+      await logAction("حذف منتج", req.session.userId, req.session.username,
+        {
+        PNAME: deleted.PNAME,
+        WHOLEPRICE: deleted.WHOLEPRICE,
+        PNOTES: deleted.PNOTES,
+    }
+      );
       res.status(200).json("Done");
     })
 
@@ -226,7 +227,7 @@ app.delete("/crud/delete/:id", async (req, res) => {
 app.post("/productUpdate/:id", async (req, res) => {
   try {
     // Fetch the original document before update
-    const originalProduct = Info.Info.findById(req.params.id).lean();
+    const originalProduct = await Info.Info.findById(req.params.id).lean();
 
     if (!originalProduct) {
       return res.status(404).send("Product not found");
@@ -235,20 +236,26 @@ app.post("/productUpdate/:id", async (req, res) => {
     // Create an object with the updated fields
     const updatedFields = {
       PNAME: req.body.PNAME !== originalProduct.PNAME ? req.body.PNAME : originalProduct.PNAME,
-      WHOLEPRICE: req.body.WHOLEPRICE !== originalProduct.WHOLEPRICE ? req.body.WHOLEPRICE : originalProduct.WHOLEPRICE,
+      WHOLEPRICE: req.body.WHOLEPRICE !== originalProduct.WHOLEPRICE ? parseFloat(req.body.WHOLEPRICE) : originalProduct.WHOLEPRICE,
       PNOTES: req.body.PNOTES !== originalProduct.PNOTES ? req.body.PNOTES : originalProduct.PNOTES,
     };
 
     // Update the document
-    const updatedProduct =  Info.Info.findByIdAndUpdate(
+    const updatedProduct =  await Info.Info.findByIdAndUpdate(
       req.params.id,
-      updatedFields,
-      { new: true }
+      updatedFields
     ).lean();
-    let updateU =  Employee.Employee.findByIdAndUpdate(req.session.userId, {
+    let updateU = await Employee.Employee.findByIdAndUpdate(req.session.userId, {
       $inc: { updateations: 1 },
     }).lean();
-await Promise.all([originalProduct,updatedProduct,updateU])
+    let lastupdate = await Info.Info.findByIdAndUpdate(req.params.id, {
+      createdBy: originalProduct.createdBy,
+      lastUpdate: req.session.username
+    }).lean();
+    console.log(originalProduct);
+await Promise.all([originalProduct,updatedProduct,updateU,lastupdate]);
+
+
     // Log the changes
     const logDetails = {};
     for (const key in updatedFields) {
@@ -268,8 +275,7 @@ await Promise.all([originalProduct,updatedProduct,updateU])
         });
       }
     }
-    console.log("DETAILS:", logDetails);
-    // Increment the updates counter for the employee
+
 
 
     res.redirect("/crud");

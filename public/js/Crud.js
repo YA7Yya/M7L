@@ -31,14 +31,21 @@ getEmp.addEventListener("click", (e) => {
       let option = document.createElement("option");
       option.text = emp.username;
       option.value = emp.username; // Assuming each employee has a unique username
+ 
       // Append the option to the select element
       selectElement.appendChild(option);
+
     });
   }
 
   fetchEmployeeData();
 });
-
+check.addEventListener("click", (e) => {
+  const selectedUsername = selectElement.value;
+  if (selectedUsername) {
+    location.href = `/dashboard/${selectedUsername}`;
+  }
+});
 document.addEventListener("DOMContentLoaded", () => {
   const deleteBtns = document.querySelectorAll(".delete");
 
