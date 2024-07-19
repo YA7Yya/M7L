@@ -27,7 +27,8 @@ const socketIo = require('socket.io');
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "*"
+    origin: "*",
+    methods: ["GET","POST"]
   }
 });
 app.use(compression());
