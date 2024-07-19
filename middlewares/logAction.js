@@ -3,7 +3,7 @@
 const Log = require('../models/logs');
 
 const logAction = async (action, userId, username, details,update) => {
-  console.log('Logging action:', action, userId, username, details,update); 
+  // console.log('Logging action:', action, userId, username, details,update); 
   try {
     await Log.create({
       action,

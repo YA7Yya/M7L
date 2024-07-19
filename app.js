@@ -22,6 +22,10 @@ const moment = require("moment");
 const session = require("express-session");
 const SessionStore = require("connect-mongodb-session")(session);
 const compression = require("compression");
+const http = require("http");
+const socketIo = require('socket.io');
+const server = http.createServer(app);
+const io = socketIo(server);
 app.use(compression());
 moment.locale("ar-EG");
 require("dotenv").config();
@@ -49,6 +53,15 @@ app.use(
     store: STORE,
   })
 );
+
+
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+  });
+});
 app.use(async (req, res, next) => {
   try {
     const user = await Employee.Employee.findOne({
@@ -74,13 +87,11 @@ app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
   const id = req.session.userId;
 
   try {
-    // Find employee by ID and update visitCount
-    const updateVisitCount = Employee.Employee.findByIdAndUpdate(id, { $inc: { visits: 1 } }).lean();
+    const updateVisitCount = await Employee.Employee.findByIdAndUpdate(id, { $inc: { visits: 1 } }).lean();
+    await io.emit('visitsUpdate', updateVisitCount.visits);
 
-    // Fetch all products after updating the visit count
     const fetchProducts = Info.Info.find().sort({ updatedAt: -1 }).lean();
 
-    // Run queries in parallel
     const [updateResult, allProducts] = await Promise.all([updateVisitCount, fetchProducts]);
 
     res.render("./crud.ejs", {
@@ -181,13 +192,12 @@ app.post("/productAdd", async (req, res) => {
     req.session.username,
     "Not Updated Yet"
   )
-  const emp =Employee.Employee.findByIdAndUpdate(req.session.userId, {
+  const emp = await Employee.Employee.findByIdAndUpdate(req.session.userId, {
     $inc: { addations: 1 },
-  }).lean()
-await Promise.all([create,emp])
+  }).lean();
+  await io.emit('addationsUpdate', emp.addations)
+  await Promise.all([create,emp])
   .then(async (body) => {
-
-    console.log(body);
     logAction(
       "إضافة منتج",
       req.session.userId,
@@ -196,7 +206,7 @@ await Promise.all([create,emp])
   PNAME: req.body.PNAME,
   WHOLEPRICE: req.body.WHOLEPRICE,
   PNOTES: req.body.PNOTES
-}
+},
     )
     res.redirect("/crud");
   });
@@ -205,10 +215,11 @@ app.delete("/crud/delete/:id", async (req, res) => {
   let deleted = await Info.Info.findByIdAndDelete(req.params.id)
   let updateD = await Employee.Employee.findByIdAndUpdate(req.session.userId, {
     $inc: { deleteations: 1 },
-  })
+  }).then(async(value) => {
+    io.emit('deleteationsUpdate', value.deleteations);
+  });
   await Promise.all([deleted,updateD])
     .then(async (body) => {
-      console.log("Body:" + deleted);
       await logAction("حذف منتج", req.session.userId, req.session.username,
         {
         PNAME: deleted.PNAME,
@@ -248,6 +259,7 @@ app.post("/productUpdate/:id", async (req, res) => {
     let updateU = await Employee.Employee.findByIdAndUpdate(req.session.userId, {
       $inc: { updateations: 1 },
     }).lean();
+  await io.emit('updateationsUpdate', updateU.updateations);
     let lastupdate = await Info.Info.findByIdAndUpdate(req.params.id, {
       createdBy: originalProduct.createdBy,
       lastUpdate: req.session.username
@@ -433,7 +445,7 @@ app.use((req, res) => {
 // Tracking Visits System
 // in model:  visitCount: { type: Number, default: 0 }
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log("Started Successfully");
 });
 module.exports = app;
