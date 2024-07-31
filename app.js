@@ -25,10 +25,12 @@ const compression = require("compression");
 const http = require("http");
 const socketIo = require('socket.io');
 const server = http.createServer(app);
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./views/swagger.json');
+
 const io = socketIo(server, {
   cors: {
     origin: "*",
-    methods: ["GET","POST"]
   }
 });
 app.use(compression());
@@ -88,6 +90,7 @@ app.use(async (req, res, next) => {
     res.status(500).send("Internal Server Error");
   }
 });
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
   const id = req.session.userId;
 

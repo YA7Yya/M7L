@@ -1,0 +1,179 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "Employee CRUD API",
+      "description": "API documentation for the Employee CRUD system"
+    },
+    "host": "localhost:80",
+    "basePath": "/",
+    "schemes": [
+      "http"
+    ],
+    "paths": {
+      "/login": {
+        "post": {
+          "tags": ["Authentication"],
+          "summary": "Log in a user",
+          "parameters": [
+            {
+              "name": "body",
+              "in": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": ["username", "password"]
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "User logged in successfully"
+            },
+            "401": {
+              "description": "Invalid credentials"
+            }
+          }
+        }
+      },
+      "/crud": {
+        "get": {
+          "tags": ["CRUD"],
+          "summary": "Get all products",
+          "responses": {
+            "200": {
+              "description": "Successfully retrieved products",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Product"
+                }
+              }
+            }
+          }
+        }
+      },
+      "/productAdd": {
+        "post": {
+          "tags": ["CRUD"],
+          "summary": "Add a new product",
+          "parameters": [
+            {
+              "name": "body",
+              "in": "body",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/ProductInput"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Product added successfully"
+            },
+            "400": {
+              "description": "Invalid input"
+            }
+          }
+        }
+      },
+      "/crud/delete/{id}": {
+        "delete": {
+          "tags": ["CRUD"],
+          "summary": "Delete a product",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Product deleted successfully"
+            },
+            "404": {
+              "description": "Product not found"
+            }
+          }
+        }
+      },
+      "/productUpdate/{id}": {
+        "post": {
+          "tags": ["CRUD"],
+          "summary": "Update a product",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "body",
+              "in": "body",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/ProductInput"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Product updated successfully"
+            },
+            "404": {
+              "description": "Product not found"
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "Product": {
+        "type": "object",
+        "properties": {
+          "PNAME": {
+            "type": "string"
+          },
+          "WHOLEPRICE": {
+            "type": "number"
+          },
+          "PNOTES": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "lastUpdate": {
+            "type": "string"
+          }
+        }
+      },
+      "ProductInput": {
+        "type": "object",
+        "properties": {
+          "PNAME": {
+            "type": "string"
+          },
+          "WHOLEPRICE": {
+            "type": "number"
+          },
+          "PNOTES": {
+            "type": "string"
+          }
+        },
+        "required": ["PNAME", "WHOLEPRICE"]
+      }
+    }
+  }
+  
