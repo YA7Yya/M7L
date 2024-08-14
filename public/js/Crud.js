@@ -7,12 +7,15 @@ let check = document.querySelector(".check");
 let getEmp = document.querySelector(".getEmp");
 let opt = document.querySelector(".opt");
 let selectElement = document.querySelector(".sel");
+let reloadEmployees = document.querySelector(".reload");
 let updateBtns = document.querySelectorAll(".update");
-getEmp.addEventListener("click", (e) => {
-  async function fetchEmployeeData() {
-    // Clear existing options and show loading message
-    selectElement.innerHTML = `<option >Loading...⏳</option>`;
+let hasFetchedData = false;
 
+async function fetchEmployeeData() {
+  // Clear existing options and show loading message
+  selectElement.innerHTML = `<option>Loading...⏳</option>`;
+
+  try {
     const response = await fetch(`/allEmployees`, { method: "POST" });
     const data = await response.json();
 
@@ -27,25 +30,35 @@ getEmp.addEventListener("click", (e) => {
 
     // Populate the select element with employee data
     data.forEach((emp) => {
-      // Create a new option element
-      let option = document.createElement("option");
+      const option = document.createElement("option");
       option.text = emp.username;
       option.value = emp.username; // Assuming each employee has a unique username
- 
-      // Append the option to the select element
       selectElement.appendChild(option);
-
     });
-  }
 
-  fetchEmployeeData();
+    hasFetchedData = true; // Mark that data has been fetched successfully
+  } catch (error) {
+    console.error("Error fetching employee data:", error);
+    selectElement.innerHTML = "<option>Error loading data</option>";
+  }
+}
+
+getEmp.addEventListener("click", (e) => {
+  if (!hasFetchedData) {
+    fetchEmployeeData();
+  }
 });
+
 check.addEventListener("click", (e) => {
   const selectedUsername = selectElement.value;
   if (selectedUsername) {
     location.href = `/dashboard/${selectedUsername}`;
   }
 });
+reloadEmployees.addEventListener("click", (e) => {
+fetchEmployeeData()
+});
+
 document.addEventListener("DOMContentLoaded", () => {
   const deleteBtns = document.querySelectorAll(".delete");
 
