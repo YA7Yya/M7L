@@ -60,11 +60,9 @@ fetchEmployeeData()
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  const deleteBtns = document.querySelectorAll(".delete");
-
-  deleteBtns.forEach((btn) => {
-    btn.addEventListener("click", function () {
-      let deleteId = this.getAttribute("data-idlink");
+  document.addEventListener("click", function(e) {
+    if (e.target.closest(".delete")) {
+      let deleteId = e.target.closest(".delete").getAttribute("data-idlink");
       if (!deleteId) {
         console.error("No delete ID found.");
         return;
@@ -89,17 +87,17 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            loading()
+            loading();
             $.ajax({
               url: `/crud/delete/${deleteId}`,
               type: "DELETE",
               success: function (result) {
                 Swal.mixin({
-                  toast: !0,
+                  toast: true,
                   position: "top-end",
-                  showConfirmButton: !1,
+                  showConfirmButton: false,
                   timer: 1000,
-                  timerProgressBar: !1,
+                  timerProgressBar: false,
                   background: "#07bc0c",
                 }).fire({ icon: "success", title: `تم حذف المنتج بنجاح` });
                 setTimeout(() => {
@@ -123,9 +121,10 @@ document.addEventListener("DOMContentLoaded", () => {
             });
           }
         });
-    });
+    }
   });
 });
+
 
 function search_animal() {
   let input = document.getElementById("searchbar").value;
@@ -167,12 +166,21 @@ updateBtns.forEach((btn) => {
     updateP(updateId);
   });
 
+ document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("click", function(e) {
+    if (e.target.closest(".update")) {
+      let updateId = e.target.closest(".update").getAttribute("data-updateid");
+      console.log("Update ID:", updateId); // Debugging statement
+      updateP(updateId);
+    }
+  });
+
   function updateP(updateId) {
     if (!updateId) {
       alert("Error While Getting updateid");
       return;
     }
-loading();
+    loading();
     $.ajax({
       url: `/crud/update/${updateId}`,
       type: "GET",
@@ -204,3 +212,13 @@ loading();
     });
   }
 });
+
+});
+
+// window.onscroll = function() {myFunction()};
+
+// function myFunction() {
+//   if (document.body.scrollTop > 190 || document.documentElement.scrollTop > 190) {
+//     console.log("It's Working Now");
+//   }else return false;
+// }

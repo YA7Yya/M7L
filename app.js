@@ -98,7 +98,7 @@ app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
     const updateVisitCount = await Employee.Employee.findByIdAndUpdate(id, { $inc: { visits: 1 } }).lean();
     await io.emit('visitsUpdate', updateVisitCount.visits);
 
-    const fetchProducts = Info.Info.find().sort({ updatedAt: -1 }).lean();
+    const fetchProducts = Info.Info.find().sort({ updatedAt: -1 }).limit(3).lean();
 
     const [updateResult, allProducts] = await Promise.all([updateVisitCount, fetchProducts]);
 
@@ -114,7 +114,19 @@ app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+app.get("/loadMoreProducts", authGuard.isAuth, async (req, res) => {
+  try {
+    const offset = parseInt(req.query.offset) || 0;
+    const limit = 3;
+    
+    const moreProducts = await Info.Info.find().sort({ updatedAt: -1 }).skip(offset).limit(limit).lean();
 
+    res.json(moreProducts);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+});
 app.get("/products/api", (req,res) =>{
   Info.Info.find().lean().then((api) => {
     res.json(api)

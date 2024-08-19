@@ -300,7 +300,74 @@ justify-content: center;
       <input type="submit" class="btn btn-primary w-100" id="updateBtn" value="تعديل المنتج" />
     </form>
   </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/locale/ar.min.js"></script>
 
+
+  <script>
+   $(document).ready(function() {
+  let offset = 3;
+  let isLoading = false; // Flag to track loading state
+
+  $(window).on('scroll', function() {
+    if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+      if (!isLoading) {
+        loadMoreProducts();
+      }
+    }
+  });
+
+  function loadMoreProducts() {
+    isLoading = true; // Set loading state to true to prevent more requests
+
+    $.ajax({
+      url: "/loadMoreProducts",
+      method: "GET",
+      data: { offset: offset },
+      success: function(data) {
+        if (data.length > 0) {
+          data.forEach(function(product) {
+            let price = product.WHOLEPRICE * 1.50;
+            let productRow = `
+              <tr class="productsdata">
+                <td>${product.PNAME}</td>
+                <td>${product.WHOLEPRICE}</td>
+                <td>${price}</td>
+                <td>${price - product.WHOLEPRICE}</td>
+                <td>${product.PNOTES}</td>
+                <td>${moment(product.updatedAt).format('LL')}</td>
+                <td>
+                  <button class="btn btn-outline-warning update" data-updateid="${product._id}">
+                    <i class="fa fa-edit"></i>
+                  </button>
+                </td>
+                <td class="delete">
+                  <button class="btn btn-outline-danger delete" data-idlink="${product._id}">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            `;
+            $('#tableBody').append(productRow);
+          });
+          offset += 3; // Increase the offset for the next batch
+          isLoading = false; // Reset loading state after content is loaded
+        } else {
+          // No more products to load, you can remove the scroll event listener or handle it differently
+          $(window).off('scroll');
+        }
+      },
+      error: function(err) {
+        console.error("Error loading more products:", err);
+        isLoading = false; // Reset loading state even on error
+      }
+    });
+  }
+});
+
+  </script>
+  
+  
   <script src="../js/Crud.js"></script>
 </body>
 </html>
