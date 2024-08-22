@@ -114,6 +114,9 @@ app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+app.get("/storage", (req,res) =>{
+  res.render("./storage.ejs")
+})
 app.get("/loadMoreProducts", authGuard.isAuth, async (req, res) => {
   try {
     const offset = parseInt(req.query.offset) || 0;
