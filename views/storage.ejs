@@ -74,7 +74,28 @@ select {
 <center>
     <h2>إضافة منتج للمخزن</h2>
 </center>
-            <form id="addItemForm" action="/storage" method="post">
+  <form id="updateForm" method="post">
+                <input type="text" id="itemName puname" name="productName" class="form-control" placeholder="اسم المنتج" required>
+                <input type="number" name="quantity" id="itemQuantity puquantity" class="form-control" placeholder="الكمية" required>
+                <input type="number" name="wholePrice" class="form-control" id="puprice" placeholder="سعر الجملة للوحدة" required>
+                <select name="unit" class="form-select" required id="puunit">
+                    <option value="الوحدة" disabled selected>الوحدة</option>
+                    <option value="دستة">دستة</option>
+                    <option value="1/2 دستة">1/2 دستة</option>
+                    <option value="قطعة">قطعة</option>
+                    <option value="كرتونة">كرتونة</option>
+                    <option value="طقم">طقم</option>
+                </select>
+                <select name="status" class="form-select" id="pustatus" required>
+                    <option value="حالة المتج" disabled selected >حالة المنتج</option>
+                   <option value="متوفر 🟢">متوفر 🟢</option>
+                   <option value="غير متوفر 🔴">غير متوفر 🔴</option>
+                </select>
+                <button type="submit" class="btn btn-primary w-100">إضافة المنتج</button>
+            </form>
+
+
+            <form id="addItemForm" class="addingForm" action="/storage" method="post">
                 <input type="text" id="itemName" name="productName" class="form-control" placeholder="اسم المنتج" required>
                 <input type="number" name="quantity" id="itemQuantity" class="form-control" placeholder="الكمية" required>
                 <input type="number" name="wholePrice" class="form-control" placeholder="سعر الجملة للوحدة" required>
@@ -116,6 +137,9 @@ select {
                         <td>
                             <button class="btn btn-outline-danger delete" data-productId="<%= product._id %>">
                                 <i class="fa fa-trash delete"></i>
+                              </button>
+                            <button class="btn btn-outline-warning update" data-productId="<%= product._id %>">
+                                <i class="fa fa-edit update"></i>
                               </button>
                         </td>
                     </tr>

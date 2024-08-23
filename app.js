@@ -346,6 +346,13 @@ app.get("/crud/update/:id", async (req, res) => {
     res.status(200).json(value);
   });
 });
+app.get("/storage/update/:id", async (req, res) => {
+  await Storage.Storage.findById(req.params.id).lean().then((value) => {
+    console.log("Find The Product");
+    console.log(value);
+    res.status(200).json(value);
+  });
+});
 app.get("/", (req, res) => res.redirect("/crud"));
 
 app.get("/createEmployee", managerGuard.isManager, (req, res) => {
