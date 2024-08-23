@@ -119,6 +119,71 @@ app.delete("/storage/delete/:id", async(req,res) =>{
   let deleted = await Storage.Storage.findByIdAndDelete(req.params.id);
   res.json("Done").status(200)
 })
+app.post("/storage/update/:id",async (req,res) =>{
+    try {
+      // Fetch the original document before update
+      const originalProduct = await Storage.Storage.findById(req.params.id).lean();
+  
+      if (!originalProduct) {
+        return res.status(404).send("Product not found");
+      }
+  
+      // Create an object with the updated fields
+      const updatedFields = {
+        productName: req.body.productName !== originalProduct.productName ? req.body.productName : originalProduct.productName,
+        wholePrice: req.body.wholePrice !== originalProduct.wholePrice ? parseFloat(req.body.wholePrice) : originalProduct.wholePrice,
+        quantity: req.body.quantity !== originalProduct.quantity ? req.body.quantity : originalProduct.quantity,
+        unit: req.body.unit !== originalProduct.unit ? req.body.unit : originalProduct.unit,
+        status: req.body.status !== originalProduct.status ? req.body.status : originalProduct.status,
+      };
+  
+      // Update the document
+      const updatedProduct =  await Storage.Storage.findByIdAndUpdate(
+        req.params.id,
+        updatedFields
+      ).lean();
+      let updateU = await Employee.Employee.findByIdAndUpdate(req.session.userId, {
+        $inc: { updateations: 1 },
+      }).lean();
+    await io.emit('updateationsUpdate', updateU.updateations);
+      let lastupdate = await Storage.Storage.findByIdAndUpdate(req.params.id, {
+        createdBy: originalProduct.createdBy,
+        lastUpdate: req.session.username
+      }).lean();
+      console.log(originalProduct);
+  await Promise.all([originalProduct,updatedProduct,updateU,lastupdate]);
+  
+  
+      // Log the changes
+      const logDetails = {};
+      for (const key in updatedFields) {
+        if (originalProduct[key] !== updatedFields[key]) {
+          logDetails.before = originalProduct[key];
+          logDetails.after = updatedFields[key];
+          let ss = await Log.create({
+            action: `Update ${key}`,
+            userId: req.session.userId,
+            username: req.session.username,
+            details: {
+              productName: req.body.productName,
+              wholePrice: req.body.wholePrice,
+              quantity: req.body.quantity,
+              unit: req.body.unit,
+              status: req.body.status,
+            },
+            update: logDetails,
+          });
+        }
+      }
+  
+  
+  
+      res.redirect("/crud");
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+})
 app.post("/storage", (req,res) =>{
   console.log(req.body);
   Storage.storageProduct(req.body.productName, req.body.quantity, req.body.unit,req.body.wholePrice,req.body.status,req.session.username).then(() => {
@@ -393,6 +458,7 @@ app.post("/login", async (req, res) => {
       console.log(err);
     });
 });
+
 app.all("/logout", async (req, res) => {
   req.session.destroy(() => {
     res.redirect("/login");

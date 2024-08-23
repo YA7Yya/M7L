@@ -186,9 +186,11 @@ updateBtns.forEach((btn) => {
       type: "GET",
       success: function (response) {
         console.log("Response:", response); // Debugging statement
-        pNameInput.value = response.PNAME;
-        wholePriceInput.value = response.WHOLEPRICE;
-        pNotesInput.value = response.PNOTES;
+        pNameInput.value = response.productName;
+        wholePriceInput.value = response.wholePrice;
+        pQuantity.value = response.quantity;
+        pUnit.value = response.unit;
+        pStatus.value = response.status;
         $(".swal2-container").css("display", "none");
         $(".swal2-shown").css("overflow", "visible");
         let addingForm = document.querySelector(".addingForm").style.display =
@@ -198,7 +200,7 @@ updateBtns.forEach((btn) => {
         ).style.display = "block";
         document.getElementById(
           "updateForm"
-        ).action = `/productUpdate/${updateId}`;
+        ).action = `/storage/update/${updateId}`;
       },
 
       error: function (err) {

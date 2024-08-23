@@ -131,9 +131,16 @@ justify-content: center;
   }
 
   </style>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
+<div class="position-relative">
+  <a href="/storage" class="position-absolute top-1 start-0 m-0" >
+    <i class="material-icons" style="font-size: 35px; color: #ff8800; margin-left: 32px; margin-top: 20px;">inventory_2</i>
+  </a>
+</div>
   <% if(isUser){ %>
+  
     <div class="text-center mt-3">
       <a href="/logout" class="btn btn-danger btn-circle btn-lg">
         <i class="fa fa-sign-out " aria-hidden="true"></i>
@@ -169,6 +176,7 @@ justify-content: center;
         <i class="fa fa-history fa-2x" aria-hidden="true"></i>
       </a>
       <h1 class="fw-bolder text-uppercase text-center mb-4">Crud system</h1>
+   
       <a class="position-absolute top-0 start-4 m-4"  data-bs-toggle="modal" data-bs-target="#exampleModal">
         <i class="fa fa-user fa-2x getEmp" aria-hidden="true"></i>
       </a>

@@ -1,8 +1,8 @@
 let pNameInput = document.getElementById("puname");
+let wholePriceInput = document.getElementById("puprice");
 let pQuantity = document.getElementById("puquantity");
 let pUnit = document.getElementById("puunit");
 let pStatus = document.getElementById("pustatus");
-let wholePriceInput = document.getElementById("puprice");
 function loading() {
   
     let timerInterval;
@@ -88,62 +88,71 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
-  let updateBtns = document.querySelectorAll(".update");
-updateBtns.forEach((btn) => {
-  btn.addEventListener("click", function () {
-    let updateId = this.getAttribute("data-updateid");
-    console.log("Update ID:", updateId); // Debugging statement
-    updateP(updateId);
-  });
+
+
 
  document.addEventListener("DOMContentLoaded", () => {
 
-  document.addEventListener("click", function(e) {
-    if (e.target.closest(".update")) {
-      let updateId = e.target.closest(".update").getAttribute("data-productId");
+  // document.addEventListener("click", function(e) {
+  //   if (e.target.closest(".update")) {
+  //     let updateId = e.target.closest(".update").getAttribute("data-productId");
+  //     console.log("Update ID:", updateId); // Debugging statement
+  //     updateP(updateId);
+  //   }
+  // });
+  let updateBtns = document.querySelectorAll(".update");
+  updateBtns.forEach((btn) => {
+    btn.addEventListener("click", function () {
+      let updateId = this.getAttribute("data-productId");
       console.log("Update ID:", updateId); // Debugging statement
       updateP(updateId);
+    });
+  
+    function updateP(updateId) {
+      if (!updateId) {
+        alert("Error While Getting updateid");
+        return;
+      }
+      loading();
+      $.ajax({
+        url: `/storage/update/${updateId}`,
+        type: "GET",
+        success: function (response) {
+          console.log("Response:", response); // Debugging statement
+  let addForStorage = document.querySelector(".addForStorage").style.display = "none"
+
+          // Select elements correctly
+         
+          // Make sure elements are found
+          if (!pNameInput || !wholePriceInput || !pQuantity || !pUnit || !pStatus) {
+            console.error("One or more input elements are not found");
+            return;
+          }
+  
+          // Set values to elements
+          pNameInput.value = response.productName;
+          wholePriceInput.value = response.wholePrice;
+          pQuantity.value = response.quantity;
+          pUnit.value = response.unit;
+          pStatus.value = response.status;
+  
+          $(".swal2-container").css("display", "none");
+          $(".swal2-shown").css("overflow", "visible");
+          document.querySelector(".addingForm").style.display = "none";
+          document.querySelector("#updateForm").style.display = "block";
+          
+          document.getElementById("updateForm").action = `/storage/update/${updateId}`;
+        },
+        error: function (err) {
+          console.log(err);
+          Swal.fire({
+            title: "Error",
+            text: "Error While Getting Product Data!",
+            icon: "error",
+          });
+        },
+      });
     }
   });
-
-  function updateP(updateId) {
-    if (!updateId) {
-      alert("Error While Getting updateid");
-      return;
-    }
-    loading();
-    $.ajax({
-      url: `/storage/update/${updateId}`,
-      type: "GET",
-      success: function (response) {
-        console.log("Response:", response); // Debugging statement
-        pNameInput.value = response.productName;
-        wholePriceInput.value = response.wholePrice;
-        pQuantity.value = response.quantity;
-        pUnit.value = response.unit;
-        pStatus.value = response.status;
-        $(".swal2-container").css("display", "none");
-        $(".swal2-shown").css("overflow", "visible");
-        let addingForm = document.querySelector(".addingForm").style.display =
-          "none";
-        let updatingForm = document.querySelector(
-          "#updateForm"
-        ).style.display = "block";
-        document.getElementById(
-          "updateForm"
-        ).action = `/storage/update/${updateId}`;
-      },
-
-      error: function (err) {
-        console.log(err);
-        Swal.fire({
-          title: "Error",
-          text: "Error While Getting Product Data !",
-          icon: "error",
-        });
-      },
-    });
-  }
-});
-
-});
+  });
+  
