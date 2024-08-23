@@ -11,6 +11,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const path = require("path");
 const Info = require("./models/productSchema");
+const Storage = require("./models/storage");
 const Employee = require("./models/employees");
 const authGuard = require("./middlewares/auth.guard");
 const adminGuard = require("./middlewares/admin.guard");
@@ -114,8 +115,22 @@ app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+app.delete("/storage/delete/:id", async(req,res) =>{
+  let deleted = await Storage.Storage.findByIdAndDelete(req.params.id);
+  res.json("Done").status(200)
+})
+app.post("/storage", (req,res) =>{
+  console.log(req.body);
+  Storage.storageProduct(req.body.productName, req.body.quantity, req.body.unit,req.body.wholePrice,req.body.status,req.session.username).then(() => {
+    res.redirect("/storage")
+  })
+})
 app.get("/storage", (req,res) =>{
-  res.render("./storage.ejs")
+Storage.Storage.find().then((storedProduct) => {
+  res.render("./storage.ejs", {
+    product: storedProduct
+  })
+})
 })
 app.get("/loadMoreProducts", authGuard.isAuth, async (req, res) => {
   try {
