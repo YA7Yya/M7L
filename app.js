@@ -178,7 +178,7 @@ app.post("/storage/update/:id",async (req,res) =>{
   
   
   
-      res.redirect("/crud");
+      res.redirect("/storage");
     } catch (error) {
       console.error(error);
       res.status(500).send("Internal Server Error");
@@ -190,10 +190,11 @@ app.post("/storage", (req,res) =>{
     res.redirect("/storage")
   })
 })
-app.get("/storage", (req,res) =>{
-Storage.Storage.find().then((storedProduct) => {
+app.get("/storage", async(req,res) =>{
+await Storage.Storage.find().sort({updatedAt: -1}).limit(3).then((storedProducts) => {
   res.render("./storage.ejs", {
-    product: storedProduct
+    product: storedProducts,
+    moment: moment,
   })
 })
 })
@@ -203,6 +204,19 @@ app.get("/loadMoreProducts", authGuard.isAuth, async (req, res) => {
     const limit = 3;
     
     const moreProducts = await Info.Info.find().sort({ updatedAt: -1 }).skip(offset).limit(limit).lean();
+
+    res.json(moreProducts);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+});
+app.get("/loadMoreStorageProducts", authGuard.isAuth, async (req, res) => {
+  try {
+    const offset = parseInt(req.query.offset) || 0;
+    const limit = 3;
+    
+    const moreProducts = await Storage.Storage.find().sort({ updatedAt: -1 }).skip(offset).limit(limit).lean();
 
     res.json(moreProducts);
   } catch (err) {
@@ -338,7 +352,7 @@ app.delete("/crud/delete/:id", async (req, res) => {
     });
 });
 
-app.post("/productUpdate/:id", async (req, res) => {
+app.post("/crud/update/:id", async (req, res) => {
   try {
     // Fetch the original document before update
     const originalProduct = await Info.Info.findById(req.params.id).lean();

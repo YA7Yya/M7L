@@ -159,12 +159,6 @@ function loading() {
     }
   });
 }
-updateBtns.forEach((btn) => {
-  btn.addEventListener("click", function () {
-    let updateId = this.getAttribute("data-updateid");
-    console.log("Update ID:", updateId); // Debugging statement
-    updateP(updateId);
-  });
 
  document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("click", function(e) {
@@ -186,11 +180,9 @@ updateBtns.forEach((btn) => {
       type: "GET",
       success: function (response) {
         console.log("Response:", response); // Debugging statement
-        pNameInput.value = response.productName;
-        wholePriceInput.value = response.wholePrice;
-        pQuantity.value = response.quantity;
-        pUnit.value = response.unit;
-        pStatus.value = response.status;
+        pNameInput.value = response.PNAME;
+        wholePriceInput.value = response.WHOLEPRICE;
+        pNotesInput.value = response.PNOTES;
         $(".swal2-container").css("display", "none");
         $(".swal2-shown").css("overflow", "visible");
         let addingForm = document.querySelector(".addingForm").style.display =
@@ -200,7 +192,7 @@ updateBtns.forEach((btn) => {
         ).style.display = "block";
         document.getElementById(
           "updateForm"
-        ).action = `/storage/update/${updateId}`;
+        ).action = `/crud/update/${updateId}`;
       },
 
       error: function (err) {
@@ -215,7 +207,7 @@ updateBtns.forEach((btn) => {
   }
 });
 
-});
+
 
 // window.onscroll = function() {myFunction()};
 

@@ -91,22 +91,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+
  document.addEventListener("DOMContentLoaded", () => {
 
-  // document.addEventListener("click", function(e) {
-  //   if (e.target.closest(".update")) {
-  //     let updateId = e.target.closest(".update").getAttribute("data-productId");
-  //     console.log("Update ID:", updateId); // Debugging statement
-  //     updateP(updateId);
-  //   }
-  // });
-  let updateBtns = document.querySelectorAll(".update");
-  updateBtns.forEach((btn) => {
-    btn.addEventListener("click", function () {
-      let updateId = this.getAttribute("data-productId");
+  document.addEventListener("click", function(e) {
+    if (e.target.closest(".update")) {
+      let updateId = e.target.closest(".update").getAttribute("data-productId");
       console.log("Update ID:", updateId); // Debugging statement
       updateP(updateId);
-    });
+    }
+  });
+
+
   
     function updateP(updateId) {
       if (!updateId) {
@@ -153,6 +149,5 @@ document.addEventListener("DOMContentLoaded", () => {
         },
       });
     }
-  });
   });
   

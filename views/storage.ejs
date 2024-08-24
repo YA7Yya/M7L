@@ -163,11 +163,12 @@ select {
             <h2 class="text-center">المخزن</h2>
             <table class="table table-striped table-bordered mt-3 table-responsive table table-hover bg-light">
                 <thead>
-                    <tr>
+                    <tr class="productsdata">
                         <th>الصنف</th>
                         <th>الكمية/الوحدة</th>
                         <th>سعر الجملة للوحدة</th>
                         <th>حالة الصنف</th>
+                        <th>اخر تحديث</th>
                         <th>نشاط</th>
                     </tr>
                 </thead>
@@ -178,9 +179,10 @@ select {
                         <td><%= product.quantity%> / <%= product.unit %>  </td>
                         <td style="text-align: center;font-weight: bold;"><%= product.wholePrice %> </td>
                         <td><%= product.status %> </td>
+                        <td><%= moment(product.updatedAt).format('LL') %> </td>
                         <td>
                             <button class="btn btn-outline-danger delete" data-productId="<%= product._id %>">
-                                <i class="fa fa-trash delete"></i>
+                                <i class="fa fa-trash"></i>
                               </button>
                             <button class="btn btn-outline-warning update" data-productId="<%= product._id %>">
                                 <i class="fa fa-edit" ></i>
@@ -193,55 +195,69 @@ select {
             </table>
         </section>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/locale/ar.min.js"></script>
     <script src="../js/Storage.js"></script>
 
-    <!-- <script>
-        const form = document.getElementById('addItemForm');
-        const itemTable = document.querySelector('.storage-list tbody');
-
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const itemName = document.getElementById('itemName').value;
-            const itemQuantity = document.getElementById('itemQuantity').value;
-
-            if (itemName && itemQuantity) {
-                const newRow = document.createElement('tr');
-
-                newRow.innerHTML = `
-                    <td>${itemName}</td>
-                    <td>${itemQuantity}</td>
-                    <td>
-                        <button class="btn btn-edit btn-sm me-2">تعديل</button>
-                        <button class="btn btn-delete btn-sm">حذف</button>
-                    </td>
-                `;
-
-                itemTable.appendChild(newRow);
-
-                const editBtn = newRow.querySelector('.btn-edit');
-                editBtn.addEventListener('click', function() {
-                    const newName = prompt('أدخل الاسم الجديد:', itemName);
-                    const newQuantity = prompt('أدخل الكمية الجديدة:', itemQuantity);
-                    if (newName !== null && newQuantity !== null) {
-                        newRow.cells[0].textContent = newName;
-                        newRow.cells[1].textContent = newQuantity;
-                    }
-                });
-
-                const deleteBtn = newRow.querySelector('.btn-delete');
-                deleteBtn.addEventListener('click', function() {
-                    if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
-                        newRow.remove();
-                    }
-                });
-
-                // Clear form
-                form.reset();
-            }
-        });
-    </script> -->
-    <!-- Bootstrap JS -->
+    <script>
+        $(document).ready(function() {
+       let offset = 3;
+       let isLoading = false; // Flag to track loading state
+     
+       $(window).on('scroll', function() {
+         if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+           if (!isLoading) {
+             loadMoreProducts();
+           }
+         }
+       });
+     
+       function loadMoreProducts() {
+         isLoading = true; // Set loading state to true to prevent more requests
+     
+         $.ajax({
+           url: "/loadMoreStorageProducts",
+           method: "GET",
+           data: { offset: offset },
+           success: function(data) {
+             if (data.length > 0) {
+               data.forEach(function(product) {
+                 let price = product.wholePrice * 1.50;
+                 let productRow = `
+                   <tr class="productsdata">
+                     <td>${product.productName}</td>
+                     <td>${product.quantity} / ${product.unit}</td>
+                     <td style="text-align: center;font-weight: bold;">${product.wholePrice}</td>
+                     <td>${product.status}</td>
+                     <td>${moment(product.updatedAt).format('LL')}</td>
+                     <td>
+                            <button class="btn btn-outline-danger delete" data-productId="${product._id}">
+                                <i class="fa fa-trash"></i>
+                              </button>
+                                 <button class="btn btn-outline-warning update" data-productId="${product._id}">
+                                <i class="fa fa-edit" ></i>
+                              </button>
+                        </td>
+                   </tr>
+                 `;
+                 $('#tableBody').append(productRow);
+               });
+               offset += 3; // Increase the offset for the next batch
+               isLoading = false; // Reset loading state after content is loaded
+             } else {
+               // No more products to load, you can remove the scroll event listener or handle it differently
+               $(window).off('scroll');
+             }
+           },
+           error: function(err) {
+             console.error("Error loading more products:", err);
+             isLoading = false; // Reset loading state even on error
+           }
+         });
+       }
+     });
+     
+       </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
