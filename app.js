@@ -115,7 +115,7 @@ app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-app.delete("/storage/delete/:id", async(req,res) =>{
+app.delete("/storage/delete/:id",authGuard.isAuth,adminGuard.isEmployee, async(req,res) =>{
   let deleted = await Storage.Storage.findByIdAndDelete(req.params.id);
   res.json("Done").status(200)
 })
@@ -184,13 +184,13 @@ app.post("/storage/update/:id",async (req,res) =>{
       res.status(500).send("Internal Server Error");
     }
 })
-app.post("/storage", (req,res) =>{
+app.post("/storage",authGuard.isAuth,adminGuard.isEmployee, (req,res) =>{
   console.log(req.body);
   Storage.storageProduct(req.body.productName, req.body.quantity, req.body.unit,req.body.wholePrice,req.body.status,req.session.username).then(() => {
     res.redirect("/storage")
   })
 })
-app.get("/storage", async(req,res) =>{
+app.get("/storage",authGuard.isAuth,adminGuard.isEmployee, async(req,res) =>{
 await Storage.Storage.find().sort({updatedAt: -1}).limit(3).then((storedProducts) => {
   res.render("./storage.ejs", {
     product: storedProducts,
@@ -224,7 +224,7 @@ app.get("/loadMoreStorageProducts", authGuard.isAuth, async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-app.get("/products/api", (req,res) =>{
+app.get("/products/api",authGuard.isAuth,managerGuard.isManager, (req,res) =>{
   Info.Info.find().lean().then((api) => {
     res.json(api)
   })
@@ -238,14 +238,14 @@ app.get("/logs", authGuard.isAuth, managerGuard.isManager, async (req, res) => {
   }
 });
 
-app.get("/dashboard/:username", async (req, res) => {
+app.get("/dashboard/:username", authGuard.isAuth, managerGuard.isManager, async (req, res) => {
   const username = req.params.username;
 
   res.render("logs/dashboard", {
     username,
   });
 });
-app.get("/api/employee-stats/:username", async (req, res) => {
+app.get("/api/employee-stats/:username", authGuard.isAuth, managerGuard.isManager, async (req, res) => {
   try {
     const username = req.params.username;
 
@@ -301,7 +301,7 @@ app.post("/logs", managerGuard.isManager, async (req, res) => {
   }
 });
 
-app.post("/productAdd", async (req, res) => {
+app.post("/productAdd", authGuard.isAuth,adminGuard.isEmployee, async (req, res) => {
   const create = Info.createNewProduct(
     req.body.PNAME,
     req.body.WHOLEPRICE,
@@ -328,7 +328,7 @@ app.post("/productAdd", async (req, res) => {
     res.redirect("/crud");
   });
 });
-app.delete("/crud/delete/:id", async (req, res) => {
+app.delete("/crud/delete/:id",authGuard.isAuth,adminGuard.isEmployee, async (req, res) => {
   let deleted = await Info.Info.findByIdAndDelete(req.params.id)
   let updateD = await Employee.Employee.findByIdAndUpdate(req.session.userId, {
     $inc: { deleteations: 1 },
@@ -352,7 +352,7 @@ app.delete("/crud/delete/:id", async (req, res) => {
     });
 });
 
-app.post("/crud/update/:id", async (req, res) => {
+app.post("/crud/update/:id",authGuard.isAuth,adminGuard.isEmployee, async (req, res) => {
   try {
     // Fetch the original document before update
     const originalProduct = await Info.Info.findById(req.params.id).lean();
@@ -413,7 +413,7 @@ await Promise.all([originalProduct,updatedProduct,updateU,lastupdate]);
     res.status(500).send("Internal Server Error");
   }
 });
-app.post("/allEmployees", async(req,res) =>{
+app.post("/allEmployees", authGuard.isAuth, managerGuard.isManager, async(req,res) =>{
   await Employee.Employee.find().lean().then((rs) => {
     res.send(rs)
   });
@@ -473,7 +473,7 @@ app.post("/login", async (req, res) => {
     });
 });
 
-app.all("/logout", async (req, res) => {
+app.all("/logout", adminGuard.isEmployee, async (req, res) => {
   req.session.destroy(() => {
     res.redirect("/login");
   });
