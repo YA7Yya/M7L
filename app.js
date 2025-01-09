@@ -29,7 +29,6 @@ const socketIo = require('socket.io');
 const server = http.createServer(app);
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./views/swagger.json');
-const connectionState = require('./ConnectionState'); // Correct case
 
 const io = socketIo(server, {
   cors: {
@@ -442,7 +441,23 @@ app.get("/createEmployee", managerGuard.isManager, (req, res) => {
 app.get("/login", authGuard.notAuth, (req, res) => {
   res.render("auth/login.ejs");
 });
+app.get("/product/:barcode", async (req, res) => {
+  try {
+    const product = await Info.Info.findOne({ barcode: req.params.barcode }).lean();
 
+    if (!product) {
+      return res.status(404).send("Product not found");
+    }
+
+    res.json(product);
+  } catch (error) {
+    console.error("Error fetching product by barcode:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+app.get("/this", (req, res) => {
+  res.render("./this.ejs");
+});
 
 app.post("/createEmployee", managerGuard.isManager, async (req, res) => {
   await Employee.createNewEmployee(req.body.username, req.body.password)
