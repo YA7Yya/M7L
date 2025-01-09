@@ -6,7 +6,6 @@
   <title>Barcode Scanner with Flash</title>
   <script src="https://cdn.jsdelivr.net/npm/quagga/dist/quagga.min.js"></script>
   <style>
-    /* General Styles */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -15,6 +14,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
       height: 100vh;
       text-align: center;
     }
@@ -26,7 +26,6 @@
       font-weight: 600;
     }
 
-    /* Container for the scanner */
     #scanner-container {
       width: 100%;
       max-width: 600px;
@@ -34,19 +33,16 @@
       border: 2px solid #007BFF;
       border-radius: 10px;
       background-color: #fff;
-      margin: 20px auto;
       position: relative;
       overflow: hidden;
     }
 
-    /* Style the video to fit inside the container */
     #scanner-container video {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
 
-    /* Result section */
     #barcode-result {
       font-size: 1.5em;
       font-weight: bold;
@@ -59,7 +55,6 @@
       background-color: #e7f3ff;
     }
 
-    /* Styling for the buttons */
     button {
       padding: 10px 20px;
       font-size: 1em;
@@ -75,7 +70,6 @@
       background-color: #0056b3;
     }
 
-    /* Mobile responsiveness */
     @media (max-width: 768px) {
       #scanner-container {
         height: 300px;
@@ -107,6 +101,7 @@
       let videoTrack = null;
       let flashEnabled = false;
 
+      // Initialize Quagga
       Quagga.init({
         inputStream: {
           type: "LiveStream",
@@ -125,9 +120,16 @@
         // Access the video track for flash control
         Quagga.CameraAccess.request(null).then(stream => {
           videoTrack = stream.getVideoTracks()[0];
+          const capabilities = videoTrack.getCapabilities();
+          if (!capabilities || !capabilities.torch) {
+            alert("Flash is not supported on this device or browser.");
+          }
+        }).catch(err => {
+          console.error("Error accessing camera:", err);
         });
       });
 
+      // Handle detected barcodes
       Quagga.onDetected((data) => {
         if (firstScan) {
           resultSpan.textContent = data.codeResult.code;
@@ -136,15 +138,15 @@
         }
       });
 
-      // Function to toggle the flash
+      // Toggle flash function
       window.toggleFlash = () => {
         if (videoTrack && videoTrack.getCapabilities().torch) {
           flashEnabled = !flashEnabled;
           videoTrack.applyConstraints({
             advanced: [{ torch: flashEnabled }]
-          }).catch(err => console.error("Torch toggle error:", err));
+          }).catch(err => console.error("Error toggling flash:", err));
         } else {
-          alert("Flash is not supported on this device.");
+          alert("Flash is not supported on this device or browser.");
         }
       };
     });
