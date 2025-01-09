@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Barcode Scanner</title>
+  <title>Barcode Scanner with Flash</title>
   <script src="https://cdn.jsdelivr.net/npm/quagga/dist/quagga.min.js"></script>
   <style>
     /* General Styles */
@@ -36,14 +36,14 @@
       background-color: #fff;
       margin: 20px auto;
       position: relative;
-      overflow: hidden; /* Prevents overflow of video */
+      overflow: hidden;
     }
 
     /* Style the video to fit inside the container */
     #scanner-container video {
       width: 100%;
       height: 100%;
-      object-fit: cover; /* Ensures video covers the container area */
+      object-fit: cover;
     }
 
     /* Result section */
@@ -93,16 +93,19 @@
 </head>
 <body>
   <div>
-    <h1>Barcode Scanner</h1>
+    <h1>Barcode Scanner with Flash</h1>
     <div id="scanner-container"></div>
     <p>Scanned Barcode: <span id="barcode-result">None</span></p>
+    <button onclick="toggleFlash()">Toggle Flash</button>
     <button onclick="window.location.reload()">Restart Scanner</button>
   </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const resultSpan = document.getElementById("barcode-result");
-      let firstScan = true;  // Flag to check if it's the first scan
+      let firstScan = true;
+      let videoTrack = null;
+      let flashEnabled = false;
 
       Quagga.init({
         inputStream: {
@@ -118,17 +121,33 @@
           return;
         }
         Quagga.start();
+
+        // Access the video track for flash control
+        Quagga.CameraAccess.request(null).then(stream => {
+          videoTrack = stream.getVideoTracks()[0];
+        });
       });
 
       Quagga.onDetected((data) => {
         if (firstScan) {
-          resultSpan.textContent = data.codeResult.code;  // Set the first barcode
+          resultSpan.textContent = data.codeResult.code;
           console.log("First barcode detected:", data);
-          firstScan = false;  // Disable further updates
+          firstScan = false;
         }
       });
+
+      // Function to toggle the flash
+      window.toggleFlash = () => {
+        if (videoTrack && videoTrack.getCapabilities().torch) {
+          flashEnabled = !flashEnabled;
+          videoTrack.applyConstraints({
+            advanced: [{ torch: flashEnabled }]
+          }).catch(err => console.error("Torch toggle error:", err));
+        } else {
+          alert("Flash is not supported on this device.");
+        }
+      };
     });
   </script>
 </body>
 </html>
-  
