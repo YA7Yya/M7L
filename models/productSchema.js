@@ -4,6 +4,7 @@ const productInfo = new mongoose.Schema(
     PNAME: String,
     WHOLEPRICE: Number,
     PNOTES: String,
+    barcode:String,
     createdBy: { type: String}, // من أنشأ المنتج
     lastUpdate: { type: String}, // من قام بالتحديث الأخير
   },
@@ -27,7 +28,7 @@ exports.getAllProducts = async () => {
   });
 };
 
-exports.createNewProduct = async (PNAME, WHOLEPRICE, PNOTES,createdBy,lastUpdate) => {
+exports.createNewProduct = async (PNAME, WHOLEPRICE, PNOTES,barcode,createdBy,lastUpdate) => {
   return new Promise(async (resolve, reject) => {
     await mongoose
       .connect(process.env.DB)
@@ -46,6 +47,7 @@ exports.createNewProduct = async (PNAME, WHOLEPRICE, PNOTES,createdBy,lastUpdate
           PNAME: PNAME,
           WHOLEPRICE: WHOLEPRICE,
           PNOTES: PNOTES,
+          barcode:barcode,
           createdBy: createdBy,
           lastUpdate: lastUpdate,
         });

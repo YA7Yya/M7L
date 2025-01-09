@@ -1,0 +1,2 @@
+mongodump --uri="mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/" --db=test --archive=./backup.gzip --gzip
+mongorestore --uri mongodb+srv://M7L:M7L1234..567@apptest.lquzm.mongodb.net/ --gzip --archive=backup.gzip --db test

@@ -18,6 +18,7 @@ const adminGuard = require("./middlewares/admin.guard");
 const managerGuard = require("./middlewares/manager.guard");
 const MongoClient = require("mongodb").MongoClient;
 const Log = require("./models/logs");
+const Sales = require("./models/sale");
 const logAction = require("./middlewares/logAction");
 const moment = require("moment");
 const session = require("express-session");
@@ -440,6 +441,23 @@ app.get("/createEmployee", managerGuard.isManager, (req, res) => {
 app.get("/login", authGuard.notAuth, (req, res) => {
   res.render("auth/login.ejs");
 });
+app.get("/product/:barcode", async (req, res) => {
+  try {
+    const product = await Info.Info.findOne({ barcode: req.params.barcode }).lean();
+
+    if (!product) {
+      return res.status(404).send("Product not found");
+    }
+
+    res.json(product);
+  } catch (error) {
+    console.error("Error fetching product by barcode:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+app.get("/this", (req, res) => {
+  res.render("./this.ejs");
+});
 
 app.post("/createEmployee", managerGuard.isManager, async (req, res) => {
   await Employee.createNewEmployee(req.body.username, req.body.password)
@@ -472,6 +490,14 @@ app.post("/login", async (req, res) => {
       console.log(err);
     });
 });
+app.get("/sale/add", (req,res) =>{
+  res.render("./sales/sale")
+})
+app.post("/sale/add", (req,res) =>{
+   Sales.newSale(req.body.PNAME,req.body.QUANTITY,req.body.PRICE,req.body.PNOTES,req.session.username,req.session.username).then((result)=>{
+  res.redirect("/")
+})
+})
 
 app.all("/logout", adminGuard.isEmployee, async (req, res) => {
   req.session.destroy(() => {
