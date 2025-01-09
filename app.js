@@ -29,6 +29,7 @@ const socketIo = require('socket.io');
 const server = http.createServer(app);
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./views/swagger.json');
+const connectionState = require('./ConnectionState'); // Correct case
 
 const io = socketIo(server, {
   cors: {
