@@ -92,7 +92,7 @@
     <div id="scanner-container"></div>
     <p>Scanned Barcode: <span id="barcode-result">None</span></p>
     <button onclick="toggleFlash()">Toggle Flash</button>
-    <button onclick="window.location.reload()">Restart Scanner</button>
+    <button onclick="resetScan()">Restart Scanner</button>
   </div>
 
   <script>
@@ -133,7 +133,9 @@
       // Handle detected barcodes
       const audio = new Audio('../scanner.mp3'); // Replace with your sound file path
 
-
+      function resetScan(){
+  firstScan = true
+}
       Quagga.onDetected((data) => {
         if (firstScan) {
           const code = data.codeResult.code;
