@@ -96,7 +96,7 @@
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async() => {
       const resultSpan = document.getElementById("barcode-result");
       let firstScan = true;
       let videoTrack = null;
@@ -133,9 +133,7 @@
       // Handle detected barcodes
       const audio = new Audio('../scanner.mp3'); // Replace with your sound file path
 
-      function resetScan(){
-  firstScan = true
-}
+
       Quagga.onDetected((data) => {
         if (firstScan) {
           const code = data.codeResult.code;
@@ -149,7 +147,9 @@
   }
         }
       });
-
+      await function resetScan(){
+  firstScan = true
+}
       // Toggle flash function
       window.toggleFlash = () => {
         if (videoTrack && videoTrack.getCapabilities().torch) {
