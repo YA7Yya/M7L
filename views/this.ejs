@@ -86,6 +86,7 @@
   </style>
 </head>
 <body>
+
   <div>
     <h1>Barcode Scanner with Flash</h1>
     <div id="scanner-container"></div>
@@ -128,26 +129,15 @@
           console.error("Error accessing camera:", err);
         });
       });
-
       // Handle detected barcodes
+      const audio = new Audio('../scanner.mp3'); // Replace with your sound file path
+
+
       Quagga.onDetected((data) => {
         if (firstScan) {
+       
           resultSpan.textContent = data.codeResult.code;
-          mySound = new sound("../scanner.mp3");
-          function sound(src) {
-    this.sound = document.createElement("audio");
-    this.sound.src = src;
-    this.sound.setAttribute("preload", "auto");
-    this.sound.setAttribute("controls", "none");
-    this.sound.style.display = "none";
-    document.body.appendChild(this.sound);
-    this.play = function(){
-        this.sound.play();
-    }
-    this.stop = function(){
-        this.sound.pause();
-    }    
-}
+          audio.play();
           console.log("First barcode detected:", data);
           firstScan = false;
         }
