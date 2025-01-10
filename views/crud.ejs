@@ -170,56 +170,83 @@ justify-content: center;
     </div>
   </div>
 </div>
-  <div class="container mt-5">
-    <form action="/productAdd" method="post" class="shadow-lg p-4 bg-light mb-5 addingForm position-relative">
-      <a href="/logs" class="position-absolute top-0 start-0 m-4">
-        <i class="fa fa-history fa-2x" aria-hidden="true"></i>
-      </a>
-      <h1 class="fw-bolder text-uppercase text-center mb-4">Crud system</h1>
-   
-      <a class="position-absolute top-0 start-4 m-4"  data-bs-toggle="modal" data-bs-target="#exampleModal">
-        <i class="fa fa-user fa-2x getEmp" aria-hidden="true"></i>
-      </a>
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label for="pname">اسم المنتج :</label>
-          <input type="text" class="form-control" id="pname" name="PNAME" />
-        </div>
-        <div class="col-md-6 mb-3">
-          <label for="price">سعر الجملة :</label>
-          <input type="number" class="form-control" id="price" name="WHOLEPRICE" step="0.1"/>
-        </div>
+<div class="container mt-5">
+  <form action="/productAdd" method="post" class="shadow-lg p-4 bg-light mb-5 addingForm position-relative">
+    <a href="/logs" class="position-absolute top-0 start-0 m-4">
+      <i class="fa fa-history fa-2x" aria-hidden="true"></i>
+    </a>
+    <h1 class="fw-bolder text-uppercase text-center mb-4">Crud system</h1>
+
+    <a class="position-absolute top-0 start-4 m-4" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      <i class="fa fa-user fa-2x getEmp" aria-hidden="true"></i>
+    </a>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="pname">اسم المنتج :</label>
+        <input type="text" class="form-control" id="pname" name="PNAME" />
       </div>
-      <div class="mb-3">
-        <label>ملاحظات المنتج :</label>
-        <textarea class="form-control" id="notes" name="PNOTES"></textarea>
+      <div class="col-md-6 mb-3">
+        <label for="price">سعر الجملة :</label>
+        <input type="number" class="form-control" id="price" name="WHOLEPRICE" step="0.1" />
       </div>
-      <input type="submit" class="btn btn-primary w-100" id="addBtn" value="إضافة المنتج" />
-    </form>
-  </div>
-  <div class="container mt-5">
-    <form action="" method="post" id="updateForm" class="shadow-lg p-4 bg-light mb-5 position-relative" style="display: none;">
-      <a href="/logs" class="position-absolute top-0 start-0 m-4">
-        <i class="fa fa-history fa-2x" aria-hidden="true"></i>
-      </a>
-      <h1 class="fw-bolder text-uppercase text-center mb-4">Update Product</h1>
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label for="puname">اسم المنتج :</label>
-          <input type="text" class="form-control" id="puname" name="PNAME" />
-        </div>
-        <div class="col-md-6 mb-3">
-          <label for="uprice">سعر الجملة :</label>
-          <input type="number" class="form-control" id="puprice" name="WHOLEPRICE" />
-        </div>
+    </div>
+    <div class="mb-3">
+      <label>ملاحظات المنتج :</label>
+      <textarea class="form-control" id="notes" name="PNOTES"></textarea>
+    </div>
+    <!-- Barcode Scanner Section -->
+    <div class="scanner-container mt-3 border rounded bg-light shadow-sm" style="height: 150px;">
+      <video id="scanner-video" class="w-100 h-100 rounded"></video>
+    </div>
+    <p class="text-center mt-2">
+      الباركود الممسوح: <span id="barcode-result" class="text-primary">None</span>
+    </p>
+    <div class="d-flex justify-content-center gap-2 mb-3">
+      <button type="button" class="btn btn-sm btn-primary" onclick="toggleFlash()">تشغيل/إيقاف الفلاش</button>
+      <button type="button" class="btn btn-sm btn-danger" onclick="resetScan()">إعادة ضبط</button>
+    </div>
+    <input type="submit" class="btn btn-primary w-100" id="addBtn" value="إضافة المنتج" />
+  </form>
+</div>
+
+<div class="container mt-5">
+  <form action="" method="post" id="updateForm" class="shadow-lg p-4 bg-light mb-5 position-relative" style="display: none;">
+    <a href="/logs" class="position-absolute top-0 start-0 m-4">
+      <i class="fa fa-history fa-2x" aria-hidden="true"></i>
+    </a>
+    <h1 class="fw-bolder text-uppercase text-center mb-4">Update Product</h1>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="puname">اسم المنتج :</label>
+        <input type="text" class="form-control" id="puname" name="PNAME" />
       </div>
-      <div class="mb-3">
-        <label>ملاحظات المنتج :</label>
-        <textarea class="form-control" id="punotes" name="PNOTES"></textarea>
+      <div class="col-md-6 mb-3">
+        <label for="uprice">سعر الجملة :</label>
+        <input type="number" class="form-control" id="puprice" name="WHOLEPRICE" />
       </div>
-      <input type="submit" class="btn btn-primary w-100" id="updateBtn" value="تعديل المنتج" />
-    </form>
-  </div>
+    </div>
+    <div class="mb-3">
+      <label>ملاحظات المنتج :</label>
+      <textarea class="form-control" id="punotes" name="PNOTES"></textarea>
+    </div>
+    <!-- Barcode Scanner Section -->
+    <div class="scanner-container mt-3 border rounded bg-light shadow-sm" style="height: 150px;">
+      <video id="update-scanner-video" class="w-100 h-100 rounded"></video>
+    </div>
+    <p class="text-center mt-2">
+      الباركود الممسوح: <span id="update-barcode-result" class="text-primary">None</span>
+    </p>
+    <div class="d-flex justify-content-center gap-2 mb-3">
+      <button type="button" class="btn btn-sm btn-primary" onclick="toggleFlash()">تشغيل/إيقاف الفلاش</button>
+      <button type="button" class="btn btn-sm btn-danger" onclick="resetScan()">إعادة ضبط</button>
+    </div>
+    <input type="submit" class="btn btn-primary w-100" id="updateBtn" value="تعديل المنتج" />
+  </form>
+</div>
+
+<!-- QuaggaJS -->
+
+
     <% if(Dev){ %>
       <div class="text-center mb-3">
         <form action="/logs" method="post">
@@ -374,7 +401,72 @@ justify-content: center;
 });
 
   </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+
+  <script>
+    const addResultSpan = document.getElementById("barcode-result");
+    const updateResultSpan = document.getElementById("update-barcode-result");
+    let firstScanAdd = true;
+    let firstScanUpdate = true;
+    let videoTrack = null;
+    let flashEnabled = false;
   
+    function initScanner(videoId, resultSpan, resetFlag) {
+      Quagga.init({
+        inputStream: {
+          type: "LiveStream",
+          target: document.getElementById(videoId),
+        },
+        decoder: {
+          readers: ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader", "code_39_reader"],
+        },
+      }, (err) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        Quagga.start();
+  
+        // Access video track for flash control
+        Quagga.CameraAccess.request(null).then(stream => {
+          videoTrack = stream.getVideoTracks()[0];
+        }).catch(err => console.error("Error accessing camera:", err));
+      });
+  
+      Quagga.onDetected((data) => {
+        if (resetFlag) {
+          const code = data.codeResult.code;
+          if (/^\d{12,13}$/.test(code)) {
+            resultSpan.textContent = code;
+            resetFlag = false;
+          }
+        }
+      });
+    }
+  
+    document.addEventListener("DOMContentLoaded", () => {
+      initScanner("scanner-video", addResultSpan, firstScanAdd);
+      initScanner("update-scanner-video", updateResultSpan, firstScanUpdate);
+    });
+  
+    function toggleFlash() {
+      if (videoTrack) {
+        flashEnabled = !flashEnabled;
+        videoTrack.applyConstraints({
+          advanced: [{ torch: flashEnabled }],
+        }).catch(err => console.error("Error toggling flash:", err));
+      } else {
+        alert("Flash is not supported on this device or browser.");
+      }
+    }
+  
+    function resetScan() {
+      addResultSpan.textContent = "None";
+      updateResultSpan.textContent = "None";
+      firstScanAdd = true;
+      firstScanUpdate = true;
+    }
+  </script>
   
   <script src="../js/Crud.js"></script>
 </body>
