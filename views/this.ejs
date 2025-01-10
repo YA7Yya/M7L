@@ -96,11 +96,11 @@
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", async() => {
       const resultSpan = document.getElementById("barcode-result");
       let firstScan = true;
       let videoTrack = null;
       let flashEnabled = true
+    document.addEventListener("DOMContentLoaded", async() => {
 
       // Initialize Quagga
       Quagga.init({
@@ -147,10 +147,7 @@
   }
         }
       });
-       function resetScan(){
-        resultSpan.textContent = "";
-  firstScan = true
-}
+
       // Toggle flash function
       window.toggleFlash = () => {
         if (videoTrack && videoTrack.getCapabilities().torch) {
@@ -163,6 +160,10 @@
         }
       };
     });
+    function resetScan(){
+        resultSpan.textContent = "";
+  firstScan = true
+}
   </script>
 </body>
 </html>
