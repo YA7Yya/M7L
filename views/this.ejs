@@ -109,8 +109,9 @@
           target: document.querySelector("#scanner-container"),
         },
         decoder: {
-          readers: ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader"],
-        },
+  readers: ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader", "code_39_reader"],
+},
+
       }, (err) => {
         if (err) {
           console.error(err);
@@ -135,11 +136,15 @@
 
       Quagga.onDetected((data) => {
         if (firstScan) {
-       
-          resultSpan.textContent = data.codeResult.code;
-          audio.play();
-          console.log("First barcode detected:", data);
-          firstScan = false;
+          const code = data.codeResult.code;
+          if (/^\d{12,13}$/.test(code)) { // Example: Validate barcode length (e.g., UPC or EAN)
+    resultSpan.textContent = code;
+    audio.play();
+    console.log("Barcode detected:", code);
+    firstScan = false;
+  } else {
+    console.warn("Invalid barcode detected:", code);
+  }
         }
       });
 
