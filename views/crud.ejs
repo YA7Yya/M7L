@@ -17,6 +17,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <!-- Custom CSS -->
   <link rel="stylesheet" href="CSS/style.css" type="text/css" />
+  <script src="https://cdn.jsdelivr.net/npm/quagga/dist/quagga.min.js"></script>
+
+
   <title>Crud System</title>
   <!-- Browser logo -->
   <link rel="icon" type="image/png" sizes="32x32" href="https://logopond.com/logos/70a5a28358a0f80718ac4f6737f018ae.png" />
@@ -190,21 +193,26 @@ justify-content: center;
         <input type="number" class="form-control" id="price" name="WHOLEPRICE" step="0.1" />
       </div>
     </div>
-    <div class="mb-3">
-      <label>ملاحظات المنتج :</label>
-      <textarea class="form-control" id="notes" name="PNOTES"></textarea>
+      <div class="mb-3" style="display: none;" id="barcodeContainer">
+        <label for="barcode" id="barcodeLabel" >الباركود:</label>
+        <input type="number" class="form-control" id="barcode" name="barcode" disabled style="text-align: center;"  />
+      </div>
+      <div class="mb-3">
+        <label>ملاحظات المنتج :</label>
+        <textarea class="form-control" id="notes" name="PNOTES"></textarea>
+        <center>
+      <button class="start scnbtns" onclick="startScanner()" type="reset">Start Scanner</button>
+        </center>
+      </div>
     </div>
+
     <!-- Barcode Scanner Section -->
-    <div class="scanner-container mt-3 border rounded bg-light shadow-sm" style="height: 150px;">
-      <video id="scanner-video" class="w-100 h-100 rounded"></video>
+    <div class="col-md-6 mb-3 w-100" >
+      <div id="scanner-container" style="width: 100%; height: 200px; display: none;"></div>
+      <button class="stop scnbtns" style="display: none;" onclick="stopScanner()" type="reset">Stop Scanner</button>
+      <button class="reset scnbtns" style="display: none;" onclick="resetScan()" type="reset">Restart Scanner</button>
     </div>
-    <p class="text-center mt-2">
-      الباركود الممسوح: <span id="barcode-result" class="text-primary">None</span>
-    </p>
-    <div class="d-flex justify-content-center gap-2 mb-3">
-      <button type="button" class="btn btn-sm btn-primary" onclick="toggleFlash()">تشغيل/إيقاف الفلاش</button>
-      <button type="button" class="btn btn-sm btn-danger" onclick="resetScan()">إعادة ضبط</button>
-    </div>
+  
     <input type="submit" class="btn btn-primary w-100" id="addBtn" value="إضافة المنتج" />
   </form>
 </div>
@@ -230,19 +238,103 @@ justify-content: center;
       <textarea class="form-control" id="punotes" name="PNOTES"></textarea>
     </div>
     <!-- Barcode Scanner Section -->
-    <div class="scanner-container mt-3 border rounded bg-light shadow-sm" style="height: 150px;">
-      <video id="update-scanner-video" class="w-100 h-100 rounded"></video>
-    </div>
-    <p class="text-center mt-2">
-      الباركود الممسوح: <span id="update-barcode-result" class="text-primary">None</span>
-    </p>
-    <div class="d-flex justify-content-center gap-2 mb-3">
-      <button type="button" class="btn btn-sm btn-primary" onclick="toggleFlash()">تشغيل/إيقاف الفلاش</button>
-      <button type="button" class="btn btn-sm btn-danger" onclick="resetScan()">إعادة ضبط</button>
-    </div>
-    <input type="submit" class="btn btn-primary w-100" id="updateBtn" value="تعديل المنتج" />
-  </form>
-</div>
+   
+
+
+  <script>
+    const scannerContainer = document.querySelector("#scanner-container");
+      const barcodeResult = document.querySelector("#barcode");
+      const barcodeContainer = document.querySelector("#barcodeContainer");
+      const start = document.querySelector(".start");
+      const stopScanning = document.querySelector(".stop");
+      const reset = document.querySelector(".reset");
+      let firstScan = true;
+      let videoTrack = null;
+      let flashEnabled = true
+
+
+      // Initialize Quagga
+     function startScanner(){
+      start.style.display="none"
+      stopScanning.style.display="block"
+      reset.style.display="block"
+      barcodeResult.style.display="block"
+      barcodeContainer.style.display="block"
+      scannerContainer.style.display="block"
+      Quagga.init({
+        inputStream: {
+          type: "LiveStream",
+          target: document.querySelector("#scanner-container"),
+        },
+        decoder: {
+  readers: ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader", "code_39_reader"],
+},
+
+      }, (err) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        Quagga.start();
+
+        // Access the video track for flash control
+        Quagga.CameraAccess.request(null).then(stream => {
+          videoTrack = stream.getVideoTracks()[0];
+          const capabilities = videoTrack.getCapabilities();
+          if (!capabilities || !capabilities.torch) {
+            alert("Flash is not supported on this device or browser.");
+          }
+        }).catch(err => {
+          console.error("Error accessing camera:", err);
+        });
+      });
+     }
+      // Handle detected barcodes
+      const audio = new Audio('../scanner.mp3'); // Replace with your sound file path
+
+
+      Quagga.onDetected((data) => {
+        if (firstScan) {
+          const code = data.codeResult.code;
+          if (/^\d{12,13}$/.test(code)) { // Example: Validate barcode length (e.g., UPC or EAN)
+    barcodeResult.value = code;
+    audio.play();
+    console.log("Barcode detected:", code);
+    firstScan = false;
+  } else {
+    console.warn("Invalid barcode detected:", code);
+  }
+        }
+      });
+
+      // Toggle flash function
+      window.toggleFlash = () => {
+        if (videoTrack && videoTrack.getCapabilities().torch) {
+          flashEnabled = !flashEnabled;
+          videoTrack.applyConstraints({
+            advanced: [{ torch: flashEnabled }]
+          }).catch(err => console.error("Error toggling flash:", err));
+        } else {
+          alert("Flash is not supported on this device or browser.");
+        }
+      };
+
+    function resetScan(){
+      
+        barcodeResult.value = "";
+  firstScan = true
+}
+function stopScanner(){
+  start.style.display="block"
+      stopScanning.style.display="none"
+      reset.style.display="none"
+      barcodeResult.style.display="none"
+      barcodeContainer.style.display="none"
+      scannerContainer.style.display="none"
+      
+      Quagga.stop();
+}
+  </script>
 
 <!-- QuaggaJS -->
 
@@ -401,72 +493,8 @@ justify-content: center;
 });
 
   </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 
-  <script>
-    const addResultSpan = document.getElementById("barcode-result");
-    const updateResultSpan = document.getElementById("update-barcode-result");
-    let firstScanAdd = true;
-    let firstScanUpdate = true;
-    let videoTrack = null;
-    let flashEnabled = false;
-  
-    function initScanner(videoId, resultSpan, resetFlag) {
-      Quagga.init({
-        inputStream: {
-          type: "LiveStream",
-          target: document.getElementById(videoId),
-        },
-        decoder: {
-          readers: ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader", "code_39_reader"],
-        },
-      }, (err) => {
-        if (err) {
-          console.error(err);
-          return;
-        }
-        Quagga.start();
-  
-        // Access video track for flash control
-        Quagga.CameraAccess.request(null).then(stream => {
-          videoTrack = stream.getVideoTracks()[0];
-        }).catch(err => console.error("Error accessing camera:", err));
-      });
-  
-      Quagga.onDetected((data) => {
-        if (resetFlag) {
-          const code = data.codeResult.code;
-          if (/^\d{12,13}$/.test(code)) {
-            resultSpan.textContent = code;
-            resetFlag = false;
-          }
-        }
-      });
-    }
-  
-    document.addEventListener("DOMContentLoaded", () => {
-      initScanner("scanner-video", addResultSpan, firstScanAdd);
-      initScanner("update-scanner-video", updateResultSpan, firstScanUpdate);
-    });
-  
-    function toggleFlash() {
-      if (videoTrack) {
-        flashEnabled = !flashEnabled;
-        videoTrack.applyConstraints({
-          advanced: [{ torch: flashEnabled }],
-        }).catch(err => console.error("Error toggling flash:", err));
-      } else {
-        alert("Flash is not supported on this device or browser.");
-      }
-    }
-  
-    function resetScan() {
-      addResultSpan.textContent = "None";
-      updateResultSpan.textContent = "None";
-      firstScanAdd = true;
-      firstScanUpdate = true;
-    }
-  </script>
+
   
   <script src="../js/Crud.js"></script>
 </body>
