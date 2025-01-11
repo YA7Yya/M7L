@@ -4,7 +4,7 @@ const productInfo = new mongoose.Schema(
     PNAME: String,
     WHOLEPRICE: Number,
     PNOTES: String,
-    barcode:String,
+    barcode:Number,
     createdBy: { type: String}, // من أنشأ المنتج
     lastUpdate: { type: String}, // من قام بالتحديث الأخير
   },

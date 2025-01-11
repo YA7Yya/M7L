@@ -271,6 +271,20 @@ app.get("/api/employee-stats/:username", authGuard.isAuth, managerGuard.isManage
     res.status(500).send("Internal Server Error");
   }
 });
+app.post("/search" ,(req,res) =>{
+  let searchText = req.body.barcode.trim();
+
+  Info.Info.find({
+    barcode:searchText
+  }).then((result) => {
+    console.log(result);
+    res.render("search.ejs", {
+      title: "Search",
+      searchResult: result,
+      moment: moment,
+    });
+  });
+})
 app.post("/logs", managerGuard.isManager, async (req, res) => {
   const url = process.env.DB;
 
@@ -307,6 +321,7 @@ app.post("/productAdd", authGuard.isAuth,adminGuard.isEmployee, async (req, res)
     req.body.PNAME,
     req.body.WHOLEPRICE,
     req.body.PNOTES,
+    req.body.barcode,
     req.session.username,
     "Not Updated Yet"
   )
