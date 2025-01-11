@@ -72,6 +72,35 @@ h1 {
   cursor: pointer;
   margin: 3px;
 }
+.custom-alert {
+  padding: 15px;
+  margin: 15px 0;
+  border-radius: 8px;
+  background-color: #f8d7da;
+  color: #721c24;
+  font-size: 16px;
+  border: 1px solid #f5c6cb;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+
+.custom-alert.alert-danger {
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.custom-alert.alert-danger:hover {
+  background-color: #f5c6cb;
+  border-color: #f1b0b7;
+  transform: scale(1.05);
+}
+
+.custom-alert .close {
+  color: #721c24;
+  font-size: 18px;
+  font-weight: bold;
+}
+
 .start{
   padding: 5px 10px;
   font-size: 0.7em;

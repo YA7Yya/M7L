@@ -9,6 +9,7 @@ const corsConfig = {
 let port = 80;
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const flash = require("connect-flash");
 const path = require("path");
 const Info = require("./models/productSchema");
 const Storage = require("./models/storage");
@@ -63,6 +64,7 @@ app.use(
   })
 );
 
+app.use(flash());
 
 io.on('connection', (socket) => {
   console.log('A user connected');
@@ -107,6 +109,7 @@ app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
     res.render("./crud.ejs", {
       allProducts: allProducts,
       isUser: req.session.userId,
+      req:req,
       isManager: req.session.role === "Manager",
       Dev: req.session.role === "Developer",
       moment: moment,
@@ -271,20 +274,36 @@ app.get("/api/employee-stats/:username", authGuard.isAuth, managerGuard.isManage
     res.status(500).send("Internal Server Error");
   }
 });
-app.post("/search" ,(req,res) =>{
-  let searchText = req.body.barcode.trim();
+app.post("/search", async (req, res) => {
+  let searchText = req.body.barcode;
 
-  Info.Info.find({
-    barcode:searchText
-  }).then((result) => {
-    console.log(result);
+  try {
+    const product = await Info.Info.findOne({ barcode: searchText });
+
+    if (!product) {
+      console.log("Not Found");
+      req.flash("error", "No Product Has This Barcode: " + `${searchText}`);
+      return res.redirect("/crud"); // Redirect with flash message
+    }
+
+    // If product is found, proceed with the search results
+    const result = await Info.Info.find({ barcode: searchText });
     res.render("search.ejs", {
       title: "Search",
       searchResult: result,
+      req: req,
+      isUser: req.session.userId,
+      isManager: req.session.role === "Manager",
+      Dev: req.session.role === "Developer",
       moment: moment,
     });
-  });
-})
+  } catch (error) {
+    console.error("Error during search:", error);
+    req.flash("error", "An error occurred during the search.");
+    res.redirect("/search"); // Redirect in case of error
+  }
+});
+
 app.post("/logs", managerGuard.isManager, async (req, res) => {
   const url = process.env.DB;
 
