@@ -72,6 +72,15 @@ h1 {
   cursor: pointer;
   margin: 3px;
 }
+.start{
+  padding: 5px 10px;
+  font-size: 0.7em;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 3px;
+}
 mark {
   margin: 0;
   padding: 0;

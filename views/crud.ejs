@@ -16,7 +16,7 @@
   <!-- Font Awesome CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="CSS/style.css" type="text/css" />
+  <link rel="stylesheet" href="../CSS/style.css" type="text/css" />
   <script src="https://cdn.jsdelivr.net/npm/quagga/dist/quagga.min.js"></script>
 
 
@@ -201,17 +201,24 @@ justify-content: center;
         <label>ملاحظات المنتج :</label>
         <textarea class="form-control" id="notes" name="PNOTES"></textarea>
         <center>
-      <button class="start scnbtns" onclick="startScanner()" type="reset">Start Scanner</button>
+      <button class="start btn btn-success" onclick="startScanner()" type="reset">Start Scanner</button>
         </center>
       </div>
     </div>
 
     <!-- Barcode Scanner Section -->
-    <div class="col-md-6 mb-3 w-100" >
-      <div id="scanner-container" style="width: 100%; height: 200px; display: none;"></div>
-      <button class="stop scnbtns" style="display: none;" onclick="stopScanner()" type="reset">Stop Scanner</button>
-      <button class="reset scnbtns" style="display: none;" onclick="resetScan()" type="reset">Restart Scanner</button>
+    <div class="col-12 col-md-6 mb-3">
+      <div id="scanner-container" class="w-100" style="height: 200px; display: none;"></div>
+      <div class="d-flex justify-content-between mt-2">
+        <button class="btn btn-danger stop scnbtns flex-grow-1 me-2" style="display: none;" onclick="stopScanner()" type="reset">
+          Stop Scanner
+        </button>
+        <button class="btn btn-primary reset scnbtns flex-grow-1" style="display: none;" onclick="resetScan()" type="reset">
+          Restart Scanner
+        </button>
+      </div>
     </div>
+    
   
     <input type="submit" class="btn btn-primary w-100" id="addBtn" value="إضافة المنتج" />
   </form>
