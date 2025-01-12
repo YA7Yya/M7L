@@ -322,21 +322,20 @@ justify-content: center;
 
       // Initialize Quagga
       let currentScannerMode = ""; // To track whether "search" or "add" is active
-
+    
 function startScanner(mode) {
 
   currentScannerMode = mode; // Set mode to either "search" or "add"
 
-if(start.style.display="block"){
-  start.style.display = "none";
-  stopScanning.style.display = "block";
-  reset.style.display = "block";
-  barcodeResult.style.display = "block";
-  barcodeContainer.style.display = "block";
-  scannerContainer.style.display = "block";
-}else{
-  return false;
-}
+
+  if (start.style.display !== "none") {
+    start.style.display = "none"; // Hide start button
+    stopScanning.style.display = "block"; // Show stop button
+    reset.style.display = "block"; // Show reset button
+    barcodeResult.style.display = "block"; // Show barcode result
+    barcodeContainer.style.display = "block"; // Show barcode container
+    scannerContainer.style.display = "block"; // Show scanner container
+
   Quagga.init(
     {
       inputStream: {
@@ -356,12 +355,14 @@ if(start.style.display="block"){
     (err) => {
       if (err) {
         console.error(err);
+        Quagga.stop();
         return;
       }
       Quagga.start();
       quaggaInitialized = true;
     }
   );
+}
 }
 const barcodeInput = document.getElementById("barcode");
 
@@ -427,12 +428,8 @@ if (quaggaInitialized) {
     await Quagga.stop(); // Stop Quagga if it was initialized
     quaggaInitialized = false; // Reset the initialization flag
   }
+  videoTrack  = null
 
-  // Stop camera tracks manually
-  if (videoTrack) {
-    videoTrack.getTracks().forEach(track => track.stop());
-    videoTrack = null;
-  }
   stopScanning.style.display = "none";
   reset.style.display = "none";
   start.style.display = "block";
@@ -441,7 +438,6 @@ if (quaggaInitialized) {
   
 
 
-  
 
   
 }
