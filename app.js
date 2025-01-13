@@ -303,6 +303,24 @@ app.post("/search", async (req, res) => {
     res.redirect("/search"); // Redirect in case of error
   }
 });
+app.post("/getProduct", async (req, res) => {
+  let detectedCode = req.body.detectedCode;
+
+  try {
+    const products = await Info.Info.find({ barcode: detectedCode }); // Use find to get multiple products if needed
+
+    if (!products.length) {
+      console.log("Not Found");
+      return res.status(200).json([]); // Return an empty array if no products found
+    }
+
+    // If products are found, return them
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("Error during search:", error);
+    res.status(500).json({ error: "An error occurred during the search." });
+  }
+});
 
 app.post("/logs", managerGuard.isManager, async (req, res) => {
   const url = process.env.DB;
@@ -490,7 +508,13 @@ app.get("/product/:barcode", async (req, res) => {
   }
 });
 app.get("/this", (req, res) => {
-  res.render("./this.ejs");
+  res.render("./this.ejs",{
+    req: req,
+    isUser: req.session.userId,
+    isManager: req.session.role === "Manager",
+    Dev: req.session.role === "Developer",
+    moment: moment,
+  });
 });
 
 app.post("/createEmployee", managerGuard.isManager, async (req, res) => {
