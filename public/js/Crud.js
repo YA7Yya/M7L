@@ -185,11 +185,17 @@ function loading() {
         pNotesInput.value = response.PNOTES;
         $(".swal2-container").css("display", "none");
         $(".swal2-shown").css("overflow", "visible");
-        let addingForm = document.querySelector(".addingForm").style.display =
+        document.querySelector(".addingForm").style.display =
           "none";
-        let updatingForm = document.querySelector(
+        document.querySelector(
           "#updateForm"
         ).style.display = "block";
+          document.querySelector(
+            "#updateBtn"
+          ).style.display = "block";
+        document.querySelector(
+          "#addBtn"
+        ).style.display = "none";
         document.getElementById(
           "updateForm"
         ).action = `/crud/update/${updateId}`;
