@@ -251,12 +251,12 @@ app.get("/loadMoreProducts", authGuard.isAuth, async (req, res) => {
   try {
     const offset = parseInt(req.query.offset) || 0;
     const limit = 3;
-    moment.locale("ar-EG");
     const moreProducts = await Info.Info.find()
       .sort({ updatedAt: -1 })
       .skip(offset)
       .limit(limit)
       .lean();
+    moment.locale("ar-EG");
     res.json(moreProducts);
   } catch (err) {
     console.error(err);

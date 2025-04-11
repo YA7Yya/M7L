@@ -526,8 +526,7 @@ document.querySelector(".start.search").addEventListener("click", () => {
 
     
   </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/locale/ar.min.js"></script>
+
 
 
   <script>
@@ -555,6 +554,7 @@ document.querySelector(".start.search").addEventListener("click", () => {
           data.forEach(function(product) {
             let price = product.WHOLEPRICE * 1.50;
             let productRow = `
+        
               <tr class="productsdata">
                 <td>${product.PNAME}</td>
                 <td>${product.WHOLEPRICE}</td>
@@ -592,7 +592,8 @@ document.querySelector(".start.search").addEventListener("click", () => {
 });
 
   </script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/locale/ar.min.js"></script>
 
   
   <script src="../js/Crud.js"></script>
