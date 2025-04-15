@@ -248,7 +248,7 @@ app.get("/api/employee-stats/:username", authGuard.isAuth, managerGuard.isManage
     const username = req.params.username;
 
     const employee = await Employee.Employee.findOne({
-      username: new RegExp("^${username}$", "i"),
+      username: new RegExp(`^${username}$`, "i"),
     }).lean();
 
     if (!employee) {
