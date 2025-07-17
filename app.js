@@ -37,7 +37,8 @@ const io = socketIo(server, {
   },
 });
 app.use(compression());
-moment.locale("ar-EG");
+require('./node_modules/moment/locale/ar-sa'); // Load Arabic locale
+moment.locale('ar-sa');
 require("dotenv").config();
 app.set("view engine", "ejs");
 app.use(express.static("public"));
@@ -95,6 +96,127 @@ app.use(async (req, res, next) => {
   }
 });
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+const ExcelJS = require('exceljs');
+
+
+app.get('/export/excel', async (req, res) => {
+  try {
+    const products = await Info.Info.find().lean();
+
+    if (products.length === 0) {
+      return res.status(404).send('لا توجد منتجات للتصدير.');
+    }
+
+    // Sort by Arabic name
+    products.sort((a, b) => {
+      if (a.PNAME && b.PNAME) {
+        return a.PNAME.localeCompare(b.PNAME, 'ar', { sensitivity: 'base' });
+      }
+      return 0;
+    });
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('المنتجات', {
+      views: [{ rightToLeft: true, showGridLines: false }]
+    });
+
+    worksheet.columns = [
+      { header: 'اسم المنتج', key: 'PNAME', width: 40 },
+      { header: 'سعر الجملة', key: 'WHOLEPRICE', width: 20 },
+      { header: 'ملاحظات', key: 'PNOTES', width: 40 },
+      {
+        header: 'الباركود',
+        key: 'barcode',
+        width: 30,
+        style: { numFmt: '@' }
+      },
+      {
+        header: 'اخر تعديل',
+        key: 'formattedDate',
+        width: 30
+      }
+    ];
+
+    const headerRow = worksheet.getRow(1);
+    headerRow.height = 30;
+    headerRow.eachCell((cell) => {
+      cell.font = { bold: true, size: 14, name: 'Arial', color: { argb: 'FFFFFFFF' } };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF1F497D' }
+      };
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' }
+      };
+    });
+
+    products.forEach((product, index) => {
+      // Fix barcode formatting
+      if (!product.barcode || product.barcode === '') {
+        product.barcode = "لا يوجد باركود";
+      } else if (typeof product.barcode !== 'string') {
+        product.barcode = `'${product.barcode.toString()}`;
+      }
+
+      const formattedDate = product.updatedAt
+        ? moment(product.updatedAt).format('D MMMM YYYY - hh:mm A')
+        : '';
+
+      const row = worksheet.addRow({
+        ...product,
+        formattedDate
+      });
+
+      row.height = 25;
+      row.eachCell((cell, colNumber) => {
+        cell.font = { name: 'Arial', size: 12 };
+        cell.alignment = { horizontal: 'right', vertical: 'middle', wrapText: true };
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+
+        if (index % 2 === 0) {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFF3F3F3' }
+          };
+        }
+
+        if (colNumber === 4) {
+          cell.numFmt = '@';
+          cell.alignment = { horizontal: 'center', vertical: 'middle' };
+        }
+      });
+    });
+
+    worksheet.pageSetup.fitToPage = true;
+    worksheet.pageSetup.fitToWidth = 1;
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename=Products-${Date.now()}.xlsx`);
+    await workbook.xlsx.write(res);
+    res.end();
+
+  } catch (err) {
+    console.error('Export error:', err);
+    res.status(500).send('حدث خطأ أثناء التصدير.');
+  }
+});
+
+
+
+
+
 app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
   const id = req.session.userId;
 
@@ -472,8 +594,8 @@ app.post("/crud/update/:id",authGuard.isAuth,adminGuard.isEmployee, async (req, 
       createdBy: originalProduct.createdBy,
       lastUpdate: req.session.username
     }).lean();
-    console.log(originalProduct);
-await Promise.all([originalProduct,updatedProduct,updateU,lastupdate]);
+    await Promise.all([originalProduct,updatedProduct,updateU,lastupdate]);
+    
 
 
     // Log the changes
@@ -483,7 +605,7 @@ await Promise.all([originalProduct,updatedProduct,updateU,lastupdate]);
         logDetails.before = originalProduct[key];
         logDetails.after = updatedFields[key];
         let ss = await Log.create({
-          action: Update `${key}`,
+          action: "Update" + `${key}`,
           userId: req.session.userId,
           username: req.session.username,
           details: {
@@ -495,7 +617,6 @@ await Promise.all([originalProduct,updatedProduct,updateU,lastupdate]);
         });
       }
     }
-
 
 
     res.redirect("/crud");
@@ -511,8 +632,6 @@ app.post("/allEmployees", authGuard.isAuth, managerGuard.isManager, async(req,re
 })
 app.get("/crud/update/:id", async (req, res) => {
   await Info.Info.findById(req.params.id).lean().then((value) => {
-    console.log("Find The Product");
-    console.log(value);
     res.status(200).json(value);
   });
 });

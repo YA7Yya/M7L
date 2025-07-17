@@ -456,14 +456,22 @@ document.querySelector(".start.search").addEventListener("click", () => {
 
 <!-- QuaggaJS -->
 
-
+ <center>
+        <form action="/export/excel" method="get" class="start">
+          <button type="submit" class="btn btn-success">Export to Excel</button>
+        </form>
+      </center>
     <% if(Dev){ %>
-      <div class="text-center mb-3">
-        <form action="/logs" method="post">
+     <center>
+       
+        <form action="/logs" method="post" class="start">
           <button type="submit" class="btn btn-danger">Delete Collection</button>
         </form>
-      </div>
+     </center>
+    
+    
     <% } %>
+   
 <form action="/productSearch" method="post">
   <div class="container mt-5">
     <div class="row mb-3">
