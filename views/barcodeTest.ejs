@@ -10,33 +10,44 @@
   <p>Scanned Result: <span id="result"></span></p>
 
   <script type="module">
-   import { BrowserMultiFormatReader } from 'https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.1/+esm';
+  import { BrowserMultiFormatReader } from 'https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.1/+esm';
 
 const codeReader = new BrowserMultiFormatReader();
 const videoElement = document.getElementById('video');
 const resultElement = document.getElementById('result');
 
-try {
-  const selectedDevice = await BrowserMultiFormatReader.getVideoInputDevices().then(devices => {
-    return devices.find(device => device.label.toLowerCase().includes('back')) || devices[0];
-  });
+async function startScanner() {
+  try {
+    // Get all video input devices (cameras)
+    const devices = await BrowserMultiFormatReader.listVideoInputDevices();
 
-  const constraints = {
-    video: {
-      deviceId: selectedDevice.deviceId,
-      facingMode: { exact: 'environment' }
+    if (devices.length === 0) {
+      throw new Error('No camera devices found');
     }
-  };
 
-  codeReader.decodeFromConstraints(constraints, videoElement, (result, err) => {
-    if (result) {
-      resultElement.textContent = result.getText();
-    }
-  });
-} catch (err) {
-  console.error('Camera error:', err);
-  resultElement.textContent = '📷 Failed to access camera.';
+    // Try to find the back/rear camera
+    const backCam = devices.find(device =>
+      device.label.toLowerCase().includes('back') ||
+      device.label.toLowerCase().includes('rear')
+    );
+
+    const selectedDeviceId = backCam?.deviceId || devices[0].deviceId;
+
+    // Start scanning using the selected device
+    codeReader.decodeFromVideoDevice(selectedDeviceId, videoElement, (result, err) => {
+      if (result) {
+        resultElement.textContent = result.getText();
+      }
+    });
+
+  } catch (error) {
+    console.error('Camera access error:', error);
+    resultElement.textContent = '❌ Failed to access camera';
+  }
 }
+
+startScanner();
+
 
 
   </script>
