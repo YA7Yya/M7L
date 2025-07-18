@@ -38,8 +38,7 @@ exports.createNewEmployee = async (
   return new Promise((resolve, reject) => {
     mongoose
       .connect(process.env.DB, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
+        useNewUrlParser: true
       })
       .then(() => {
         return Employee.findOne({ username: username });

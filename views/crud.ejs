@@ -217,14 +217,18 @@ justify-content: center;
 </div>
 <div class="container mt-5">
   <form action="/productAdd" method="post" class="shadow-lg p-4 bg-light mb-5 addingForm position-relative">
-    <a href="/logs" class="position-absolute top-0 start-0 m-4">
+<% if(isManager || Dev){ %>
+      <a href="/logs" class="position-absolute top-0 start-0 m-4">
       <i class="fa fa-history fa-2x" aria-hidden="true"></i>
     </a>
+    <% } %>
     <h1 class="fw-bolder text-uppercase text-center mb-4">Crud system</h1>
 
-    <a class="position-absolute top-0 start-4 m-4" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    <% if(isManager || Dev){ %>
+      <a class="position-absolute top-0 start-4 m-4" data-bs-toggle="modal" data-bs-target="#exampleModal">
       <i class="fa fa-user fa-2x getEmp" aria-hidden="true"></i>
     </a>
+    <% } %>
     <div class="row">
       <div class="col-md-6 mb-3">
         <label for="pname">اسم المنتج :</label>
@@ -281,42 +285,6 @@ justify-content: center;
   </style>
   <!-- Trigger Button -->
 <!-- Action Panel -->
-<section class="container mt-4">
-  <div class="card shadow-sm border-0">
-    <div class="card-body text-center">
-
-      <!-- Title -->
-      <h5 class="mb-4 fw-bold text-secondary">Available Actions</h5>
-
-      <!-- Button Group -->
-      <div class="d-flex flex-wrap justify-content-center gap-3">
-
-        <!-- Sell Modal Button -->
-        <button class="btn btn-outline-success px-4" data-bs-toggle="modal" data-bs-target="#embedModal" type="button">
-          💲 Sell Product
-        </button>
-
-        <!-- Export Button -->
-
-         <a href="/export/excel" class="btn btn-outline-primary">
-  📁 Export to Excel
-</a>
-
-
-
-        <!-- Danger Button (if Dev) -->
-        <% if (Dev) { %>
-          <form action="/logs" method="post" class="m-0" onsubmit="return confirm('Are you sure you want to delete the entire collection?');">
-            <button type="submit" class="btn btn-outline-danger px-4">
-              🗑 Delete Collection
-            </button>
-          </form>
-        <% } %>
-
-      </div>
-    </div>
-  </div>
-</section>
 
 
   <!-- Modal -->
@@ -324,7 +292,7 @@ justify-content: center;
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="embedModalLabel">Embedded Content</h5>
+          <h5 class="modal-title" id="embedModalLabel">فاتورة جديدة</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -356,12 +324,52 @@ justify-content: center;
     <input type="submit" class="btn btn-primary w-100" id="addBtn" value="إضافة المنتج" />
   </form>
 </div>
+<section class="container mt-4">
+  <div class="card shadow-sm border-0">
+    <div class="card-body text-center">
+
+      <!-- Title -->
+      <h5 class="mb-4 fw-bold text-secondary">Available Actions</h5>
+
+      <!-- Button Group -->
+      <div class="d-flex flex-wrap justify-content-center gap-3">
+
+        <!-- Sell Modal Button -->
+        <button class="btn btn-outline-success px-4" data-bs-toggle="modal" data-bs-target="#embedModal" type="button">
+          💲 Sell Product
+        </button>
+
+        <!-- Export Button -->
+
+      <% if(isManager || Dev){%>
+           <a href="/export/excel" class="btn btn-outline-primary">
+          📁 Export to Excel
+          </a>
+          <% } %>
+
+
+
+        <!-- Danger Button (if Dev) -->
+        <% if (Dev) { %>
+          <form action="/logs" method="post" class="m-0" onsubmit="return confirm('Are you sure you want to delete the entire collection?');">
+            <button type="submit" class="btn btn-outline-danger px-4">
+              🗑 Delete Collection
+            </button>
+          </form>
+        <% } %>
+
+      </div>
+    </div>
+  </div>
+</section>
 
 <div class="container mt-5">
   <form action="" method="post" id="updateForm" class="shadow-lg p-4 bg-light mb-5 position-relative" style="display: none;">
-    <a href="/logs" class="position-absolute top-0 start-0 m-4">
+<% if(isManager || Dev){ %>
+      <a href="/logs" class="position-absolute top-0 start-0 m-4">
       <i class="fa fa-history fa-2x" aria-hidden="true"></i>
     </a>
+    <% } %>
     <h1 class="fw-bolder text-uppercase text-center mb-4">Update Product</h1>
     <div class="row">
       <div class="col-md-6 mb-3">

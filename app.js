@@ -46,7 +46,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
-mongoose.connect(process.env.DB, { useUnifiedTopology: true }).then(() => {
+mongoose.connect(process.env.DB,).then(() => {
   console.log("DB Started Successfully");
 });
 app.use(cors(corsConfig));
@@ -60,6 +60,7 @@ app.use(
   session({
     secret: "this is my secret for ENcryPt",
     saveUninitialized: false,
+    resave: false,
     cookie: { expires: new Date(Date.now() + day * 365) },
     store: STORE,
   })
@@ -100,7 +101,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 const ExcelJS = require('exceljs');
 
 
-app.get('/export/excel', async (req, res) => {
+app.get('/export/excel', authGuard.isAuth, managerGuard.isManager, async (req, res) => {
   try {
     const products = await Info.Info.find().lean();
 
@@ -436,14 +437,10 @@ app.post("/productSearch", async (req, res) => {
     const products = await Info.Info.find({ $or: searchConditions });
 
     if (products.length === 0) {
-      req.flash("error", `No products found containing: ${searchText}`);
+      req.flash("error", `No products found contain: ${searchText}`);
       return res.redirect("/crud");
     }
 
-    if (products.length === 0) {
-      req.flash("error", `No products found containing: ${searchText}`);
-      return res.redirect("/crud");
-    }
 
     res.render("search.ejs", {
       title: "Search",
@@ -487,9 +484,8 @@ app.post("/logs", managerGuard.isManager, async (req, res) => {
   console.log("Connecting to database...");
 
   try {
-    const client = await MongoClient.connect(url, {
+    const client = MongoClient.connect(url, {
       useNewUrlParser: true,
-      useUnifiedTopology: true,
     });
     console.log("Connected to database");
 
