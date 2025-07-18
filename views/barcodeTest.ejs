@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ZXing Barcode Scanner</title>
+</head>
+<body>
+  <h1>Scan Barcode</h1>
+  <video id="video" width="400" height="300" style="border:1px solid black;"></video>
+  <p>Scanned Result: <span id="result"></span></p>
+
+  <script type="module">
+    import { BrowserMultiFormatReader } from 'https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.1/+esm';
+
+const codeReader = new BrowserMultiFormatReader();
+const videoElement = document.getElementById('video');
+const resultElement = document.getElementById('result');
+
+try {
+  const devices = await BrowserMultiFormatReader.listVideoInputDevices();
+  const selectedDeviceId = devices[0]?.deviceId;
+
+  codeReader.decodeFromVideoDevice(selectedDeviceId, videoElement, (result, err) => {
+    if (result) {
+      resultElement.textContent = result.getText();
+    }
+  });
+} catch (err) {
+  console.error('Camera error:', err);
+}
+
+  </script>
+</body>
+</html>

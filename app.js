@@ -214,7 +214,9 @@ app.get('/export/excel', async (req, res) => {
 });
 
 
-
+app.get("/bartest",(req,res) =>{
+  res.render("./barcodeTest.ejs")
+})
 
 
 app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
