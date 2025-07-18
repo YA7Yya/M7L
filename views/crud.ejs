@@ -261,7 +261,82 @@ justify-content: center;
         
       </div>
     </div>
+  <style>
+    .embed-container {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      height: 0;
+      overflow: hidden;
+    }
 
+    .embed-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+  </style>
+  <!-- Trigger Button -->
+<!-- Action Panel -->
+<section class="container mt-4">
+  <div class="card shadow-sm border-0">
+    <div class="card-body text-center">
+
+      <!-- Title -->
+      <h5 class="mb-4 fw-bold text-secondary">Available Actions</h5>
+
+      <!-- Button Group -->
+      <div class="d-flex flex-wrap justify-content-center gap-3">
+
+        <!-- Sell Modal Button -->
+        <button class="btn btn-outline-success px-4" data-bs-toggle="modal" data-bs-target="#embedModal" type="button">
+          💲 Sell Product
+        </button>
+
+        <!-- Export Button -->
+
+         <a href="/export/excel" class="btn btn-outline-primary">
+  📁 Export to Excel
+</a>
+
+
+
+        <!-- Danger Button (if Dev) -->
+        <% if (Dev) { %>
+          <form action="/logs" method="post" class="m-0" onsubmit="return confirm('Are you sure you want to delete the entire collection?');">
+            <button type="submit" class="btn btn-outline-danger px-4">
+              🗑 Delete Collection
+            </button>
+          </form>
+        <% } %>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="embedModal" tabindex="-1" aria-labelledby="embedModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="embedModalLabel">Embedded Content</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Responsive iframe container -->
+          <div class="embed-container">
+            <!-- Change the src below to your desired embed (YouTube, PDF, etc) -->
+            <iframe src="/this" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
     <!-- Barcode Scanner Section -->
     <div class="col-12 col-md-6 mb-3">
       <div id="scanner-container" class="w-100" style="height: 200px; display: none;">
@@ -454,23 +529,7 @@ document.querySelector(".start.search").addEventListener("click", () => {
 
   </script>
 
-<!-- QuaggaJS -->
 
- <center>
-        <form action="/export/excel" method="get" class="start">
-          <button type="submit" class="btn btn-success">Export to Excel</button>
-        </form>
-      </center>
-    <% if(Dev){ %>
-     <center>
-       
-        <form action="/logs" method="post" class="start">
-          <button type="submit" class="btn btn-danger">Delete Collection</button>
-        </form>
-     </center>
-    
-    
-    <% } %>
    
 <form action="/productSearch" method="post">
   <div class="container mt-5">
@@ -521,7 +580,7 @@ document.querySelector(".start.search").addEventListener("click", () => {
                   <i class="fa fa-edit"></i>
                 </button>
               </td>
-              <td class="delete">
+              <td>
                 <button class="btn btn-outline-danger delete" data-idlink="<%= product._id %>">
                   <i class="fa fa-trash delete"></i>
                 </button>

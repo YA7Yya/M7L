@@ -214,9 +214,6 @@ app.get('/export/excel', async (req, res) => {
 });
 
 
-app.get("/bartest",(req,res) =>{
-  res.render("./barcodeTest.ejs")
-})
 
 
 app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
@@ -540,8 +537,8 @@ app.post("/productAdd", authGuard.isAuth,adminGuard.isEmployee, async (req, res)
   PNOTES: req.body.PNOTES
 },
     )
-    res.redirect("/crud");
   });
+  res.redirect("/crud");
 });
 app.delete("/crud/delete/:id",authGuard.isAuth,adminGuard.isEmployee, async (req, res) => {
   let deleted = await Info.Info.findByIdAndDelete(req.params.id)
