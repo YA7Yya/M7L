@@ -459,6 +459,54 @@ app.post("/productSearch", async (req, res) => {
   }
 });
 
+app.get("/allreceipts", async(req,res) =>{
+  let employees =   await Employee.Employee.find().lean();
+  let receipts =  await Sales.Sale.find().lean();
+
+const employeeFilter = req.query.employee;;
+  if (employeeFilter && employeeFilter !== 'all') {
+    receipts = await Sales.Sale.find({ employee: employeeFilter });
+  } else {
+    receipts = await Sales.Sale.find();
+  }
+
+ res.render('./receipts/allreceipts.ejs', { receipts, employees, selectedEmployee: employeeFilter || 'all' , moment: moment});
+
+  
+})
+app.get("/receipts/:id",(req,res) =>{
+Sales.Sale.findById({_id: req.params.id}).lean().then((receipt) =>{
+  res.render("./receipts/receipt.ejs", {receipt: receipt, moment: moment})
+})
+})
+app.post("/receipts/filter", async (req, res) => {
+  try {
+    const employeeId = req.body.employeeId;
+    let query = {};
+    if (employeeId && employeeId.trim() !== "") {
+      query.createdBy = employeeId;
+    }
+
+    const receipts = await Sales.Sale.find(query).lean(); // Use .lean() to avoid circular refs
+
+    // Format the data if needed
+    const filtered = receipts.map(receipt => {
+  
+      return {
+        _id: receipt._id,
+        date: receipt.createdAt,
+        employeeName: receipt.createdBy || "N/A",
+        total: receipt.TOTAL || 0
+      };
+    });
+
+    res.json(filtered);
+  } catch (err) {
+    console.error("Filter error:", err);
+    res.status(500).json({ error: "Server error filtering receipts" });
+  }
+});
+
 app.post("/getProduct", async (req, res) => {
   let detectedCode = req.body.detectedCode;
 
@@ -700,11 +748,9 @@ app.post("/login", async (req, res) => {
       console.log(err);
     });
 });
-app.get("/sale/add", (req,res) =>{
-  res.render("./sales/sale")
-})
+
 app.post("/sale/add", (req,res) =>{
-   Sales.newSale(req.body.PNAME,req.body.QUANTITY,req.body.PRICE,req.body.PNOTES,req.session.username,req.session.username).then((result)=>{
+   Sales.newSale(req.body.PNAME,req.body.QUANTITY,req.body.PRICE,req.body.PNOTES,req.body.TOTAL,req.session.username,req.session.username).then((result)=>{
   res.redirect("/")
 })
 })

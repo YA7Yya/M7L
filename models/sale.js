@@ -5,6 +5,7 @@ const sale = new mongoose.Schema(
     QUANTITY: Number,
     PRICE: Number,
     PNOTES: String,
+    TOTAL: Number,
     createdBy: { type: String}, // من أنشأ المنتج
     lastUpdate: { type: String}, // من قام بالتحديث الأخير
   },
@@ -12,7 +13,7 @@ const sale = new mongoose.Schema(
 );
 const Sale = mongoose.model("Sales", sale);
 
-exports.newSale = (PNAME,QUANTITY,PRICE,PNOTES,createdBy,lastUpdate) =>{
+exports.newSale = (PNAME,QUANTITY,PRICE,PNOTES,TOTAL,createdBy,lastUpdate) =>{
     return new Promise(async (resolve, reject) => {
         await mongoose
           .connect(process.env.DB)
@@ -22,6 +23,7 @@ exports.newSale = (PNAME,QUANTITY,PRICE,PNOTES,createdBy,lastUpdate) =>{
               QUANTITY: QUANTITY,
               PRICE: PRICE,
               PNOTES: PNOTES,
+              TOTAL: TOTAL,
               createdBy: createdBy,
               lastUpdate: lastUpdate,
             });

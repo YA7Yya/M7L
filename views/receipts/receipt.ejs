@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Receipt</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap 5 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+
+    .receipt-container {
+      max-width: 700px;
+      margin: 30px auto;
+      padding: 25px;
+      background: #fff;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      border-radius: 12px;
+    }
+
+    .receipt-header h2 {
+      margin-bottom: 0;
+    }
+
+    .table th, .table td {
+      vertical-align: middle;
+    }
+
+    .total {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    @media print {
+      .no-print {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="receipt-container">
+  <div class="receipt-header text-center mb-4">
+    <h2 class="text-primary">Klamata System</h2>
+    <p class="text-muted">Klamata store cashier system.</p>
+    <hr>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-sm-6">
+      <p><strong>Invoice #: </strong> INV-<%= receipt._id %></p>
+      <p><strong>Cashier: </strong> <%= receipt.createdBy %></p>
+    </div>
+    <div class="col-sm-6 text-sm-end">
+      <p><strong>Date: </strong> <%= moment(receipt.createdAt).format("LL") %></p>
+      <p><strong>Time: </strong> <%= moment(receipt.createdAt).format("LT") %></p>
+    </div>
+  </div>
+
+  <div class="table-responsive mb-3">
+    <table class="table table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th>Item</th>
+          <th>Qty</th>
+          <th>Unit Price</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><%= receipt.PNAME %></td>
+          <td><%= receipt.QUANTITY %></td>
+          <td><%= receipt.PRICE %> EGP</td>
+          <td><%= receipt.QUANTITY * receipt.PRICE%> EGP</td>
+        </tr>
+       
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" class="text-end total">Total</td>
+          <td class="total"><%= receipt.TOTAL %> EGP</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <p class="text-center text-muted">Thank you for your purchase!</p>
+
+  <div class="text-center mt-4 no-print">
+    <button onclick="window.print()" class="btn btn-outline-primary">🖨 Print Receipt</button>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -506,14 +506,20 @@ document.querySelector(".start.add").addEventListener("click", () => {
             </tr>
         
         </tbody>
+        <form action="/sale/add" method="post">
         <tr id="totalPriceRow" class="position-fixed bottom-0 start-50 translate-middle-x" style="display: none;">
         <hr>
       
           <td colspan="6" class="text-start"><strong>المجموع:</strong></td>
-          <td colspan="2" class="text-center"><strong id="totalPrice">0.00</strong></td>
+          <td colspan="2" class="text-center"><strong id="totalPrice"><input type="text" value="0.00" name="TOTAL"></strong></td>
         </tr>
       </table>
-    </div>
+
+<center>
+      <button type="submit" class="btn btn-success text-center">Close the Deal</button>
+</center>
+    </form> 
+  </div>
 
     <!-- Update Form -->
  
