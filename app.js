@@ -459,7 +459,7 @@ app.post("/productSearch", async (req, res) => {
   }
 });
 
-app.get("/allreceipts", async(req,res) =>{
+app.get("/allreceipts",adminGuard.isEmployee, async(req,res) =>{
   let employees =   await Employee.Employee.find().lean();
 
 const employeeFilter = req.query.employee;;
@@ -774,7 +774,8 @@ app.post("/login", async (req, res) => {
 
 app.post("/sale/add", (req,res) =>{
   const count = Sales.Sale.estimatedDocumentCount();
-const RECEIPTID = count + 1;
+  const RECEIPTID = count + 1;
+  console.log(RECEIPTID);
    Sales.newSale(req.body.PNAME,req.body.QUANTITY,req.body.PRICE,req.body.PNOTES,req.body.TOTAL,RECEIPTID,req.session.username,req.session.username).then((result)=>{
   res.redirect("/")
 })
