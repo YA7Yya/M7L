@@ -16,7 +16,8 @@ const Sale = mongoose.model("Sales", sale);
 
 const count = Sale.estimatedDocumentCount();
 exports.newSale = async(PNAME,QUANTITY,PRICE,PNOTES,TOTAL,RECEIPTID,createdBy,lastUpdate) =>{
-    return new Promise(async (resolve, reject) => {
+      RECEIPTID = count
+  return new Promise(async (resolve, reject) => {
         await mongoose
           .connect(process.env.DB)
           .then(async () => {
@@ -26,7 +27,7 @@ exports.newSale = async(PNAME,QUANTITY,PRICE,PNOTES,TOTAL,RECEIPTID,createdBy,la
               PRICE: PRICE,
               PNOTES: PNOTES,
               TOTAL: TOTAL,
-              RECEIPTID: count + 1,
+              RECEIPTID: RECEIPTID + 1,
               createdBy: createdBy,
               lastUpdate: lastUpdate,
             });
