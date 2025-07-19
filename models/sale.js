@@ -1,11 +1,26 @@
 const mongoose = require("mongoose");
 const sale = new mongoose.Schema(
   {
-    PNAME: String,
-    QUANTITY: Number,
-    PRICE: Number,
-    PNOTES: String,
-    TOTAL: Number,
+    PNAME: {
+      type: String,
+      default: "None"
+    },
+    QUANTITY: {
+      type: Number,
+      default: 0
+    },
+    PRICE: {
+      type: Number,
+      default: 0
+    },
+    PNOTES: {
+      type: String,
+      default: "None"
+    },
+    TOTAL: {
+      type: String,
+      default: 0
+    },
     RECEIPTID: Number,
     createdBy: { type: String}, // من أنشأ المنتج
     lastUpdate: { type: String}, // من قام بالتحديث الأخير
