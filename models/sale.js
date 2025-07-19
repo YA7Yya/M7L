@@ -14,8 +14,8 @@ const sale = new mongoose.Schema(
 );
 const Sale = mongoose.model("Sales", sale);
 
-exports.newSale = async(PNAME,QUANTITY,PRICE,PNOTES,TOTAL,createdBy,lastUpdate) =>{
-   const count = await Sale.estimatedDocumentCount();
+const count = Sale.estimatedDocumentCount();
+exports.newSale = async(PNAME,QUANTITY,PRICE,PNOTES,TOTAL,RECEIPTID,createdBy,lastUpdate) =>{
     return new Promise(async (resolve, reject) => {
         await mongoose
           .connect(process.env.DB)
