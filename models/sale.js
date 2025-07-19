@@ -6,7 +6,7 @@ const sale = new mongoose.Schema(
     PRICE: Number,
     PNOTES: String,
     TOTAL: Number,
-    RCEIPTID: Number,
+    RECEIPTID: Number,
     createdBy: { type: String}, // من أنشأ المنتج
     lastUpdate: { type: String}, // من قام بالتحديث الأخير
   },
@@ -26,7 +26,7 @@ exports.newSale = async(PNAME,QUANTITY,PRICE,PNOTES,TOTAL,RECEIPTID,createdBy,la
               PRICE: PRICE,
               PNOTES: PNOTES,
               TOTAL: TOTAL,
-              RCEIPTID: count + 1,
+              RECEIPTID: count + 1,
               createdBy: createdBy,
               lastUpdate: lastUpdate,
             });
