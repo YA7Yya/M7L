@@ -257,7 +257,7 @@ justify-content: center;
     <!-- Barcode Scanner Section -->
    
 
-
+<input type="text" value="<%= product.PNAME %>" disabled hidden name="PNAME">
   <script>
     const scannerContainer = document.querySelector("#scanner-container");
       const searchInput = document.getElementById("searchInput");
@@ -349,14 +349,14 @@ Quagga.onDetected((result) => {
               let price = product.WHOLEPRICE * 1.50;
               let productRow = `
                 <tr class="productsdata">
-                  <td>${product.PNAME}</td>
-                  <td>${product.WHOLEPRICE.toFixed(2)}</td>
+                  <td>${product.PNAME} <input type="text" value="${product.PNAME}" disabled hidden name="PNAME"></td>
+                  <td>${product.WHOLEPRICE.toFixed(2)} <input type="text" value="${product.WHOLEPRICE}" disabled hidden name="WHOLEPRICE"></td>
                   <td>${price.toFixed(2)}</td>
                   <td>
                     <input type="number" class="form-control quantity-input" value="1" min="1" step="1" style="width: 60px;">
                   </td>
                   <td class="profit-cell">${(price - product.WHOLEPRICE).toFixed(2)}</td>
-                  <td>${product.PNOTES}</td>
+                  <td>${product.PNOTES} <input type="text" value="${product.PNOTES}" disabled hidden name="PNOTES"></td>
                   <td>${moment(product.updatedAt).format('LL')}</td>
                 </tr>
               `;
