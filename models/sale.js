@@ -37,6 +37,7 @@ exports.newSale = async(PNAME,QUANTITY,PRICE,PNOTES,TOTAL,createdBy,lastUpdate) 
             resolve();
           });
       }).catch((err) => {
+        reject("Error")
         console.log(err);
       });
 }
