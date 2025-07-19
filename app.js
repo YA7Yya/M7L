@@ -770,9 +770,10 @@ app.post("/login", async (req, res) => {
       console.log(err);
     });
 });
-
+const count = await Sales.Sale.countDocuments();
+const RECEIPTID = count + 1;
 app.post("/sale/add", (req,res) =>{
-   Sales.newSale(req.body.PNAME,req.body.QUANTITY,req.body.PRICE,req.body.PNOTES,req.body.TOTAL,req.body.RECEIPTID,req.session.username,req.session.username).then((result)=>{
+   Sales.newSale(req.body.PNAME,req.body.QUANTITY,req.body.PRICE,req.body.PNOTES,req.body.TOTAL,RECEIPTID,req.session.username,req.session.username).then((result)=>{
   res.redirect("/")
 })
 })
