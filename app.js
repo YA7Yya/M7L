@@ -470,7 +470,7 @@ const employeeFilter = req.query.employee;;
     receipts = await Sales.Sale.find();
   }
 
- res.render('./receipts/allreceipts.ejs', { receipts, employees, selectedEmployee: employeeFilter || 'all' , moment: moment});
+ res.render('./receipts/allReceipts.ejs', { receipts, employees, selectedEmployee: employeeFilter || 'all' , moment: moment});
 
   
 })
