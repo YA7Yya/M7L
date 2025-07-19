@@ -353,7 +353,7 @@ Quagga.onDetected((result) => {
                   <td>${product.WHOLEPRICE.toFixed(2)} <input type="text" value="${product.WHOLEPRICE}" disabled hidden name="WHOLEPRICE"></td>
                   <td>${price.toFixed(2)}</td>
                   <td>
-                    <input type="number" class="form-control quantity-input" value="1" min="1" step="1" style="width: 60px;">
+                    <input type="number" class="form-control quantity-input" value="1" min="1" step="1" style="width: 60px;" name="QUANTITY">
                   </td>
                   <td class="profit-cell">${(price - product.WHOLEPRICE).toFixed(2)}</td>
                   <td>${product.PNOTES} <input type="text" value="${product.PNOTES}" disabled hidden name="PNOTES"></td>
