@@ -772,7 +772,7 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/sale/add", (req,res) =>{
-   Sales.newSale(req.body.PNAME,req.body.QUANTITY,req.body.PRICE,req.body.PNOTES,req.body.TOTAL,req.session.username,req.session.username).then((result)=>{
+   Sales.newSale(req.body.PNAME,req.body.QUANTITY,req.body.PRICE,req.body.PNOTES,req.body.TOTAL,req.body.RECEIPTID,req.session.username,req.session.username).then((result)=>{
   res.redirect("/")
 })
 })
