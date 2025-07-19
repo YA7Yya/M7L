@@ -773,12 +773,15 @@ app.post("/login", async (req, res) => {
 
 
 app.post("/sale/add", (req,res) =>{
-  const count = Sales.Sale.estimatedDocumentCount();
-  const RECEIPTID = count + 1;
-  console.log(RECEIPTID);
-   Sales.newSale(req.body.PNAME,req.body.QUANTITY,req.body.PRICE,req.body.PNOTES,req.body.TOTAL,RECEIPTID,req.session.username,req.session.username).then((result)=>{
+ Sales.Sale.estimatedDocumentCount().then((countedDoc) => {
+    Sales.newSale(req.body.PNAME,req.body.QUANTITY,req.body.PRICE,req.body.PNOTES,req.body.TOTAL,countedDoc + 1,req.session.username,req.session.username).then((result)=>{
   res.redirect("/")
 })
+  }).catch((err) => {
+    
+  });
+
+   
 })
 
 app.all("/logout", adminGuard.isEmployee, async (req, res) => {

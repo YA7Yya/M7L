@@ -21,17 +21,18 @@ exports.newSale = async(PNAME,QUANTITY,PRICE,PNOTES,TOTAL,RECEIPTID,createdBy,la
           .connect(process.env.DB)
           let countDocuments = Sale.estimatedDocumentCount()
           .then(async (countedDoc) => {
+            RECEIPTID = countedDoc
             let sale = new Sale({
               PNAME: PNAME,
               QUANTITY: QUANTITY,
               PRICE: PRICE,
               PNOTES: PNOTES,
               TOTAL: TOTAL,
-              RECEIPTID: countedDoc + 1,
+              RECEIPTID: RECEIPTID + 1,
               createdBy: createdBy,
               lastUpdate: lastUpdate,
             });
-            console.log(countedDoc);
+
             return sale.save();
           })
     

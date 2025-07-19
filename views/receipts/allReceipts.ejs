@@ -70,7 +70,7 @@
     <tbody id="receiptBody">
       <% receipts.forEach(function(receipt) { %>
         <tr class="receipt-row">
-          <td onclick="window.location.href = `/receipts/<%= receipt._id %>`"><%= receipt._id %></td>
+          <td onclick="window.location.href = `/receipts/<%= receipt._id %>`"><%= receipt.RECEIPTID %></td>
           <td onclick="window.location.href = `/receipts/<%= receipt._id %>`"><%= moment(receipt.createdAt).format("LL") %></td>
           <td onclick="window.location.href = `/receipts/<%= receipt._id %>`"><%= receipt.createdBy %></td>
           <td onclick="window.location.href = `/receipts/<%= receipt._id %>`"><%= receipt.TOTAL %></td>
