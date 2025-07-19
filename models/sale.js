@@ -47,7 +47,7 @@ exports.newSale = async(PNAME,QUANTITY,PRICE,PNOTES,TOTAL,RECEIPTID,createdBy,la
               createdBy: createdBy,
               lastUpdate: lastUpdate,
             });
-
+console.log(sale);
             return sale.save();
           })
     

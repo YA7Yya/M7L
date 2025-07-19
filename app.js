@@ -775,7 +775,9 @@ app.post("/login", async (req, res) => {
 app.post("/sale/add", (req,res) =>{
  Sales.Sale.estimatedDocumentCount().then((countedDoc) => {
     Sales.newSale(req.body.PNAME,req.body.QUANTITY,req.body.PRICE,req.body.PNOTES,req.body.TOTAL,countedDoc + 1,req.session.username,req.session.username).then((result)=>{
-  res.redirect("/")
+  console.log(result);
+      res.redirect("/")
+
 })
   }).catch((err) => {
     
