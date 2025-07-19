@@ -461,13 +461,12 @@ app.post("/productSearch", async (req, res) => {
 
 app.get("/allreceipts", async(req,res) =>{
   let employees =   await Employee.Employee.find().lean();
-  let receipts =  await Sales.Sale.find().lean();
 
 const employeeFilter = req.query.employee;;
   if (employeeFilter && employeeFilter !== 'all') {
-    receipts = await Sales.Sale.find({ employee: employeeFilter });
+    receipts = await Sales.Sale.find({ employee: employeeFilter }).sort({ createdAt: -1 }).lean();
   } else {
-    receipts = await Sales.Sale.find();
+    receipts = await Sales.Sale.find().sort({ createdAt: -1 }).lean();
   }
 
  res.render('./receipts/allReceipts.ejs', { receipts, employees, selectedEmployee: employeeFilter || 'all' , moment: moment});
@@ -594,6 +593,29 @@ app.delete("/crud/delete/:id",authGuard.isAuth,adminGuard.isEmployee, async (req
   await Promise.all([deleted,updateD])
     .then(async (body) => {
       await logAction("حذف منتج", req.session.userId, req.session.username,
+        {
+        PNAME: deleted.PNAME,
+        WHOLEPRICE: deleted.WHOLEPRICE,
+        PNOTES: deleted.PNOTES,
+    }
+      );
+      res.status(200).json("Done");
+    })
+
+    .catch((err) => {
+      console.log(err);
+    });
+});
+app.delete("/receipt/delete/:id",authGuard.isAuth,adminGuard.isEmployee, async (req, res) => {
+  let deleted = await Sales.Sale.findByIdAndDelete(req.params.id)
+  let updateD = await Employee.Employee.findByIdAndUpdate(req.session.userId, {
+    $inc: { deleteations: 1 },
+  }).then(async(value) => {
+    io.emit('deleteationsUpdate', value.deleteations);
+  });
+  await Promise.all([deleted,updateD])
+    .then(async (body) => {
+      await logAction("حذف فاتورة", req.session.userId, req.session.username,
         {
         PNAME: deleted.PNAME,
         WHOLEPRICE: deleted.WHOLEPRICE,
