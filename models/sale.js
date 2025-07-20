@@ -35,12 +35,12 @@ const saleSchema = new mongoose.Schema(
 
 const Sale = mongoose.model("Sales", saleSchema);
 
-exports.newSale = async (products, RECEIPTID, createdBy, lastUpdate) => {
+exports.newSale = async (products,TOTAL, RECEIPTID, createdBy, lastUpdate) => {
   return new Promise(async (resolve, reject) => {
     try {
       await mongoose.connect(process.env.DB);
       const total = products.reduce((sum, product) => sum + (product.PRICE * product.QUANTITY), 0);
-      
+      TOTAL = total
       const sale = new Sale({
         products: products.map(product => ({
           PNAME: product.PNAME,
@@ -48,7 +48,7 @@ exports.newSale = async (products, RECEIPTID, createdBy, lastUpdate) => {
           PRICE: product.PRICE,
           PNOTES: product.PNOTES
         })),
-        TOTAL: total,
+        TOTAL: TOTAL,
         RECEIPTID: RECEIPTID,
         createdBy: createdBy,
         lastUpdate: lastUpdate,

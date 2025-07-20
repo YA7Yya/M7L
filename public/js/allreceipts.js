@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
 document.getElementById('employeeFilter').addEventListener('change', function () {
     const employeeId = this.value;
 
-    fetch('/receipts/filter', {
+    fetch(`/receipts/filter/${employeeId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -75,6 +75,7 @@ document.getElementById('employeeFilter').addEventListener('change', function ()
     })
     .then(response => response.json())
     .then(data => {
+      console.log(data);
       const tbody = document.getElementById('receiptBody');
       tbody.innerHTML = '';
 
@@ -89,6 +90,7 @@ document.getElementById('employeeFilter').addEventListener('change', function ()
       } else {
         for (let i = 0; i < data.length; i++) {
           const receipt = data[i];
+          console.log(data);
           const tr = document.createElement('tr');
           tr.className = 'receipt-row';
           tr.onclick = function () {
@@ -96,24 +98,41 @@ document.getElementById('employeeFilter').addEventListener('change', function ()
           };
 
 
+          const RECEIPTID = document.createElement('td');
+          RECEIPTID.href = '/receipts/' + receipt._id;
+          RECEIPTID.textContent = receipt.RECEIPTID;
+          tr.appendChild(RECEIPTID);
           const date = document.createElement('td');
-          date.textContent = moment(receipt.date).format("LL");
+          date.href = '/receipts/' + receipt._id;
+          date.textContent = moment(receipt.createdAt).format("LL");
           tr.appendChild(date);
 
           const emp = document.createElement('td');
-          emp.textContent = receipt.username;
+          emp.href = '/receipts/' + receipt._id;
+          emp.textContent = receipt.createdBy;
           tr.appendChild(emp);
 
           const total = document.createElement('td');
+          total.href = '/receipts/' + receipt._id;
           total.textContent = 'EGP ' + parseFloat(receipt.TOTAL).toFixed(2);
           tr.appendChild(total);
 
           const action = document.createElement('td');
           const link = document.createElement('a');
-          link.href = '/receipts/' + receipt._id;
-          link.className = 'btn btn-sm btn-outline-primary';
-          link.textContent = 'View';
+          const iconOpen = document.createElement('i');
+          const iconDelete = document.createElement('i');
+          const deleteBtn = document.createElement('button');
+          
+          link.className = 'btn btn-sm btn-outline-info';
+          iconOpen.className = "fa-solid fa-arrow-up-right-from-square"
+          iconDelete.className = "fa fa-trash delete"
+          deleteBtn.className = "btn btn-sm btn-outline-danger delete"
+          deleteBtn.setAttribute("data-idlink", `${receipt._id}`)
+          iconDelete.setAttribute("data-idlink", `${receipt._id}`)
+          deleteBtn.appendChild(iconDelete)
+          link.appendChild(iconOpen)
           action.appendChild(link);
+          action.appendChild(deleteBtn);
           tr.appendChild(action);
 
           tbody.appendChild(tr);

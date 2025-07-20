@@ -198,16 +198,7 @@
   </div>
 </form>
 
-<script>
-  $(document).ready(function() {
-    $('#searchInput').on('keyup', function() {
-      var value = $(this).val().toLowerCase();
-      $('#tableBody tr').filter(function() {
-        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-      });
-    });
-  });
-</script>
+
 
 <div class="table-responsive">
   <form action="/sale/add" id="myForm" method="post">

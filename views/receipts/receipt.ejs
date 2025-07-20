@@ -82,12 +82,16 @@
             <td><%= (product.QUANTITY * product.PRICE).toFixed(2) %> EGP</td>
           </tr>
         <% }); %>
+
       </tbody>
       <tfoot>
-        <tr>
+                
+         <tr>
           <td colspan="3" class="text-end total">Total</td>
-          <td class="total"><%= receipt.TOTAL.toFixed(2) %> EGP</td>
+          <td class="total"><%= Number(receipt.TOTAL.toFixed(2)) %> EGP</td>
         </tr>
+       
+      
       </tfoot>
     </table>
   </div>

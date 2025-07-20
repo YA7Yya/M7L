@@ -463,6 +463,7 @@ app.get("/allreceipts",adminGuard.isEmployee, async(req,res) =>{
   let employees =   await Employee.Employee.find().lean();
 
 const employeeFilter = req.query.employee;;
+console.log(employeeFilter);
   if (employeeFilter && employeeFilter !== 'all') {
     receipts = await Sales.Sale.find({ employee: employeeFilter }).sort({ createdAt: -1 }).lean();
   } else {
@@ -478,28 +479,27 @@ Sales.Sale.findById({_id: req.params.id}).lean().then((receipt) =>{
   res.render("./receipts/receipt.ejs", {receipt: receipt, moment: moment})
 })
 })
-app.post("/receipts/filter", async (req, res) => {
+app.post("/receipts/filter/:createdBy", async (req, res) => {
   try {
-    const employeeId = req.body.employeeId;
-    let query = {};
-    if (employeeId && employeeId.trim() !== "") {
-      query.createdBy = employeeId;
-    }
+    const createdBy = req.params.createdBy;
 
-    const receipts = await Sales.Sale.find(query).lean(); // Use .lean() to avoid circular refs
+  
+
+    const receipts = await Sales.Sale.find({createdBy: createdBy}).lean(); // Use .lean() to avoid circular refs
 
     // Format the data if needed
     const filtered = receipts.map(receipt => {
-  
+  console.log(receipt);
       return {
         _id: receipt._id,
-        date: receipt.createdAt,
-        employeeName: receipt.createdBy || "N/A",
-        total: receipt.TOTAL || 0
+        RECEIPTID: receipt.RECEIPTID,
+        createdAt: receipt.createdAt,
+        createdBy: receipt.createdBy || "N/A",
+        TOTAL: receipt.TOTAL || 0
       };
     });
-
     res.json(filtered);
+    
   } catch (err) {
     console.error("Filter error:", err);
     res.status(500).json({ error: "Server error filtering receipts" });
@@ -775,7 +775,7 @@ app.post("/login", async (req, res) => {
 app.post("/sale/add", (req, res) => {
   Sales.Sale.estimatedDocumentCount().then((countedDoc) => {
     const products = req.body.products || []; // Expecting array of products
-    Sales.newSale(products, countedDoc + 1, req.session.username, req.session.username).then((result) => {
+    Sales.newSale(products,req.body.TOTAL, countedDoc + 1, req.session.username, req.session.username).then((result) => {
       console.log(req.body);
       res.redirect("/allreceipts");
     }).catch((err) => {

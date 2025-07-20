@@ -47,10 +47,10 @@
     <select id="employeeFilter" class="form-select">
       <option value="">All Employees</option>
       <% employees.forEach(function(emp) { %>
-        <% if (selectedEmployee === emp._id.toString()) { %>
-          <option value="<%= emp._id %>" selected><%= emp.username %></option>
+        <% if (selectedEmployee === emp.username) { %>
+          <option value="<%= emp.username %>" selected><%= emp.username %></option>
         <% } else { %>
-          <option value="<%= emp._id %>"><%= emp.username %></option>
+          <option value="<%= emp.username %>"><%= emp.username %></option>
         <% } %>
       <% }) %>
     </select>
