@@ -772,17 +772,18 @@ app.post("/login", async (req, res) => {
 });
 
 
-app.post("/sale/add", (req,res) =>{
- Sales.Sale.estimatedDocumentCount().then((countedDoc) => {
-    Sales.newSale(req.body.PNAME,req.body.QUANTITY,req.body.PRICE,req.body.PNOTES,req.body.TOTAL,countedDoc + 1,req.session.username,req.session.username).then((result)=>{
-  console.log(req.body);
-      res.redirect("/allreceipts")
-
-})
-  })
-
-   
-})
+app.post("/sale/add", (req, res) => {
+  Sales.Sale.estimatedDocumentCount().then((countedDoc) => {
+    const products = req.body.products || []; // Expecting array of products
+    Sales.newSale(products, countedDoc + 1, req.session.username, req.session.username).then((result) => {
+      console.log(req.body);
+      res.redirect("/allreceipts");
+    }).catch((err) => {
+      console.error(err);
+      res.status(500).send("Error saving sale");
+    });
+  });
+});
 
 app.all("/logout", adminGuard.isEmployee, async (req, res) => {
   req.session.destroy(() => {

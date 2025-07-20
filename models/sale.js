@@ -1,63 +1,67 @@
 const mongoose = require("mongoose");
-const sale = new mongoose.Schema(
+
+const productSchema = new mongoose.Schema({
+  PNAME: {
+    type: String,
+    default: "None"
+  },
+  QUANTITY: {
+    type: Number,
+    default: 0
+  },
+  PRICE: {
+    type: Number,
+    default: 0
+  },
+  PNOTES: {
+    type: String,
+    default: "None"
+  }
+});
+
+const saleSchema = new mongoose.Schema(
   {
-    PNAME: {
-      type: String,
-      default: "None"
-    },
-    QUANTITY: {
-      type: Number,
-      default: 0
-    },
-    PRICE: {
-      type: Number,
-      default: 0
-    },
-    PNOTES: {
-      type: String,
-      default: "None"
-    },
+    products: [productSchema], // Array of products
     TOTAL: {
-      type: String,
+      type: Number,
       default: 0
     },
     RECEIPTID: Number,
-    createdBy: { type: String}, // من أنشأ المنتج
-    lastUpdate: { type: String}, // من قام بالتحديث الأخير
+    createdBy: { type: String },
+    lastUpdate: { type: String },
   },
   { timestamps: true }
 );
-const Sale = mongoose.model("Sales", sale);
 
-exports.newSale = async(PNAME,QUANTITY,PRICE,PNOTES,TOTAL,RECEIPTID,createdBy,lastUpdate) =>{
-     
+const Sale = mongoose.model("Sales", saleSchema);
+
+exports.newSale = async (products, RECEIPTID, createdBy, lastUpdate) => {
   return new Promise(async (resolve, reject) => {
-       let dbconnect =  await mongoose
-          .connect(process.env.DB)
-          let countDocuments = Sale.estimatedDocumentCount()
-          .then(async (countedDoc) => {
-            RECEIPTID = countedDoc
-            let sale = new Sale({
-              PNAME: PNAME,
-              QUANTITY: QUANTITY,
-              PRICE: PRICE,
-              PNOTES: PNOTES,
-              TOTAL: TOTAL,
-              RECEIPTID: RECEIPTID + 1,
-              createdBy: createdBy,
-              lastUpdate: lastUpdate,
-            });
-console.log(sale);
-            return sale.save();
-          })
-    
-          .then(() => {
-            resolve();
-          });
-      }).catch((err) => {
-        reject("Error")
-        console.log(err);
+    try {
+      await mongoose.connect(process.env.DB);
+      const total = products.reduce((sum, product) => sum + (product.PRICE * product.QUANTITY), 0);
+      
+      const sale = new Sale({
+        products: products.map(product => ({
+          PNAME: product.PNAME,
+          QUANTITY: product.QUANTITY,
+          PRICE: product.PRICE,
+          PNOTES: product.PNOTES
+        })),
+        TOTAL: total,
+        RECEIPTID: RECEIPTID,
+        createdBy: createdBy,
+        lastUpdate: lastUpdate,
       });
-}
+
+      console.log(sale);
+      await sale.save();
+      resolve();
+    } catch (err) {
+      console.error(err);
+      reject("Error");
+    }
+  });
+};
 
 exports.Sale = Sale;
