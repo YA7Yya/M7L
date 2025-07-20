@@ -344,26 +344,47 @@ Quagga.onDetected((result) => {
             return false;
           } else {
             // Append the received products to the table and update scannedProducts
+            let form = document.querySelector("#myForm")
+            console.log(form);
             data.forEach(function(product) {
+
+
               let price = product.WHOLEPRICE * 1.50;
               let productRow = `
                 <tr class="productsdata">
-                  <td>${product.PNAME} <input type="text" value="${product.PNAME}" disabled hidden name="PNAME"></td>
-                  <td>${product.WHOLEPRICE.toFixed(2)} <input type="text" value="${product.WHOLEPRICE}" disabled hidden name="WHOLEPRICE"></td>
+                  <td>${product.PNAME}</td>
+                  <td>${product.WHOLEPRICE.toFixed(2)}</td>
                   <td>${price.toFixed(2)}</td>
                   <td>
                     <input type="number" class="form-control quantity-input" value="1" min="1" step="1" style="width: 60px;" name="QUANTITY">
                   </td>
                   <td class="profit-cell">${(price - product.WHOLEPRICE).toFixed(2)}</td>
-                  <td>${product.PNOTES} <input type="text" value="${product.PNOTES}" disabled hidden name="PNOTES"></td>
+                  <td>${product.PNOTES}></td>
                   <td>${moment(product.updatedAt).format('LL')}</td>
                 </tr>
               `;
-              $('#tableBody').append(productRow);
 
+              $('#tableBody').append(productRow);
+form.insertAdjacentHTML('beforeend', `
+  <div style="display: none;">
+    <input type="text" value="${product.PNAME}" name="products[0][PNAME]">
+    <input type="number" value="${price}" name="products[0][PRICE]">
+    <input type="text" value="${product.PNOTES}" name="products[0][PNOTES]">
+    <input type="text" value="${totalPrice+=price}" name="TOTAL">
+  </div>
+`);
+// Add the button only if it doesn't already exist
+if (!document.querySelector("#closeDealBtn")) {
+  const btn = document.createElement("button");
+  btn.type = "submit";
+  btn.id = "closeDealBtn"; // <-- important for preventing duplicates
+  btn.className = "btn btn-success text-center mt-3";
+  btn.textContent = "Close the Deal";
+  form.appendChild(btn);
+}
               // Update scannedProducts and totalPrice
               scannedProducts.push({ name: product.PNAME, price: price });
-              totalPrice += price;
+              
 
               // Set the initial total price based on quantity
               const quantityInput = $('.quantity-input').last();
@@ -484,7 +505,8 @@ document.querySelector(".start.add").addEventListener("click", () => {
       });
       </script>
       
-    <div class="table-responsive">
+      <div class="table-responsive">
+      <form action="/sale/add" id="myForm" method="post">
       <table class="table table-hover bg-light">
         <thead>
           <tr>
@@ -497,9 +519,8 @@ document.querySelector(".start.add").addEventListener("click", () => {
             <th>اخر تعديل</th>
           </tr>
         </thead>
+       
         <tbody id="tableBody">
-          
-          <form action="/sale/add" method="post">
             <tr class="productsdata">
              
             
@@ -515,10 +536,8 @@ document.querySelector(".start.add").addEventListener("click", () => {
         </tr>
       </table>
 
-<center id="totalPriceRow" style="display: block;">
-      <button type="submit" class="btn btn-success text-center">Close the Deal</button>
-</center>
-    </form> 
+</form>
+   
   </div>
 
     <!-- Update Form -->
