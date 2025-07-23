@@ -283,28 +283,8 @@ justify-content: center;
       border: 0;
     }
   </style>
-  <!-- Trigger Button -->
-<!-- Action Panel -->
 
 
-  <!-- Modal -->
-  <div class="modal fade" id="embedModal" tabindex="-1" aria-labelledby="embedModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="embedModalLabel">فاتورة جديدة</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <!-- Responsive iframe container -->
-          <div class="embed-container">
-            <!-- Change the src below to your desired embed (YouTube, PDF, etc) -->
-            <iframe src="/this" allowfullscreen></iframe>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
     <!-- Barcode Scanner Section -->
     <div class="col-12 col-md-6 mb-3">
       <div id="scanner-container" class="w-100" style="height: 200px; display: none;">
@@ -335,7 +315,7 @@ justify-content: center;
       <div class="d-flex flex-wrap justify-content-center gap-3">
 
         <!-- Sell Modal Button -->
-        <button class="btn btn-outline-success px-4" data-bs-toggle="modal" data-bs-target="#embedModal" type="button">
+        <button class="btn btn-outline-success px-4" type="button" onclick="window.location.href='/sell'">
           💲 Sell Product
         </button>
 

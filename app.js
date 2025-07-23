@@ -556,6 +556,17 @@ app.post("/logs", managerGuard.isManager, async (req, res) => {
 });
 
 app.post("/productAdd", authGuard.isAuth,adminGuard.isEmployee, async (req, res) => {
+ if(Info.Info.findOne({$or:[{barcode: req.body.barcode},{PNAME: req.body.PNAME}] })) {
+if(req.body.PNAME){
+    req.flash("error", "This product already exists: " + `${req.body.PNAME}`);
+  return res.redirect("/crud"); // Redirect with flash message
+
+}
+if(req.body.barcode){
+    req.flash("error", "This product already exists: " + `${req.body.barcode}`);
+  return res.redirect("/crud"); // Redirect with flash message
+}
+ };
   const create = Info.createNewProduct(
     req.body.PNAME,
     req.body.WHOLEPRICE,
@@ -563,7 +574,8 @@ app.post("/productAdd", authGuard.isAuth,adminGuard.isEmployee, async (req, res)
     req.body.barcode,
     req.session.username,
     "Not Updated Yet"
-  )
+  );
+  
   const emp = await Employee.Employee.findByIdAndUpdate(req.session.userId, {
     $inc: { addations: 1 },
   }).lean();
@@ -729,8 +741,8 @@ app.get("/product/:barcode", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-app.get("/this", (req, res) => {
-  res.render("./this.ejs",{
+app.get("/sell", (req, res) => {
+  res.render("./sell.ejs",{
     req: req,
     isUser: req.session.userId,
     isManager: req.session.role === "Manager",
@@ -773,16 +785,16 @@ app.post("/login", async (req, res) => {
 
 
 app.post("/sale/add", (req, res) => {
-  Sales.Sale.estimatedDocumentCount().then((countedDoc) => {
-    const products = req.body.products || []; // Expecting array of products
-    Sales.newSale(products,req.body.TOTAL, countedDoc + 1, req.session.username, req.session.username).then((result) => {
-      console.log(req.body);
-      res.redirect(result._id);
-    }).catch((err) => {
-      console.error(err);
-      res.status(500).send("Error saving sale");
+    Sales.Sale.estimatedDocumentCount().then(async(countedDoc) => {
+      const products = req.body.products || []; // Expecting array of products
+      await Sales.newSale(products,req.body.TOTAL, countedDoc + 1, req.session.username, req.session.username).then((result) => {
+        console.log(result);
+        res.redirect(`/receipts/${result._id}`);
+      }).catch((err) => {
+        console.error(err);
+        res.status(500).send("Error saving receipt.");
+      });
     });
-  });
 });
 
 app.all("/logout", adminGuard.isEmployee, async (req, res) => {

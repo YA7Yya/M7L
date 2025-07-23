@@ -36,6 +36,23 @@
       font-weight: bold;
     }
 
+    #allReceiptsBtn {
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    #allReceiptsBtn:hover {
+      background-color: #0d6efd;
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #allReceiptsBtn:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
     @media print {
       .no-print {
         display: none;
@@ -82,16 +99,12 @@
             <td><%= (product.QUANTITY * product.PRICE).toFixed(2) %> EGP</td>
           </tr>
         <% }); %>
-
       </tbody>
       <tfoot>
-                
-         <tr>
+        <tr>
           <td colspan="3" class="text-end total">Total</td>
           <td class="total"><%= Number(receipt.TOTAL.toFixed(2)) %> EGP</td>
         </tr>
-       
-      
       </tfoot>
     </table>
   </div>
@@ -102,7 +115,10 @@
     <button onclick="window.print()" class="btn btn-outline-primary">🖨</button>
     <button class="btn btn-outline-danger delete" data-idlink="<%= receipt._id %>">
       <i class="fa fa-trash delete" data-idlink="<%= receipt._id %>"></i>
-    </button> 
+    </button>
+    <a href="/allreceipts" class="btn btn-outline-primary" id="allReceiptsBtn">
+      <i class="fa-solid fa-list me-2"></i> View All Receipts
+    </a>
   </div>
 </div>
 

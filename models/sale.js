@@ -53,10 +53,8 @@ exports.newSale = async (products,TOTAL, RECEIPTID, createdBy, lastUpdate) => {
         createdBy: createdBy,
         lastUpdate: lastUpdate,
       });
-
-      console.log(sale);
-      await sale.save();
-      resolve();
+resolve(await sale.save())
+       
     } catch (err) {
       console.error(err);
       reject("Error");
