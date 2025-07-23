@@ -777,7 +777,7 @@ app.post("/sale/add", (req, res) => {
     const products = req.body.products || []; // Expecting array of products
     Sales.newSale(products,req.body.TOTAL, countedDoc + 1, req.session.username, req.session.username).then((result) => {
       console.log(req.body);
-      res.redirect("/allreceipts");
+      res.redirect(result._id);
     }).catch((err) => {
       console.error(err);
       res.status(500).send("Error saving sale");
