@@ -39,11 +39,7 @@ exports.createNewProduct = async (PNAME, WHOLEPRICE, PNOTES,barcode,createdBy,la
         if (product) {
           reject("Product Exist !");
         } else {
-          return true;
-        }
-      })
-      .then(async () => {
-        let Product = new Info({
+              let Product = new Info({
           PNAME: PNAME,
           WHOLEPRICE: WHOLEPRICE,
           PNOTES: PNOTES,
@@ -51,12 +47,10 @@ exports.createNewProduct = async (PNAME, WHOLEPRICE, PNOTES,barcode,createdBy,la
           createdBy: createdBy,
           lastUpdate: lastUpdate,
         });
-        return Product.save();
+         
+          resolve(Product.save())
+        }
       })
-
-      .then(() => {
-        resolve();
-      });
   }).catch((err) => {
     console.log(err);
   });

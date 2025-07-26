@@ -96,16 +96,6 @@
               </form>
               <br>
               <input type="text" id="searchInput" class="form-control" placeholder="Search for products...">
-              <script>
-                  $(document).ready(function() {
-                    $('#searchInput').on('keyup', function() {
-                      var value = $(this).val().toLowerCase();
-                      $('#tableBody tr').filter(function() {
-                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                      });
-                    });
-                  });
-                  </script>
           </section>
           <section class="storage-list mt-5">
               <h2 class="text-center">المخزن</h2>
@@ -147,89 +137,7 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/locale/ar.min.js"></script>
       <script src="../js/Storage.js" defer></script>
 
-      <script>
-          $(document).ready(function() {
-        let offset = 3;
-        let isLoading = false; // Flag to track loading state
-      
-        $(window).on('scroll', function() {
-          if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
-            if (!isLoading) {
-              loadMoreProducts();
-            }
-          }
-        });
-      
-        function loadMoreProducts() {
-          isLoading = true; // Set loading state to true to prevent more requests
-      
-          $.ajax({
-            url: "/loadMoreStorageProducts",
-            method: "GET",
-            data: { offset: offset },
-            success: function(data) {
-              if (data.length > 0) {
-                data.forEach(function(product) {
-                  let price = product.wholePrice * 1.50;
-                  let productRow = `
-                    <tr class="productsdata">
-                      <td>${product.productName}</td>
-                      <td>${product.quantity} / ${product.unit}</td>
-                      <td style="text-align: center;font-weight: bold;">${product.wholePrice}</td>
-                      <td>${product.status}</td>
-                      <td>${moment(product.updatedAt).format('LL')}</td>
-                      <td>
-                              <button class="btn btn-outline-danger delete" data-productId="${product._id}">
-                                  <i class="fa fa-trash"></i>
-                                </button>
-                                  <button class="btn btn-outline-warning update" data-productId="${product._id}">
-                                  <i class="fa fa-edit" ></i>
-                                </button>
-                          </td>
-                    </tr>
-                  `;
-                  $('#tableBody').append(productRow);
-                });
-                offset += 3; // Increase the offset for the next batch
-                isLoading = false; // Reset loading state after content is loaded
-              } else {
-                // No more products to load, you can remove the scroll event listener or handle it differently
-                $(window).off('scroll');
-              }
-            },
-            error: function(err) {
-              console.error("Error loading more products:", err);
-              isLoading = false; // Reset loading state even on error
-            }
-          });
-        }
-      });
-      let quantity = document.querySelector("#itemQuantity");
-  let available = document.querySelector(".available");
-  let notAvailable = document.querySelector(".notAvailable");
-  document.addEventListener('DOMContentLoaded', () => {
-    if (isNaN(quantity)) {
-      $(notAvailable).attr("selected", true);  // Set 'غير متوفر' as selected
-    }
-  quantity.addEventListener('input', (event) => {  // Use 'input' event
 
-    let changedValue = Number(event.target.value); // Convert the input value to a number
-    if (changedValue === 0) {
-      $(notAvailable).attr("selected", true);  // Set 'غير متوفر' as selected
-    } else {
-      $(available).attr("selected", true);  // Set 'متوفر' as selected if the value is not 0
-    }
-  });
-  });
-
-
-
-  document.getElementById('addItemForm').addEventListener('submit', function() {
-          // Disable the submit button after form submission
-          document.getElementById('submitButton').disabled = true;
-      });
-
-        </script>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   </body>
   </html>

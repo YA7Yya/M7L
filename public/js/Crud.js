@@ -213,12 +213,185 @@ function loading() {
   }
 });
 
+ $(document).ready(function() {
+    $('#searchInput').on('keyup', function() {
+      var value = $(this).val().toLowerCase();
+      $('#tableBody tr').filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+      });
+    });
+  });
+  const scannerContainer = document.querySelector("#scanner-container");
+  const barcodeResult = document.querySelector("#barcode");
+  const barcodeContainer = document.querySelector("#barcodeContainer");
+  const start = document.querySelector(".start");
+  const stopScanning = document.querySelector(".stop");
+  const reset = document.querySelector(".reset");
+  let firstScan = true;
+  let videoTrack = null;
+  let flashEnabled = true;
+  let quaggaInitialized = true;
+  const audio = new Audio('../scanner.mp3');
+  let currentScannerMode = "";
 
+  function startScanner(mode) {
+    currentScannerMode = mode;
+    if (start.style.display !== "none") {
+      start.style.display = "none";
+      stopScanning.style.display = "block";
+      reset.style.display = "block";
+      barcodeResult.style.display = "block";
+      barcodeContainer.style.display = "block";
+      scannerContainer.style.display = "block";
+      Quagga.init({
+        inputStream: {
+          type: "LiveStream",
+          target: document.querySelector("#scanner-container"),
+        },
+        decoder: {
+          readers: [
+            "code_128_reader",
+            "ean_reader",
+            "ean_8_reader",
+            "upc_reader",
+            "code_39_reader",
+          ],
+        },
+      }, (err) => {
+        if (err) {
+          console.error(err);
+          Quagga.stop();
+          return;
+        }
+        Quagga.start();
+        quaggaInitialized = true;
+      });
+    }
+  }
 
-// window.onscroll = function() {myFunction()};
+  Quagga.onDetected((result) => {
+    const detectedCode = result.codeResult.code;
+    if (currentScannerMode === "search") {
+      if (/^\d{12,13}$/.test(detectedCode)) {
+        audio.play();
+        console.log("Barcode detected:", detectedCode);
+        firstScan = false;
+        barcodeInput.disabled = false;
+        barcodeInput.value = detectedCode;
+      } else {
+        console.warn("Invalid barcode detected:", detectedCode);
+        return;
+      }
+      sendPostRequest(detectedCode);
+    } else if (currentScannerMode === "add") {
+      if (/^\d{12,13}$/.test(detectedCode)) {
+        audio.play();
+        console.log("Barcode detected:", detectedCode);
+        firstScan = false;
+        barcodeInput.disabled = false;
+        barcodeInput.value = detectedCode;
+      } else {
+        console.warn("Invalid barcode detected:", detectedCode);
+        return;
+      }
+    }
+    stopScanner();
+  });
 
-// function myFunction() {
-//   if (document.body.scrollTop > 190 || document.documentElement.scrollTop > 190) {
-//     console.log("It's Working Now");
-//   }else return false;
-// }
+  async function sendPostRequest(barcode) {
+    if (!barcode) {
+      alert("Please provide a valid barcode.");
+      return;
+    }
+    document.getElementById("loading").style.display = "flex";
+    document.getElementById("loading").style.justifyContent = "center";
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = "/search";
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = "barcode";
+    input.value = barcode;
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+  }
+
+  async function stopScanner() {
+    if (quaggaInitialized) {
+      await Quagga.stop();
+      quaggaInitialized = false;
+    }
+    videoTrack = null;
+    stopScanning.style.display = "none";
+    reset.style.display = "none";
+    start.style.display = "block";
+    scannerContainer.style.display = "none";
+    currentScannerMode = "";
+  }
+
+  document.querySelector(".start.add").addEventListener("click", () => {
+    startScanner("add");
+  });
+
+  document.querySelector(".start.search").addEventListener("click", () => {
+    startScanner("search");
+  });
+  $(document).ready(function() {
+    let offset = 3;
+    let isLoading = false;
+
+    $(window).on('scroll', function() {
+      if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+        if (!isLoading) {
+          loadMoreProducts();
+        }
+      }
+    });
+
+    function loadMoreProducts() {
+      isLoading = true;
+      $.ajax({
+        url: "/loadMoreProducts",
+        method: "GET",
+        data: { offset: offset },
+        success: function(data) {
+          if (data.length > 0) {
+            data.forEach(function(product) {
+              let price = product.WHOLEPRICE * 1.50;
+              let productRow = `
+                <tr class="productsdata">
+                  <td>${product.PNAME}</td>
+                  <td>${product.WHOLEPRICE}</td>
+                  <td>${price}</td>
+                  <td>${price - product.WHOLEPRICE}</td>
+                  <td>${product.PNOTES}</td>
+                  <td>${moment(product.updatedAt).format('LL')}</td>
+                  <td>
+                    <button class="btn btn-outline-warning update" data-updateid="${product._id}">
+                      <i class="fa fa-edit"></i>
+                    </button>
+                  </td>
+                  <td class="delete">
+                    <button class="btn btn-outline-danger delete" data-idlink="${product._id}">
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              `;
+              $('#tableBody').append(productRow);
+            });
+            offset += 3;
+            isLoading = false;
+          } else {
+            $(window).off('scroll');
+          }
+        },
+        error: function(err) {
+          console.error("Error loading more products:", err);
+          isLoading = false;
+        }
+      });
+    }
+  });
+

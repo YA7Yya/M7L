@@ -21,8 +21,8 @@
 </head>
 <body>
 <div class="position-relative">
-  <a href="/storage" class="position-absolute top-1 start-0 m-0" >
-    <i class="material-icons" style="font-size: 35px; color: #ff8800; margin-left: 32px; margin-top: 20px;">inventory_2</i>
+  <a href="/crud" class="position-absolute top-1 start-0 m-0" >
+    <i class="material-icons" style="font-size: 50px; color: #007bff; margin-left: 32px; margin-top: 20px;">home</i>
   </a>
 </div>
 <% if(isUser){ %>
@@ -33,28 +33,7 @@
   </div>
 <% } %>
 
-<div class="modal fade modal-dialog modal-dialog-centered" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: none;">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">اختر موظفاَ</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <label for="price"><strong>: Employee Name</strong></label>
-        <select class="sel form-control">
-          <option class="opt" disabled selected></option>
-        </select>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-success check w-100">Check</button>
-        <br>
-        <button type="button" class="btn btn-info reload w-100">Reload List</button>
-      </div>
-    </div>
-  </div>
-</div>
+
 <div class="container mt-5">
   <center>
     <div id="loading" class="loading-overlay">

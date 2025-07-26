@@ -28,16 +28,33 @@ const compression = require("compression");
 const http = require("http");
 const socketIo = require("socket.io");
 const server = http.createServer(app);
+const crypto = require('crypto');
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./views/swagger.json");
+const helmet = require("helmet");
 
 const io = socketIo(server, {
   cors: {
     origin: "*",
   },
 });
+app.use((req, res, next) => {
+  res.locals.nonce = crypto.randomBytes(16).toString('base64');
+  next();
+});
+app.use(helmet());
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      imgSrc: ["'self'", 'data:', 'https://logopond.com', "https://img.freepik.com"], // Add logopond.com
+      scriptSrc: ["'self'", 'https://cdnjs.cloudflare.com',"https://cdn.jsdelivr.net",(req, res) => `'nonce-${res.locals.nonce}'`,]
+    },
+  })
+);
+
 app.use(compression());
-require('./node_modules/moment/locale/ar-sa'); // Load Arabic locale
+require('./node_modules/moment/locale/ar-sa.js'); // Load Arabic locale
 moment.locale('ar-sa');
 require("dotenv").config();
 app.set("view engine", "ejs");
@@ -228,7 +245,7 @@ app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
 
     const [updateResult, allProducts] = await Promise.all([updateVisitCount, fetchProducts]);
 
-    res.render("./crud.ejs", {
+     res.render("./crud.ejs", {
       allProducts: allProducts,
       isUser: req.session.userId,
       req: req,
@@ -238,6 +255,7 @@ app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
     });
   } catch (err) {
     console.error(err);
+    req.session.destroy();
     res.status(500).send("Server Error");
   }
 });
@@ -363,6 +381,7 @@ app.get("/dashboard/:username", authGuard.isAuth, managerGuard.isManager, async 
 
   res.render("logs/dashboard", {
     username,
+    nonce: res.locals.nonce,
   });
 });
 app.get("/api/employee-stats/:username", authGuard.isAuth, managerGuard.isManager, async (req, res) => {
@@ -459,7 +478,7 @@ app.post("/productSearch", async (req, res) => {
   }
 });
 
-app.get("/allreceipts",adminGuard.isEmployee, async(req,res) =>{
+app.get("/allreceipts",adminGuard.isEmployee,managerGuard.isManager, async(req,res) =>{
   let employees =   await Employee.Employee.find().lean();
 
 const employeeFilter = req.query.employee;;
@@ -485,7 +504,7 @@ app.post("/receipts/filter/:createdBy", async (req, res) => {
 
   
 
-    const receipts = await Sales.Sale.find({createdBy: createdBy}).lean(); // Use .lean() to avoid circular refs
+    const receipts = await Sales.Sale.find({createdBy: createdBy}).sort({createdAt: -1}).lean(); // Use .lean() to avoid circular refs
 
     // Format the data if needed
     const filtered = receipts.map(receipt => {
@@ -555,45 +574,61 @@ app.post("/logs", managerGuard.isManager, async (req, res) => {
   }
 });
 
-app.post("/productAdd", authGuard.isAuth,adminGuard.isEmployee, async (req, res) => {
- if(Info.Info.findOne({$or:[{barcode: req.body.barcode},{PNAME: req.body.PNAME}] })) {
-if(req.body.PNAME){
-    req.flash("error", "This product already exists: " + `${req.body.PNAME}`);
-  return res.redirect("/crud"); // Redirect with flash message
+app.post("/productAdd", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
+  let searchObj = {PNAME: req.body.PNAME}
+  if(Number(req.body.barcode) > 0){
+searchObj.push({barcode: req.body.barcode})
+  }
+  try {
+    const existingProduct = await Info.Info.findOne({
+      $or: [searchObj],
+    });
+    if (existingProduct) {
+      req.flash("error", `This product already exists: ${existingProduct.PNAME}`);
+      return res.redirect("/crud");
+    }
 
-}
-if(req.body.barcode){
-    req.flash("error", "This product already exists: " + `${req.body.barcode}`);
-  return res.redirect("/crud"); // Redirect with flash message
-}
- };
-  const create = Info.createNewProduct(
-    req.body.PNAME,
-    req.body.WHOLEPRICE,
-    req.body.PNOTES,
-    req.body.barcode,
-    req.session.username,
-    "Not Updated Yet"
-  );
-  
-  const emp = await Employee.Employee.findByIdAndUpdate(req.session.userId, {
-    $inc: { addations: 1 },
-  }).lean();
-  await io.emit('addationsUpdate', emp.addations)
-  await Promise.all([create,emp])
-  .then(async (body) => {
-    logAction(
+    // Create new product
+    const createProduct = Info.createNewProduct(
+      req.body.PNAME,
+      req.body.WHOLEPRICE,
+      req.body.PNOTES,
+      req.body.barcode,
+      req.session.username,
+      "Not Updated Yet"
+    );
+
+    // Update employee additions
+    const emp = Employee.Employee.findByIdAndUpdate(
+      req.session.userId,
+      { $inc: { addations: 1 } },
+      { new: true } // Return updated document
+    ).lean();
+
+    // Execute both operations
+    const [createdProduct, updatedEmp] = await Promise.all([createProduct, emp]);
+
+    // Emit socket update
+    await io.emit('addationsUpdate', updatedEmp.addations);
+
+    // Log the action
+    await logAction(
       "إضافة منتج",
       req.session.userId,
-      req.session.username,{
+      req.session.username,
+      {
+        PNAME: req.body.PNAME,
+        WHOLEPRICE: req.body.WHOLEPRICE,
+        PNOTES: req.body.PNOTES
+      }
+    );
 
-  PNAME: req.body.PNAME,
-  WHOLEPRICE: req.body.WHOLEPRICE,
-  PNOTES: req.body.PNOTES
-},
-    )
-  });
-  res.redirect("/crud");
+    res.redirect("/crud");
+  } catch (error) {
+    console.error("Error in productAdd:", error);
+    req.flash("error", "An error occurred while adding the product");
+    res.redirect("/crud");
+  }
 });
 app.delete("/crud/delete/:id",authGuard.isAuth,adminGuard.isEmployee, async (req, res) => {
   let deleted = await Info.Info.findByIdAndDelete(req.params.id)
@@ -725,7 +760,7 @@ app.get("/createEmployee", managerGuard.isManager, (req, res) => {
   res.render("./auth/createEmployee.ejs");
 });
 app.get("/login", authGuard.notAuth, (req, res) => {
-  res.render("auth/login.ejs");
+  res.render("auth/login.ejs", {req: req});
 });
 app.get("/product/:barcode", async (req, res) => {
   try {
@@ -779,6 +814,8 @@ app.post("/login", async (req, res) => {
       res.redirect("/crud");
     })
     .catch((err) => {
+      req.flash("error", err);
+      res.redirect("/login");
       console.log(err);
     });
 });
@@ -796,7 +833,21 @@ app.post("/sale/add", (req, res) => {
       });
     });
 });
+app.use(async (req, res, next) => {
+  try {
+    const user = await Employee.Employee.findOne({
+      _id: req.session._id,
+    });
+    if (user) {
+      req.session = user;
+    }
 
+    next();
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
 app.all("/logout", adminGuard.isEmployee, async (req, res) => {
   req.session.destroy(() => {
     res.redirect("/login");

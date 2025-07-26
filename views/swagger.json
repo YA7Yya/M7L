@@ -1,179 +1,935 @@
 {
-    "swagger": "2.0",
-    "info": {
-      "version": "1.0.0",
-      "title": "Employee CRUD API",
-      "description": "API documentation for the Employee CRUD system"
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Storage and Product Management API",
+    "version": "1.0.0",
+    "description": "API documentation for the large Express.js project"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:80",
+      "description": "Local server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "SessionAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "connect.sid",
+        "description": "Session-based authentication using connect.sid cookie"
+      }
     },
-    "host": "localhost:80",
-    "basePath": "/",
-    "schemes": [
-      "http"
-    ],
-    "paths": {
-      "/login": {
-        "post": {
-          "tags": ["Authentication"],
-          "summary": "Log in a user",
-          "parameters": [
-            {
-              "name": "body",
-              "in": "body",
-              "required": true,
+    "schemas": {
+      "Product": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "description": "Product ID" },
+          "PNAME": { "type": "string", "description": "Product name" },
+          "WHOLEPRICE": { "type": "number", "description": "Wholesale price" },
+          "PNOTES": { "type": "string", "description": "Product notes" },
+          "barcode": { "type": "string", "description": "Product barcode" },
+          "createdBy": { "type": "string", "description": "Username of creator" },
+          "lastUpdate": { "type": "string", "description": "Username of last updater" },
+          "updatedAt": { "type": "string", "format": "date-time", "description": "Last updated timestamp" }
+        },
+        "required": ["PNAME", "WHOLEPRICE", "barcode"]
+      },
+      "StorageProduct": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "description": "Storage product ID" },
+          "productName": { "type": "string", "description": "Product name" },
+          "wholePrice": { "type": "number", "description": "Wholesale price" },
+          "quantity": { "type": "number", "description": "Quantity in storage" },
+          "unit": { "type": "string", "description": "Unit of measurement" },
+          "status": { "type": "string", "description": "Product status" },
+          "createdBy": { "type": "string", "description": "Username of creator" },
+          "lastUpdate": { "type": "string", "description": "Username of last updater" },
+          "updatedAt": { "type": "string", "format": "date-time", "description": "Last updated timestamp" }
+        },
+        "required": ["productName", "wholePrice", "quantity", "unit", "status"]
+      },
+      "Employee": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "description": "Employee ID" },
+          "username": { "type": "string", "description": "Employee username" },
+          "role": { "type": "string", "enum": ["Employee", "Manager", "Developer"], "description": "Employee role" },
+          "addations": { "type": "number", "description": "Number of product additions" },
+          "deleteations": { "type": "number", "description": "Number of product deletions" },
+          "updateations": { "type": "number", "description": "Number of product updates" },
+          "visits": { "type": "number", "description": "Number of visits" }
+        },
+        "required": ["username", "role"]
+      },
+      "Log": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "description": "Log ID" },
+          "action": { "type": "string", "description": "Action performed" },
+          "userId": { "type": "string", "description": "ID of the user who performed the action" },
+          "username": { "type": "string", "description": "Username of the user" },
+          "details": { "type": "object", "description": "Details of the action" },
+          "update": { "type": "object", "description": "Update details (before and after)" },
+          "createdAt": { "type": "string", "format": "date-time", "description": "Log creation timestamp" }
+        },
+        "required": ["action", "userId", "username"]
+      },
+      "Sale": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "description": "Sale ID" },
+          "RECEIPTID": { "type": "number", "description": "Receipt ID" },
+          "products": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Product" },
+            "description": "List of products in the sale"
+          },
+          "TOTAL": { "type": "number", "description": "Total sale amount" },
+          "createdBy": { "type": "string", "description": "Username of the employee who created the sale" },
+          "createdAt": { "type": "string", "format": "date-time", "description": "Sale creation timestamp" }
+        },
+        "required": ["RECEIPTID", "products", "TOTAL", "createdBy"]
+      }
+    }
+  },
+  "paths": {
+    "/api-docs": {
+      "get": {
+        "summary": "Swagger UI for API documentation",
+        "description": "Serves the Swagger UI for API documentation",
+        "responses": {
+          "200": { "description": "Swagger UI rendered successfully" }
+        }
+      }
+    },
+    "/export/excel": {
+      "get": {
+        "summary": "Export products to Excel",
+        "description": "Exports all products to an Excel file with Arabic formatting",
+        "security": [{ "SessionAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Excel file generated and downloaded",
+            "content": {
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+                "schema": { "type": "string", "format": "binary" }
+              }
+            }
+          },
+          "404": { "description": "No products found for export" },
+          "500": { "description": "Internal server error" }
+        }
+      }
+    },
+    "/crud": {
+      "get": {
+        "summary": "Get recent products",
+        "description": "Renders the CRUD page with the 3 most recently updated products",
+        "security": [{ "SessionAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "CRUD page rendered with products",
+            "content": {
+              "text/html": { "schema": { "type": "string" } }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/crud/delete/{id}": {
+      "delete": {
+        "summary": "Delete a product",
+        "description": "Deletes a product by ID and logs the action",
+        "security": [{ "SessionAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Product ID"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Product deleted successfully", "content": { "application/json": { "schema": { "type": "string", "example": "Done" } } } },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/crud/update/{id}": {
+      "get": {
+        "summary": "Get product details for update",
+        "description": "Fetches a product by ID for updating",
+        "security": [{ "SessionAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Product ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product details retrieved",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/Product" } }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      },
+      "post": {
+        "summary": "Update a product",
+        "description": "Updates a product by ID and logs changes",
+        "security": [{ "SessionAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Product ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "username": {
-                    "type": "string"
-                  },
-                  "password": {
-                    "type": "string"
-                  }
-                },
-                "required": ["username", "password"]
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "User logged in successfully"
-            },
-            "401": {
-              "description": "Invalid credentials"
-            }
-          }
-        }
-      },
-      "/crud": {
-        "get": {
-          "tags": ["CRUD"],
-          "summary": "Get all products",
-          "responses": {
-            "200": {
-              "description": "Successfully retrieved products",
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/definitions/Product"
+                  "PNAME": { "type": "string", "description": "Product name" },
+                  "WHOLEPRICE": { "type": "number", "description": "Wholesale price" },
+                  "PNOTES": { "type": "string", "description": "Product notes" }
                 }
               }
             }
           }
-        }
-      },
-      "/productAdd": {
-        "post": {
-          "tags": ["CRUD"],
-          "summary": "Add a new product",
-          "parameters": [
-            {
-              "name": "body",
-              "in": "body",
-              "required": true,
-              "schema": {
-                "$ref": "#/definitions/ProductInput"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Product added successfully"
-            },
-            "400": {
-              "description": "Invalid input"
-            }
-          }
-        }
-      },
-      "/crud/delete/{id}": {
-        "delete": {
-          "tags": ["CRUD"],
-          "summary": "Delete a product",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "type": "string"
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Product deleted successfully"
-            },
-            "404": {
-              "description": "Product not found"
-            }
-          }
-        }
-      },
-      "/productUpdate/{id}": {
-        "post": {
-          "tags": ["CRUD"],
-          "summary": "Update a product",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "type": "string"
-            },
-            {
-              "name": "body",
-              "in": "body",
-              "required": true,
-              "schema": {
-                "$ref": "#/definitions/ProductInput"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Product updated successfully"
-            },
-            "404": {
-              "description": "Product not found"
-            }
-          }
+        },
+        "responses": {
+          "302": { "description": "Redirect to /crud after successful update" },
+          "404": { "description": "Product not found" },
+          "500": { "description": "Internal server error" }
         }
       }
     },
-    "definitions": {
-      "Product": {
-        "type": "object",
-        "properties": {
-          "PNAME": {
-            "type": "string"
+    "/storage": {
+      "get": {
+        "summary": "Get recent storage products",
+        "description": "Renders the storage page with the 3 most recently updated storage products",
+        "security": [{ "SessionAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Storage page rendered with products",
+            "content": {
+              "text/html": { "schema": { "type": "string" } }
+            }
           },
-          "WHOLEPRICE": {
-            "type": "number"
-          },
-          "PNOTES": {
-            "type": "string"
-          },
-          "createdBy": {
-            "type": "string"
-          },
-          "lastUpdate": {
-            "type": "string"
-          }
+          "500": { "description": "Server error" }
         }
       },
-      "ProductInput": {
-        "type": "object",
-        "properties": {
-          "PNAME": {
-            "type": "string"
-          },
-          "WHOLEPRICE": {
-            "type": "number"
-          },
-          "PNOTES": {
-            "type": "string"
+      "post": {
+        "summary": "Add a storage product",
+        "description": "Creates a new storage product",
+        "security": [{ "SessionAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productName": { "type": "string", "description": "Product name" },
+                  "quantity": { "type": "number", "description": "Quantity" },
+                  "unit": { "type": "string", "description": "Unit of measurement" },
+                  "wholePrice": { "type": "number", "description": "Wholesale price" },
+                  "status": { "type": "string", "description": "Product status" }
+                },
+                "required": ["productName", "quantity", "unit", "wholePrice", "status"]
+              }
+            }
           }
         },
-        "required": ["PNAME", "WHOLEPRICE"]
+        "responses": {
+          "302": { "description": "Redirect to /storage after successful creation" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/storage/delete/{id}": {
+      "delete": {
+        "summary": "Delete a storage product",
+        "description": "Deletes a storage product by ID",
+        "security": [{ "SessionAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Storage product ID"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Storage product deleted successfully", "content": { "application/json": { "schema": { "type": "string", "example": "Done" } } } },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/storage/update/{id}": {
+      "get": {
+        "summary": "Get storage product details for update",
+        "description": "Fetches a storage product by ID for updating",
+        "security": [{ "SessionAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Storage product ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Storage product details retrieved",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/StorageProduct" } }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      },
+      "post": {
+        "summary": "Update a storage product",
+        "description": "Updates a storage product by ID and logs changes",
+        "security": [{ "SessionAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Storage product ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productName": { "type": "string", "description": "Product name" },
+                  "wholePrice": { "type": "number", "description": "Wholesale price" },
+                  "quantity": { "type": "number", "description": "Quantity" },
+                  "unit": { "type": "string", "description": "Unit of measurement" },
+                  "status": { "type": "string", "description": "Product status" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "302": { "description": "Redirect to /storage after successful update" },
+          "404": { "description": "Storage product not found" },
+          "500": { "description": "Internal server error" }
+        }
+      }
+    },
+    "/loadMoreProducts": {
+      "get": {
+        "summary": "Load more products",
+        "description": "Fetches additional products with pagination",
+        "security": [{ "SessionAuth": [] }],
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": { "type": "integer", "default": 0 },
+            "description": "Number of products to skip"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of products",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Product" } }
+              }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/loadMoreStorageProducts": {
+      "get": {
+        "summary": "Load more storage products",
+        "description": "Fetches additional storage products with pagination",
+        "security": [{ "SessionAuth": [] }],
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": { "type": "integer", "default": 0 },
+            "description": "Number of storage products to skip"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of storage products",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/StorageProduct" } }
+              }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/products/api": {
+      "get": {
+        "summary": "Get all products (Manager only)",
+        "description": "Fetches all products for managers",
+        "security": [{ "SessionAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of all products",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Product" } }
+              }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/logs": {
+      "get": {
+        "summary": "Get logs (Manager only)",
+        "description": "Renders the logs page with all logs sorted by creation date",
+        "security": [{ "SessionAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Logs page rendered",
+            "content": {
+              "text/html": { "schema": { "type": "string" } }
+            }
+          },
+          "500": { "description": "Error retrieving logs" }
+        }
+      },
+      "post": {
+        "summary": "Delete all logs (Manager only)",
+        "description": "Drops the logs collection in the database",
+        "security": [{ "SessionAuth": [] }],
+        "responses": {
+          "302": { "description": "Redirect to /crud after successful deletion" },
+          "500": { "description": "Error processing request" }
+        }
+      }
+    },
+    "/dashboard/{username}": {
+      "get": {
+        "summary": "Get employee dashboard (Manager only)",
+        "description": "Renders the dashboard for a specific employee",
+        "security": [{ "SessionAuth": [] }],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Employee username"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dashboard page rendered",
+            "content": {
+              "text/html": { "schema": { "type": "string" } }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/api/employee-stats/{username}": {
+      "get": {
+        "summary": "Get employee statistics (Manager only)",
+        "description": "Fetches statistics for a specific employee",
+        "security": [{ "SessionAuth": [] }],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Employee username"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Employee statistics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "addations": { "type": "number" },
+                    "deleteations": { "type": "number" },
+                    "updateations": { "type": "number" },
+                    "visits": { "type": "number" },
+                    "username": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "404": { "description": "Employee not found" },
+          "500": { "description": "Internal server error" }
+        }
+      }
+    },
+    "/search": {
+      "post": {
+        "summary": "Search products by barcode",
+        "description": "Searches for products by barcode and renders search results",
+        "security": [{ "SessionAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "barcode": { "type": "string", "description": "Product barcode" }
+                },
+                "required": ["barcode"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search results page rendered",
+            "content": {
+              "text/html": { "schema": { "type": "string" } }
+            }
+          },
+          "302": { "description": "Redirect to /crud if no product found" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/productSearch": {
+      "post": {
+        "summary": "Search products by name, notes, or price",
+        "description": "Searches for products by partial match on name, notes, or exact price",
+        "security": [{ "SessionAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productSearch": { "type": "string", "description": "Search term for product name, notes, or price" }
+                },
+                "required": ["productSearch"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search results page rendered",
+            "content": {
+              "text/html": { "schema": { "type": "string" } }
+            }
+          },
+          "302": { "description": "Redirect to /crud if no products found" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/allreceipts": {
+      "get": {
+        "summary": "Get all receipts",
+        "description": "Renders a page with all receipts, optionally filtered by employee",
+        "security": [{ "SessionAuth": [] }],
+        "parameters": [
+          {
+            "name": "employee",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Filter receipts by employee username (optional)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Receipts page rendered",
+            "content": {
+              "text/html": { "schema": { "type": "string" } }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/receipts/{id}": {
+      "get": {
+        "summary": "Get a specific receipt",
+        "description": "Renders a page with details of a specific receipt",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Receipt ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Receipt details page rendered",
+            "content": {
+              "text/html": { "schema": { "type": "string" } }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/receipt/delete/{id}": {
+      "delete": {
+        "summary": "Delete a receipt",
+        "description": "Deletes a receipt by ID and logs the action",
+        "security": [{ "SessionAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Receipt ID"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Receipt deleted successfully", "content": { "application/json": { "schema": { "type": "string", "example": "Done" } } } },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/receipts/filter/{createdBy}": {
+      "post": {
+        "summary": "Filter receipts by creator",
+        "description": "Fetches receipts created by a specific employee",
+        "security": [{ "SessionAuth": [] }],
+        "parameters": [
+          {
+            "name": "createdBy",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Username of the employee who created the receipts"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Filtered receipts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": { "type": "string" },
+                      "RECEIPTID": { "type": "number" },
+                      "createdAt": { "type": "string", "format": "date-time" },
+                      "createdBy": { "type": "string" },
+                      "TOTAL": { "type": "number" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/getProduct": {
+      "post": {
+        "summary": "Get products by barcode",
+        "description": "Fetches products by barcode",
+        "security": [{ "SessionAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "detectedCode": { "type": "string", "description": "Product barcode" }
+                },
+                "required": ["detectedCode"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of products matching the barcode",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Product" } }
+              }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/productAdd": {
+      "post": {
+        "summary": "Add a new product",
+        "description": "Creates a new product and logs the action",
+        "security": [{ "SessionAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "PNAME": { "type": "string", "description": "Product name" },
+                  "WHOLEPRICE": { "type": "number", "description": "Wholesale price" },
+                  "PNOTES": { "type": "string", "description": "Product notes" },
+                  "barcode": { "type": "string", "description": "Product barcode" }
+                },
+                "required": ["PNAME", "WHOLEPRICE", "barcode"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "302": { "description": "Redirect to /crud after successful creation" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/allEmployees": {
+      "post": {
+        "summary": "Get all employees (Manager only)",
+        "description": "Fetches a list of all employees",
+        "security": [{ "SessionAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of all employees",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Employee" } }
+              }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/product/{barcode}": {
+      "get": {
+        "summary": "Get product by barcode",
+        "description": "Fetches a product by its barcode",
+        "parameters": [
+          {
+            "name": "barcode",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Product barcode"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product details",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/Product" } }
+            }
+          },
+          "404": { "description": "Product not found" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/sell": {
+      "get": {
+        "summary": "Render sell page",
+        "description": "Renders the sell page for creating sales",
+        "security": [{ "SessionAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Sell page rendered",
+            "content": {
+              "text/html": { "schema": { "type": "string" } }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/sale/add": {
+      "post": {
+        "summary": "Add a new sale",
+        "description": "Creates a new sale with products and redirects to receipt page",
+        "security": [{ "SessionAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "products": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/Product" },
+                    "description": "List of products in the sale"
+                  },
+                  "TOTAL": { "type": "number", "description": "Total sale amount" }
+                },
+                "required": ["products", "TOTAL"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "302": { "description": "Redirect to receipt page after successful creation" },
+          "500": { "description": "Error saving receipt" }
+        }
+      }
+    },
+    "/createEmployee": {
+      "get": {
+        "summary": "Render create employee page (Manager only)",
+        "description": "Renders the page for creating a new employee",
+        "security": [{ "SessionAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Create employee page rendered",
+            "content": {
+              "text/html": { "schema": { "type": "string" } }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      },
+      "post": {
+        "summary": "Create a new employee (Manager only)",
+        "description": "Creates a new employee and logs the action",
+        "security": [{ "SessionAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string", "description": "Employee username" },
+                  "password": { "type": "string", "description": "Employee password" }
+                },
+                "required": ["username", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "302": { "description": "Redirect to /crud after successful creation" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/login": {
+      "get": {
+        "summary": "Render login page",
+        "description": "Renders the login page for unauthenticated users",
+        "responses": {
+          "200": {
+            "description": "Login page rendered",
+            "content": {
+              "text/html": { "schema": { "type": "string" } }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      },
+      "post": {
+        "summary": "Login user",
+        "description": "Authenticates a user and creates a session",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string", "description": "Employee username" },
+                  "password": { "type": "string", "description": "Employee password" }
+                },
+                "required": ["username", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "302": { "description": "Redirect to /crud after successful login" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/logout": {
+      "all": {
+        "summary": "Logout user",
+        "description": "Destroys the user session and redirects to login page",
+        "security": [{ "SessionAuth": [] }],
+        "responses": {
+          "302": { "description": "Redirect to /login after logout" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/session-check": {
+      "get": {
+        "summary": "Check session",
+        "description": "Returns the current session data",
+        "security": [{ "SessionAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Session data",
+            "content": {
+              "application/json": { "schema": { "type": "object" } }
+            }
+          },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "Redirect to CRUD page",
+        "description": "Redirects to /crud",
+        "responses": {
+          "302": { "description": "Redirect to /crud" }
+        }
       }
     }
   }
-  
+}
