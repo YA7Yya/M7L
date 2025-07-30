@@ -225,6 +225,7 @@ function loading() {
   const barcodeResult = document.querySelector("#barcode");
   const barcodeContainer = document.querySelector("#barcodeContainer");
   const start = document.querySelector(".start");
+  const search = document.querySelector(".search");
   const stopScanning = document.querySelector(".stop");
   const reset = document.querySelector(".reset");
   let firstScan = true;
@@ -238,6 +239,7 @@ function loading() {
     currentScannerMode = mode;
     if (start.style.display !== "none") {
       start.style.display = "none";
+      search.style.display = "none";
       stopScanning.style.display = "block";
       reset.style.display = "block";
       barcodeResult.style.display = "block";
@@ -276,8 +278,8 @@ function loading() {
         audio.play();
         console.log("Barcode detected:", detectedCode);
         firstScan = false;
-        barcodeInput.disabled = false;
-        barcodeInput.value = detectedCode;
+        barcodeResult.disabled = false;
+        barcodeResult.value = detectedCode;
       } else {
         console.warn("Invalid barcode detected:", detectedCode);
         return;
@@ -288,8 +290,8 @@ function loading() {
         audio.play();
         console.log("Barcode detected:", detectedCode);
         firstScan = false;
-        barcodeInput.disabled = false;
-        barcodeInput.value = detectedCode;
+        barcodeResult.disabled = false;
+        barcodeResult.value = detectedCode;
       } else {
         console.warn("Invalid barcode detected:", detectedCode);
         return;
@@ -301,10 +303,10 @@ stopScanning.addEventListener("click", () =>{
   stopScanner()
 });
 
-reset.addEventListener("click", () =>{
+reset.addEventListener("click", async () => {
   let current = currentScannerMode;
-  stopScanner();
-  startScanner(current);
+  await stopScanner(); 
+  startScanner(current); 
 });
 
   async function sendPostRequest(barcode) {
@@ -335,16 +337,21 @@ reset.addEventListener("click", () =>{
     stopScanning.style.display = "none";
     reset.style.display = "none";
     start.style.display = "block";
+    search.style.display = "block";
     scannerContainer.style.display = "none";
     currentScannerMode = "";
   }
 
   document.querySelector(".start.add").addEventListener("click", () => {
-    startScanner("add");
+     if(currentScannerMode === ''){
+      startScanner("add");
+    }
   });
 
   document.querySelector(".start.search").addEventListener("click", () => {
-    startScanner("search");
+    if(currentScannerMode === ''){
+      startScanner("search");
+    }
   });
   $(document).ready(function() {
     let offset = 3;
