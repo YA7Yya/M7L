@@ -47,9 +47,22 @@ app.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-      imgSrc: ["'self'", 'data:', 'https://logopond.com', "https://img.freepik.com"], // Add logopond.com
+      imgSrc: [
+        "'self'",
+        "data:",
+        "https://logopond.com",
+        "https://img.freepik.com",
+      ],
       workerSrc: ["'self'", "blob:"],
-      scriptSrc: ["'self'", 'https://cdnjs.cloudflare.com',"https://cdn.jsdelivr.net",(req, res) => `'nonce-${res.locals.nonce}'`,]
+      scriptSrc: [
+        "'self'",
+        "https://cdnjs.cloudflare.com",
+        "https://cdn.jsdelivr.net",
+        "https://code.jquery.com",
+        "https://cdn.datatables.net",
+        "https://stackpath.bootstrapcdn.com",
+        (req, res) => `'nonce-${res.locals.nonce}'`,
+      ],
     },
   })
 );
@@ -235,6 +248,7 @@ app.get('/export/excel', authGuard.isAuth, managerGuard.isManager, async (req, r
 
 
 
+
 app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
   const id = req.session.userId;
 
@@ -302,16 +316,28 @@ app.post("/storage/update/:id", async (req, res) => {
       if (originalProduct[key] !== updatedFields[key]) {
         logDetails.before = originalProduct[key];
         logDetails.after = updatedFields[key];
+       let kk;
+         if(key == "quantity"){
+          kk = "الكمية"
+        }
+        if(key == "wholePrice"){
+          kk = "سعر الجملة"
+        }
+        if(key == "productName"){
+          kk = "اسم المنتج"
+        }
+        if(key == "unit"){
+          kk = "الوحدة"
+        }
+        if(key == "status"){
+          kk = "الحالة"
+        }
         let ss = await Log.create({
-          action: `Update ${key}`,
+          action: `تعديل` + " " + kk,
           userId: req.session.userId,
           username: req.session.username,
           details: {
-            productName: req.body.productName,
-            wholePrice: req.body.wholePrice,
-            quantity: req.body.quantity,
-            unit: req.body.unit,
-            status: req.body.status,
+           updatedFields
           },
           update: logDetails,
         });
@@ -372,7 +398,7 @@ app.get("/products/api", authGuard.isAuth, managerGuard.isManager, (req, res) =>
 app.get("/logs", authGuard.isAuth, managerGuard.isManager, async (req, res) => {
   try {
     const logs = await Log.find().sort({ createdAt: -1 }).lean();
-    res.render("logs/logs", { logs, moment: moment });
+    res.render("logs/logs", { logs, moment: moment , nonce: res.locals.nonce});
   } catch (error) {
     res.status(500).send("Error retrieving logs");
   }
@@ -718,8 +744,18 @@ app.post("/crud/update/:id",authGuard.isAuth,adminGuard.isEmployee, async (req, 
       if (originalProduct[key] !== updatedFields[key]) {
         logDetails.before = originalProduct[key];
         logDetails.after = updatedFields[key];
+        let kk;
+         if(key == "PNOTES"){
+          kk = "الملاحظات"
+        }
+        if(key == "PNAME"){
+          kk = "اسم المنتج"
+        }
+        if(key == "WHOLEPRICE"){
+          kk = "سعر الجملة"
+        }
         let ss = await Log.create({
-          action: "Update" + `${key}`,
+          action: "تعديل" + " " + `${kk}`,
           userId: req.session.userId,
           username: req.session.username,
           details: {
