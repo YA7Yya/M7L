@@ -48,6 +48,7 @@ app.use(
     directives: {
       defaultSrc: ["'self'"],
       imgSrc: ["'self'", 'data:', 'https://logopond.com', "https://img.freepik.com"], // Add logopond.com
+      workerSrc: ["'self'", "blob:"],
       scriptSrc: ["'self'", 'https://cdnjs.cloudflare.com',"https://cdn.jsdelivr.net",(req, res) => `'nonce-${res.locals.nonce}'`,]
     },
   })
@@ -251,6 +252,7 @@ app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
       req: req,
       isManager: req.session.role === "Manager",
       Dev: req.session.role === "Developer",
+      nonce: res.locals.nonce,
       moment: moment,
     });
   } catch (err) {

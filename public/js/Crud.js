@@ -297,6 +297,15 @@ function loading() {
     }
     stopScanner();
   });
+stopScanning.addEventListener("click", () =>{
+  stopScanner()
+});
+
+reset.addEventListener("click", () =>{
+  let current = currentScannerMode;
+  stopScanner();
+  startScanner(current);
+});
 
   async function sendPostRequest(barcode) {
     if (!barcode) {
