@@ -236,7 +236,7 @@
             const table = $('#logsTable').DataTable({
                 dom: 'rtip',
                 searching: true,
-                paging: true,
+                paging: false,
                 info: true,
                 language: {
                     search: "بحث:",
@@ -276,8 +276,7 @@
                 $('#loadingOverlay').addClass('active');
             });
 
-            // Accessibility: Focus search input on page load
-            $('#searchInput').focus();
+
         });
     </script>
 </body>

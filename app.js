@@ -42,30 +42,30 @@ app.use((req, res, next) => {
   res.locals.nonce = crypto.randomBytes(16).toString('base64');
   next();
 });
-app.use(helmet());
-app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      imgSrc: [
-        "'self'",
-        "data:",
-        "https://logopond.com",
-        "https://img.freepik.com",
-      ],
-      workerSrc: ["'self'", "blob:"],
-      scriptSrc: [
-        "'self'",
-        "https://cdnjs.cloudflare.com",
-        "https://cdn.jsdelivr.net",
-        "https://code.jquery.com",
-        "https://cdn.datatables.net",
-        "https://stackpath.bootstrapcdn.com",
-        (req, res) => `'nonce-${res.locals.nonce}'`,
-      ],
-    },
-  })
-);
+// app.use(helmet());
+// app.use(
+//   helmet.contentSecurityPolicy({
+//     directives: {
+//       defaultSrc: ["'self'"],
+//       imgSrc: [
+//         "'self'",
+//         "data:",
+//         "https://logopond.com",
+//         "https://img.freepik.com",
+//       ],
+//       workerSrc: ["'self'", "blob:"],
+//       scriptSrc: [
+//         "'self'",
+//         "https://cdnjs.cloudflare.com",
+//         "https://cdn.jsdelivr.net",
+//         "https://code.jquery.com",
+//         "https://cdn.datatables.net",
+//         "https://stackpath.bootstrapcdn.com",
+//         (req, res) => `'nonce-${res.locals.nonce}'`,
+//       ],
+//     },
+//   })
+// );
 
 app.use(compression());
 require('./node_modules/moment/locale/ar-sa.js'); // Load Arabic locale
@@ -572,25 +572,26 @@ app.post("/getProduct", async (req, res) => {
   }
 });
 
-app.post("/logs", managerGuard.isManager, async (req, res) => {
+app.post("/logs", managerGuard.isManager, express.json(), async (req, res) => {
   const url = process.env.DB;
+  const collectionName = req.body.collection;
 
-  console.log("Connecting to database...");
+  if (!collectionName) {
+    return res.status(400).send("Collection name is required.");
+  }
+
+  console.log(`Connecting to database to delete collection: ${collectionName}`);
 
   try {
-    const client = MongoClient.connect(url, {
-      useNewUrlParser: true,
-    });
-    console.log("Connected to database");
-
+    const client = await MongoClient.connect(url, { useNewUrlParser: true });
     const dbo = client.db("test");
 
-    // Drop the collection
-    const result = await dbo.collection("logs").drop();
-    console.log("Collection successfully deleted.");
+    await dbo.collection(collectionName).drop();
+    console.log(`Collection '${collectionName}' successfully deleted.`);
+
+    await client.close();
     res.redirect("/crud");
 
-    client.close();
   } catch (error) {
     if (error.codeName === "NamespaceNotFound") {
       console.log("Collection not found or already deleted.");
@@ -601,6 +602,7 @@ app.post("/logs", managerGuard.isManager, async (req, res) => {
     }
   }
 });
+
 
 app.post("/productAdd", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
   let searchObj = {PNAME: req.body.PNAME}
