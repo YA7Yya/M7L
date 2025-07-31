@@ -42,30 +42,30 @@ app.use((req, res, next) => {
   res.locals.nonce = crypto.randomBytes(16).toString('base64');
   next();
 });
-// app.use(helmet());
-// app.use(
-//   helmet.contentSecurityPolicy({
-//     directives: {
-//       defaultSrc: ["'self'"],
-//       imgSrc: [
-//         "'self'",
-//         "data:",
-//         "https://logopond.com",
-//         "https://img.freepik.com",
-//       ],
-//       workerSrc: ["'self'", "blob:"],
-//       scriptSrc: [
-//         "'self'",
-//         "https://cdnjs.cloudflare.com",
-//         "https://cdn.jsdelivr.net",
-//         "https://code.jquery.com",
-//         "https://cdn.datatables.net",
-//         "https://stackpath.bootstrapcdn.com",
-//         (req, res) => `'nonce-${res.locals.nonce}'`,
-//       ],
-//     },
-//   })
-// );
+app.use(helmet());
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      imgSrc: [
+        "'self'",
+        "data:",
+        "https://logopond.com",
+        "https://img.freepik.com",
+      ],
+      workerSrc: ["'self'", "blob:"],
+      scriptSrc: [
+        "'self'",
+        "https://cdnjs.cloudflare.com",
+        "https://cdn.jsdelivr.net",
+        "https://code.jquery.com",
+        "https://cdn.datatables.net",
+        "https://stackpath.bootstrapcdn.com",
+        (req, res) => `'nonce-${res.locals.nonce}'`,
+      ],
+    },
+  })
+);
 
 app.use(compression());
 require('./node_modules/moment/locale/ar-sa.js'); // Load Arabic locale

@@ -412,4 +412,57 @@ reset.addEventListener("click", async () => {
   });
 
 
-  
+   document.getElementById("trigger-delete").addEventListener("click", async function () {
+    const { value: collection } = await Swal.fire({
+      title: 'Select Collection to Delete',
+      input: 'select',
+      inputOptions: {
+        sales: 'Sales',
+        logs: 'Logs',
+        products: 'Products',
+        employees: 'Employees',
+        sessions:"Sessions",
+        receipts:"Receipts",
+        storages: "Storages"
+      },
+      inputPlaceholder: 'Select a collection',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      inputValidator: (value) => {
+        return !value && 'You need to select a collection!';
+      }
+    });
+
+    if (collection) {
+      const confirmResult = await Swal.fire({
+        title: `Are you sure?`,
+        text: `This will permanently delete the "${collection}" collection!`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        confirmButtonColor: '#d33',
+        cancelButtonText: 'Cancel',
+        cancelButtonColor: '#3085d6',
+      });
+
+      if (confirmResult.isConfirmed) {
+        fetch("/logs", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ collection })
+        }).then(res => {
+          if (res.redirected) {
+            window.location.href = res.url;
+          } else {
+            Swal.fire("Error", "Something went wrong.", "error");
+          }
+        }).catch(() => {
+          Swal.fire("Error", "Request failed.", "error");
+        });
+      }
+    }
+  });
