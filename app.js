@@ -271,7 +271,6 @@ app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    req.session.destroy();
     res.status(500).send("Server Error");
   }
 });

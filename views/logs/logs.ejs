@@ -161,6 +161,19 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
+        table.dataTable thead th {
+  direction: rtl;
+  text-align: right !important;
+}
+
+table.dataTable thead th.sorting::after,
+table.dataTable thead th.sorting_asc::after,
+table.dataTable thead th.sorting_desc::after {
+  float: left !important; /* force icon to left for RTL */
+  margin-left: 5px;
+  margin-right: 0;
+}
+
     </style>
 </head>
 <body>
@@ -258,7 +271,11 @@
                         target: 'tr'
                     }
                 },
-                order: [[3, 'desc']],
+                 order: [], 
+                 columnDefs: [
+            { orderable: false, targets: [0, 2] }
+             ],
+              
                 pageLength: 10,
                 initComplete: function() {
                     $('#loadingOverlay').removeClass('active');

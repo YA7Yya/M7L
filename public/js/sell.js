@@ -84,7 +84,7 @@ const scannerContainer = document.querySelector("#scanner-container");
         let existingProductIndex = scannedProducts.findIndex(
           (item) => item.PNAME === product.PNAME
         );
-
+        console.log(existingProductIndex);
         if (existingProductIndex !== -1) {
           // Product exists, increment quantity
           scannedProducts[existingProductIndex].QUANTITY += 1;
@@ -186,11 +186,17 @@ stopScanner()
     currentScannerMode = "";
   }
 
-  async function resetScan() {
-    await stopScanner();
-    startScanner(currentScannerMode);
-  }
+stopScanning.addEventListener("click", () =>{
+  stopScanner()
+});
+
+reset.addEventListener("click", async () => {
+  let current = currentScannerMode;
+  await stopScanner(); 
+  startScanner(current); 
+});
 
   document.querySelector(".start.add").addEventListener("click", () => {
     startScanner("add");
   });
+  
