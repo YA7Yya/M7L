@@ -252,11 +252,48 @@
       <center>
         <% let messages = req.flash('error'); %>
         <% if (messages && messages.length > 0) { %>
-          <div class="alert-danger custom-alert">
-            <%= messages[0] %>
-          </div>
+             <script nonce="<%= nonce %>">
+ const err = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.onmouseenter = Swal.stopTimer;
+    toast.onmouseleave = Swal.resumeTimer;
+  }
+});
+err.fire({
+  icon: "error",
+  title: `<%= messages[0] %>`
+});
+ </script>
         <% } %>
       </center>
+   <center>
+  <% const successMessages = req.flash('success'); %>
+  <% if (successMessages.length > 0) { %>
+ <script nonce="<%= nonce %>">
+ const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+  background: "#07bc0c",
+  didOpen: (toast) => {
+    toast.onmouseenter = Swal.stopTimer;
+    toast.onmouseleave = Swal.resumeTimer;
+  }
+});
+Toast.fire({
+  icon: "success",
+  title: `<%= successMessages[0] %>`
+});
+ </script>
+  <% } %>
+</center>
     </div>
     <div class="col-12 col-md-6 mb-3">
       <div id="scanner-container" class="w-100" style="height: 200px; display: none;">

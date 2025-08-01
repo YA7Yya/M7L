@@ -422,7 +422,6 @@ reset.addEventListener("click", async () => {
         products: 'Products',
         employees: 'Employees',
         sessions:"Sessions",
-        receipts:"Receipts",
         storages: "Storages"
       },
       inputPlaceholder: 'Select a collection',
@@ -448,7 +447,7 @@ reset.addEventListener("click", async () => {
       });
 
       if (confirmResult.isConfirmed) {
-        fetch("/logs", {
+        fetch("/deleteCollection", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -461,7 +460,7 @@ reset.addEventListener("click", async () => {
             Swal.fire("Error", "Something went wrong.", "error");
           }
         }).catch(() => {
-          Swal.fire("Error", "Request failed.", "error");
+          window.location.href = "/crud"
         });
       }
     }

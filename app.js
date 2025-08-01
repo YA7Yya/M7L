@@ -572,7 +572,7 @@ app.post("/getProduct", async (req, res) => {
   }
 });
 
-app.post("/logs", managerGuard.isManager, express.json(), async (req, res) => {
+app.post("/deleteCollection", managerGuard.isManager, express.json(), async (req, res) => {
   const url = process.env.DB;
   const collectionName = req.body.collection;
 
@@ -586,12 +586,10 @@ app.post("/logs", managerGuard.isManager, express.json(), async (req, res) => {
     const client = await MongoClient.connect(url, { useNewUrlParser: true });
     const dbo = client.db("test");
 
-    await dbo.collection(collectionName).drop();
-    console.log(`Collection '${collectionName}' successfully deleted.`);
-
-    await client.close();
-    res.redirect("/crud");
-
+    await dbo.collection(collectionName).drop().then((value) => { 
+      console.log(`Collection '${collectionName}' successfully deleted.`);
+      res.redirect("/crud")
+    });
   } catch (error) {
     if (error.codeName === "NamespaceNotFound") {
       console.log("Collection not found or already deleted.");
@@ -603,23 +601,22 @@ app.post("/logs", managerGuard.isManager, express.json(), async (req, res) => {
   }
 });
 
-
 app.post("/productAdd", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
-  let searchObj = {PNAME: req.body.PNAME}
-  if(Number(req.body.barcode) > 0){
-searchObj.push({barcode: req.body.barcode})
+  let searchObj = { PNAME: req.body.PNAME };
+  if (Number(req.body.barcode) > 0) {
+    searchObj.barcode = req.body.barcode; // Fix: Assign to object property
   }
+
   try {
-    const existingProduct = await Info.Info.findOne({
-      $or: [searchObj],
-    });
+    // Check for existing product
+    const existingProduct = await Info.Info.findOne({ $or: [searchObj] });
     if (existingProduct) {
-      req.flash("error", `This product already exists: ${existingProduct.PNAME}`);
+      req.flash("error", `${existingProduct.PNAME} already exists`);
       return res.redirect("/crud");
     }
 
     // Create new product
-    const createProduct = Info.createNewProduct(
+    const createdProduct = await Info.createNewProduct(
       req.body.PNAME,
       req.body.WHOLEPRICE,
       req.body.PNOTES,
@@ -629,17 +626,14 @@ searchObj.push({barcode: req.body.barcode})
     );
 
     // Update employee additions
-    const emp = Employee.Employee.findByIdAndUpdate(
+    const updatedEmp = await Employee.Employee.findByIdAndUpdate(
       req.session.userId,
       { $inc: { addations: 1 } },
-      { new: true } // Return updated document
+      { new: true }
     ).lean();
 
-    // Execute both operations
-    const [createdProduct, updatedEmp] = await Promise.all([createProduct, emp]);
-
     // Emit socket update
-    await io.emit('addationsUpdate', updatedEmp.addations);
+    await io.emit("addationsUpdate", updatedEmp.addations);
 
     // Log the action
     await logAction(
@@ -649,15 +643,16 @@ searchObj.push({barcode: req.body.barcode})
       {
         PNAME: req.body.PNAME,
         WHOLEPRICE: req.body.WHOLEPRICE,
-        PNOTES: req.body.PNOTES
+        PNOTES: req.body.PNOTES,
       }
     );
 
-    res.redirect("/crud");
+    req.flash("success", `Product ${createdProduct.PNAME} has been created successfully`);
+    return res.redirect("/crud");
   } catch (error) {
     console.error("Error in productAdd:", error);
     req.flash("error", "An error occurred while adding the product");
-    res.redirect("/crud");
+    return res.redirect("/crud");
   }
 });
 app.delete("/crud/delete/:id",authGuard.isAuth,adminGuard.isEmployee, async (req, res) => {
