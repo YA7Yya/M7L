@@ -32,7 +32,6 @@ const crypto = require('crypto');
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./views/swagger.json");
 const helmet = require("helmet");
-const {Analytics} = require("@vercel/analytics/next")
 const io = socketIo(server, {
   cors: {
     origin: "*",

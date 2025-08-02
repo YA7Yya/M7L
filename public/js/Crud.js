@@ -314,8 +314,6 @@ reset.addEventListener("click", async () => {
       alert("Please provide a valid barcode.");
       return;
     }
-    document.getElementById("loading").style.display = "flex";
-    document.getElementById("loading").style.justifyContent = "center";
     const form = document.createElement("form");
     form.method = "POST";
     form.action = "/search";
