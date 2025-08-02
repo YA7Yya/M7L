@@ -101,7 +101,7 @@ h1 {
   font-weight: bold;
 }
 
-.start{
+.start, .search{
   padding: 5px 10px;
   font-size: 0.7em;
   color: #fff;
@@ -110,6 +110,7 @@ h1 {
   cursor: pointer;
   margin: 3px;
 }
+
 mark {
   margin: 0;
   padding: 0;

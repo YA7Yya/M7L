@@ -280,11 +280,11 @@ function loading() {
         firstScan = false;
         barcodeResult.disabled = false;
         barcodeResult.value = detectedCode;
+      sendPostRequest(detectedCode);
       } else {
         console.warn("Invalid barcode detected:", detectedCode);
         return;
       }
-      sendPostRequest(detectedCode);
     } else if (currentScannerMode === "add") {
       if (/^\d{12,13}$/.test(detectedCode)) {
         audio.play();
@@ -348,7 +348,7 @@ reset.addEventListener("click", async () => {
     }
   });
 
-  document.querySelector(".start.search").addEventListener("click", () => {
+  document.querySelector(".search").addEventListener("click", () => {
     if(currentScannerMode === ''){
       startScanner("search");
     }
