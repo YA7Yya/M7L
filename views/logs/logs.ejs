@@ -211,6 +211,7 @@ table.dataTable thead th.sorting_desc::after {
                     </thead>
                     <tbody>
                         <% logs.forEach(log => { %>
+                            
                             <tr class="fade-in">
                                 <td><%= log.action %></td>
                                 <td><%= log.username %></td>
@@ -227,6 +228,17 @@ table.dataTable thead th.sorting_desc::after {
                                         <span class="d-inline-block text-truncate" style="max-width: 500px;" title="<%= log.details.username %>">
                                             <%= log.details.username %>
                                         </span>
+                                    <% }else if (log.action === "حذف فاتورة") { %>
+                                 <% if (
+  log.details &&
+  Array.isArray(log.details.products) &&
+  Array.isArray(log.details.products[0]) &&
+  log.details.products[0][0]
+) { %>
+  <%= log.details.products[0][0].PNAME %>
+<% } else { %>
+  <span>No product name</span>
+<% } %>
                                     <% } %>
                                 </td>
                                 <td><%= moment(log.createdAt).format('D MMMM YYYY - hh:mm A') %></td>

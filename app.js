@@ -685,15 +685,21 @@ app.delete("/receipt/delete/:id",authGuard.isAuth,adminGuard.isEmployee, async (
   });
   await Promise.all([deleted,updateD])
     .then(async (body) => {
-      await logAction("حذف فاتورة", req.session.userId, req.session.username,
-        {
-        PNAME: deleted.PNAME,
-        WHOLEPRICE: deleted.WHOLEPRICE,
-        PNOTES: deleted.PNOTES,
-    }
-      );
-      res.status(200).json("Done");
-    })
+      console.log(deleted.products);
+      console.log(deleted.products[0]);
+      console.log(deleted.products[0].PNAME);
+   await logAction(
+      "حذف فاتورة",
+      req.session.userId,
+      req.session.username,
+      {
+        products: [
+         deleted.products
+        ]
+      }
+    );
+res.status(200).json("Done");
+  })
 
     .catch((err) => {
       console.log(err);
