@@ -114,8 +114,8 @@
                       <% product.forEach(product =>{ %> 
                           <tr style="padding-bottom: 10px;">
                           <td><%= product.productName %> </td>
-                          <td><%= product.quantity%> / <%= product.unit %>  </td>
-                          <td style="text-align: center;font-weight: bold;"><%= product.wholePrice %> </td>
+                          <td><%= product.quantity%> <%= product.unit %>  </td>
+                          <td style="text-align: center;font-weight: bold;"><%= product.wholePrice %> جنيه </td>
                           <td><%= product.status %> </td>
                           <td><%= moment(product.updatedAt).format('LL') %> </td>
                           <td>

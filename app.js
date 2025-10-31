@@ -440,7 +440,6 @@ app.post("/search", async (req, res) => {
 
   try {
     const product = await Info.Info.findOne({ barcode: searchText });
-
     if (!product) {
       console.log("Not Found");
       req.flash("error", "No Product Has This Barcode: " + `${searchText}`);
@@ -448,10 +447,11 @@ app.post("/search", async (req, res) => {
     }
 
     // If product is found, proceed with the search results
-    const result = await Info.Info.find({ barcode: searchText });
+    const result = await Info.Info.findOne({ barcode: searchText });
+    console.log(result)
     res.render("search.ejs", {
       title: "Search",
-      searchResult: result,
+      search: result,
       req: req,
       isUser: req.session.userId,
       isManager: req.session.role === "Manager",

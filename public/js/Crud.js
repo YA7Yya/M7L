@@ -340,7 +340,8 @@ reset.addEventListener("click", async () => {
     currentScannerMode = "";
   }
 
-  document.querySelector(".start.add").addEventListener("click", () => {
+  document.querySelector(".start.add").addEventListener("click", (e) => {
+    console.log(e)
      if(currentScannerMode === ''){
       startScanner("add");
     }
@@ -351,10 +352,14 @@ reset.addEventListener("click", async () => {
       startScanner("search");
     }
   });
-  $(document).ready(function() {
-    let offset = 3;
-    let isLoading = false;
+  const page = document.body.dataset.page;
 
+
+
+  $(document).ready(function() {
+        let offset = 3;
+    let isLoading = false;
+    if (page === "crud") {
     $(window).on('scroll', function() {
       if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
         if (!isLoading) {
@@ -362,6 +367,13 @@ reset.addEventListener("click", async () => {
         }
       }
     });
+} else {
+return false;
+}
+
+
+
+
 
     function loadMoreProducts() {
       isLoading = true;

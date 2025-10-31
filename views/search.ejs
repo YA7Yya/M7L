@@ -20,7 +20,7 @@
   <script src="https://cdn.jsdelivr.net/npm/quagga/dist/quagga.min.js"></script>
 
 
-  <title>Crud System</title>
+  <title>Smart Price</title>
   <!-- Browser logo -->
   <link rel="icon" type="image/png" sizes="32x32" href="https://logopond.com/logos/70a5a28358a0f80718ac4f6737f018ae.png" />
   <style>
@@ -136,7 +136,7 @@ justify-content: center;
   </style>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body>
+<body data-page="search">
 <div class="position-relative">
   <a href="/storage" class="position-absolute top-1 start-0 m-0" >
     <i class="material-icons" style="font-size: 35px; color: #ff8800; margin-left: 32px; margin-top: 20px;">inventory_2</i>
@@ -178,7 +178,7 @@ justify-content: center;
     <a href="/logs" class="position-absolute top-0 start-0 m-4">
       <i class="fa fa-history fa-2x" aria-hidden="true"></i>
     </a>
-    <h1 class="fw-bolder text-uppercase text-center mb-4">Crud system</h1>
+    <h1 class="fw-bolder text-uppercase text-center mb-4">Smart Price</h1>
 
     <a class="position-absolute top-0 start-4 m-4" data-bs-toggle="modal" data-bs-target="#exampleModal">
       <i class="fa fa-user fa-2x getEmp" aria-hidden="true"></i>
@@ -288,7 +288,7 @@ justify-content: center;
           </tr>
         </thead>
         <tbody id="tableBody">
-          <% searchResult.forEach(search => { %> 
+          
             <% let price = search.WHOLEPRICE * 1.50 %>
             <tr class="productsdata">
               <td><%= search.PNAME %></td>
@@ -308,7 +308,7 @@ justify-content: center;
                 </button>
               </td>
             </tr>
-          <% }); %>
+    
         </tbody>
       </table>
     </div>
