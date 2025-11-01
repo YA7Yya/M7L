@@ -480,7 +480,6 @@ app.post("/productSearch", async (req, res) => {
     }
 
     const products = await Info.Info.find({ $or: searchConditions });
-
     if (products.length === 0) {
       req.flash("error", `No products found contain: ${searchText}`);
       return res.redirect("/crud");
@@ -489,7 +488,7 @@ app.post("/productSearch", async (req, res) => {
 
     res.render("search.ejs", {
       title: "Search",
-      searchResult: products,
+      search: products,
       req: req,
       isUser: req.session.userId,
       isManager: req.session.role === "Manager",

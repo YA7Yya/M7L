@@ -288,27 +288,27 @@ justify-content: center;
           </tr>
         </thead>
         <tbody id="tableBody">
-          
-            <% let price = search.WHOLEPRICE * 1.50 %>
+         <% search.forEach(searchRes => {%> 
+            <% let price = searchRes.WHOLEPRICE * 1.50 %>
             <tr class="productsdata">
-              <td><%= search.PNAME %></td>
-              <td><%= search.WHOLEPRICE %></td>
+              <td><%= searchRes.PNAME %></td>
+              <td><%= searchRes.WHOLEPRICE %></td>
               <td><%= price %></td>
-              <td><%= price - search.WHOLEPRICE %></td>
-              <td><%= search.PNOTES %></td>
-              <td><%= moment(search.updatedAt).format('LL') %></td>
+              <td><%= price - searchRes.WHOLEPRICE %></td>
+              <td><%= searchRes.PNOTES %></td>
+              <td><%= moment(searchRes.updatedAt).format('LL') %></td>
               <td>
-                <button class="btn btn-outline-warning update" id="fire" data-updateid="<%= search._id %>">
+                <button class="btn btn-outline-warning update" id="fire" data-updateid="<%= searchRes._id %>">
                   <i class="fa fa-edit"></i>
                 </button>
               </td>
               <td class="delete">
-                <button class="btn btn-outline-danger delete" data-idlink="<%= search._id %>">
+                <button class="btn btn-outline-danger delete" data-idlink="<%= searchRes._id %>">
                   <i class="fa fa-trash delete"></i>
                 </button>
               </td>
             </tr>
-    
+    <% }) %>
         </tbody>
       </table>
     </div>
