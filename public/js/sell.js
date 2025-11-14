@@ -78,7 +78,7 @@ const scannerContainer = document.querySelector("#scanner-container");
     } else {
       let form = document.querySelector("#myForm");
       data.forEach(function(product) {
-        let price = product.WHOLEPRICE * 1.50;
+        let price = product.price * 1.50;
 
         // Check if product already exists in scannedProducts
         let existingProductIndex = scannedProducts.findIndex(
@@ -100,12 +100,12 @@ const scannerContainer = document.querySelector("#scanner-container");
           let productRow = `
             <tr class="productsdata">
               <td>${product.PNAME}</td>
-              <td>${product.WHOLEPRICE.toFixed(2)}</td>
+              <td>${product.price.toFixed(2)}</td>
               <td>${price.toFixed(2)}</td>
               <td>
                 <input type="number" class="form-control quantity-input" value="1" min="1" step="1" style="width: 70px;" data-index="${scannedProducts.length}">
               </td>
-              <td class="profit-cell">${(price - product.WHOLEPRICE).toFixed(2)}</td>
+              <td class="profit-cell">${(price - product.price).toFixed(2)}</td>
               <td>${product.PNOTES}</td>
               <td>${moment(product.updatedAt).format('LL')}</td>
             </tr>

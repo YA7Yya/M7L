@@ -1,5 +1,5 @@
 let pNameInput = document.getElementById("puname");
-let wholePriceInput = document.getElementById("puprice");
+let priceInput = document.getElementById("puprice");
 let pQuantity = document.getElementById("puquantity");
 let pUnit = document.getElementById("puunit");
 let pStatus = document.getElementById("pustatus");
@@ -120,14 +120,14 @@ document.addEventListener("DOMContentLoaded", () => {
           // Select elements correctly
          
           // Make sure elements are found
-          if (!pNameInput || !wholePriceInput || !pQuantity || !pUnit || !pStatus) {
+          if (!pNameInput || !priceInput || !pQuantity || !pUnit || !pStatus) {
             console.error("One or more input elements are not found");
             return;
           }
   
           // Set values to elements
           pNameInput.value = response.productName;
-          wholePriceInput.value = response.wholePrice;
+          priceInput.value = response.price;
           pQuantity.value = response.quantity;
           pUnit.value = response.unit;
           pStatus.value = response.status;
@@ -172,12 +172,12 @@ document.addEventListener("DOMContentLoaded", () => {
             success: function(data) {
               if (data.length > 0) {
                 data.forEach(function(product) {
-                  let price = product.wholePrice * 1.50;
+                  let price = product.price * 1.50;
                   let productRow = `
                     <tr class="productsdata">
                       <td>${product.productName}</td>
                       <td>${product.quantity} / ${product.unit}</td>
-                      <td style="text-align: center;font-weight: bold;">${product.wholePrice}</td>
+                      <td style="text-align: center;font-weight: bold;">${product.price}</td>
                       <td>${product.status}</td>
                       <td>${moment(product.updatedAt).format('LL')}</td>
                       <td>

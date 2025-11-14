@@ -112,7 +112,7 @@
   <p class="text-center text-muted">Thank you for your purchase!</p>
 
   <div class="text-center mt-4 no-print">
-    <button onclick="window.print()" class="btn btn-outline-primary">🖨</button>
+    <button class="btn btn-outline-primary print">🖨</button>
     <button class="btn btn-outline-danger delete" data-idlink="<%= receipt._id %>">
       <i class="fa fa-trash delete" data-idlink="<%= receipt._id %>"></i>
     </button>
@@ -126,6 +126,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/locale/ar.min.js"></script>
-<script src="../../js/allreceipts.js"></script>
+<script src="../../js/allreceipts.js" nonce="<%= nonce %>"></script>
 </body>
 </html>

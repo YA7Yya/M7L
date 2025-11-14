@@ -204,8 +204,8 @@
       <input type="text" class="form-control" id="puname" name="PNAME" />
     </div>
     <div class="col-md-6 mb-3">
-      <label for="uprice">سعر الجملة :</label>
-      <input type="number" class="form-control" id="puprice" name="WHOLEPRICE" />
+      <label for="uprice">السعر :</label>
+      <input type="number" class="form-control" id="puprice" name="price" />
     </div>
   </div>
   <div class="mb-3">
@@ -233,8 +233,8 @@
         <input type="text" class="form-control" id="pname" name="PNAME" />
       </div>
       <div class="col-md-6 mb-3">
-        <label for="price">سعر الجملة :</label>
-        <input type="number" class="form-control" id="price" name="WHOLEPRICE" step="0.1" />
+        <label for="price">السعر :</label>
+        <input type="number" class="form-control" id="price" name="price" step="0.1" />
       </div>
     </div>
     <div class="mb-3" style="display: none;" id="barcodeContainer">
@@ -355,9 +355,7 @@ Toast.fire({
       <thead>
         <tr>
           <th>اسم المنتج</th>
-          <th>سعر الجملة</th>
           <th>السعر</th>
-          <th>الربح</th>
           <th>ملاحظات</th>
           <th>اخر تعديل</th>
           <th>تعديل المنتج</th>
@@ -366,12 +364,9 @@ Toast.fire({
       </thead>
       <tbody id="tableBody">
         <% allProducts.forEach(product => { %>
-          <% let price = product.WHOLEPRICE * 1.50 %>
           <tr class="productsdata">
             <td><%= product.PNAME %></td>
-            <td><%= product.WHOLEPRICE %></td>
-            <td><%= price %></td>
-            <td><%= price - product.WHOLEPRICE %></td>
+            <td><%= product.price %></td>
             <td><%= product.PNOTES %></td>
             <td><%= moment(product.updatedAt).format('LL') %></td>
             <td>

@@ -13,7 +13,7 @@ const storage = new mongoose.Schema(
 );
 const Storage = mongoose.model("Storage", storage);
 
-exports.storageProduct = async(productName, quantity, unit,wholePrice,status,createdBy,lastUpdate) =>{
+exports.storageProduct = async(productName, quantity, unit,price,status,createdBy,lastUpdate) =>{
     return new Promise(async (resolve, reject) => {
         await mongoose
           .connect(process.env.DB)
@@ -32,7 +32,7 @@ exports.storageProduct = async(productName, quantity, unit,wholePrice,status,cre
               productName: productName,
               quantity: quantity,
               unit: unit,
-              wholePrice: wholePrice,
+              price: price,
               status: status,
               createdBy: createdBy,
               lastUpdate: lastUpdate

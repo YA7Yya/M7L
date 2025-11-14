@@ -189,8 +189,8 @@ justify-content: center;
         <input type="text" class="form-control" id="pname" name="PNAME" />
       </div>
       <div class="col-md-6 mb-3">
-        <label for="price">سعر الجملة :</label>
-        <input type="number" class="form-control" id="price" name="WHOLEPRICE" step="0.1" />
+        <label for="price">السعر :</label>
+        <input type="number" class="form-control" id="price" name="price" step="0.1" />
       </div>
     </div>
       <div class="mb-3" style="display: none;" id="barcodeContainer">
@@ -237,8 +237,8 @@ justify-content: center;
         <input type="text" class="form-control" id="puname" name="PNAME" />
       </div>
       <div class="col-md-6 mb-3">
-        <label for="uprice">سعر الجملة :</label>
-        <input type="number" class="form-control" id="puprice" name="WHOLEPRICE" />
+        <label for="uprice">السعر :</label>
+        <input type="number" class="form-control" id="puprice" name="price" />
       </div>
     </div>
     <div class="mb-3">
@@ -278,7 +278,7 @@ justify-content: center;
         <thead>
           <tr>
             <th>اسم المنتج</th>
-            <th>سعر الجملة</th>
+            <th>السعر</th>
             <th>السعر</th>
             <th>الربح</th>
             <th>ملاحظات</th>
@@ -289,12 +289,12 @@ justify-content: center;
         </thead>
         <tbody id="tableBody">
          <% search.forEach(searchRes => {%> 
-            <% let price = searchRes.WHOLEPRICE * 1.50 %>
+            <% let price = searchRes.price * 1.50 %>
             <tr class="productsdata">
               <td><%= searchRes.PNAME %></td>
-              <td><%= searchRes.WHOLEPRICE %></td>
+              <td><%= searchRes.price %></td>
               <td><%= price %></td>
-              <td><%= price - searchRes.WHOLEPRICE %></td>
+              <td><%= price - searchRes.price %></td>
               <td><%= searchRes.PNOTES %></td>
               <td><%= moment(searchRes.updatedAt).format('LL') %></td>
               <td>
@@ -325,8 +325,8 @@ justify-content: center;
           <input type="text" class="form-control" id="puname" name="PNAME" />
         </div>
         <div class="col-md-6 mb-3">
-          <label for="uprice">سعر الجملة :</label>
-          <input type="number" class="form-control" id="uprice" name="WHOLEPRICE" />
+          <label for="uprice">السعر :</label>
+          <input type="number" class="form-control" id="uprice" name="price" />
         </div>
       </div>
       <div class="mb-3">

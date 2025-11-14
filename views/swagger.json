@@ -26,21 +26,21 @@
         "properties": {
           "_id": { "type": "string", "description": "Product ID" },
           "PNAME": { "type": "string", "description": "Product name" },
-          "WHOLEPRICE": { "type": "number", "description": "Wholesale price" },
+          "price": { "type": "number", "description": "Wholesale price" },
           "PNOTES": { "type": "string", "description": "Product notes" },
           "barcode": { "type": "string", "description": "Product barcode" },
           "createdBy": { "type": "string", "description": "Username of creator" },
           "lastUpdate": { "type": "string", "description": "Username of last updater" },
           "updatedAt": { "type": "string", "format": "date-time", "description": "Last updated timestamp" }
         },
-        "required": ["PNAME", "WHOLEPRICE", "barcode"]
+        "required": ["PNAME", "price", "barcode"]
       },
       "StorageProduct": {
         "type": "object",
         "properties": {
           "_id": { "type": "string", "description": "Storage product ID" },
           "productName": { "type": "string", "description": "Product name" },
-          "wholePrice": { "type": "number", "description": "Wholesale price" },
+          "price": { "type": "number", "description": "Wholesale price" },
           "quantity": { "type": "number", "description": "Quantity in storage" },
           "unit": { "type": "string", "description": "Unit of measurement" },
           "status": { "type": "string", "description": "Product status" },
@@ -48,7 +48,7 @@
           "lastUpdate": { "type": "string", "description": "Username of last updater" },
           "updatedAt": { "type": "string", "format": "date-time", "description": "Last updated timestamp" }
         },
-        "required": ["productName", "wholePrice", "quantity", "unit", "status"]
+        "required": ["productName", "price", "quantity", "unit", "status"]
       },
       "Employee": {
         "type": "object",
@@ -204,7 +204,7 @@
                 "type": "object",
                 "properties": {
                   "PNAME": { "type": "string", "description": "Product name" },
-                  "WHOLEPRICE": { "type": "number", "description": "Wholesale price" },
+                  "price": { "type": "number", "description": "Wholesale price" },
                   "PNOTES": { "type": "string", "description": "Product notes" }
                 }
               }
@@ -247,10 +247,10 @@
                   "productName": { "type": "string", "description": "Product name" },
                   "quantity": { "type": "number", "description": "Quantity" },
                   "unit": { "type": "string", "description": "Unit of measurement" },
-                  "wholePrice": { "type": "number", "description": "Wholesale price" },
+                  "price": { "type": "number", "description": "Wholesale price" },
                   "status": { "type": "string", "description": "Product status" }
                 },
-                "required": ["productName", "quantity", "unit", "wholePrice", "status"]
+                "required": ["productName", "quantity", "unit", "price", "status"]
               }
             }
           }
@@ -326,7 +326,7 @@
                 "type": "object",
                 "properties": {
                   "productName": { "type": "string", "description": "Product name" },
-                  "wholePrice": { "type": "number", "description": "Wholesale price" },
+                  "price": { "type": "number", "description": "Wholesale price" },
                   "quantity": { "type": "number", "description": "Quantity" },
                   "unit": { "type": "string", "description": "Unit of measurement" },
                   "status": { "type": "string", "description": "Product status" }
@@ -713,11 +713,11 @@
                 "type": "object",
                 "properties": {
                   "PNAME": { "type": "string", "description": "Product name" },
-                  "WHOLEPRICE": { "type": "number", "description": "Wholesale price" },
+                  "price": { "type": "number", "description": "Wholesale price" },
                   "PNOTES": { "type": "string", "description": "Product notes" },
                   "barcode": { "type": "string", "description": "Product barcode" }
                 },
-                "required": ["PNAME", "WHOLEPRICE", "barcode"]
+                "required": ["PNAME", "price", "barcode"]
               }
             }
           }

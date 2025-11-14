@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const productInfo = new mongoose.Schema(
   {
     PNAME: String,
-    WHOLEPRICE: Number,
+    price: Number,
     PNOTES: String,
     barcode:Number,
     createdBy: { type: String}, // من أنشأ المنتج
@@ -28,7 +28,7 @@ exports.getAllProducts = async () => {
   });
 };
 
-exports.createNewProduct = async (PNAME, WHOLEPRICE, PNOTES,barcode,createdBy,lastUpdate) => {
+exports.createNewProduct = async (PNAME, price, PNOTES,barcode,createdBy,lastUpdate) => {
   return new Promise(async (resolve, reject) => {
     await mongoose
       .connect(process.env.DB)
@@ -41,7 +41,7 @@ exports.createNewProduct = async (PNAME, WHOLEPRICE, PNOTES,barcode,createdBy,la
         } else {
               let Product = new Info({
           PNAME: PNAME,
-          WHOLEPRICE: WHOLEPRICE,
+          price: price,
           PNOTES: PNOTES,
           barcode:barcode,
           createdBy: createdBy,

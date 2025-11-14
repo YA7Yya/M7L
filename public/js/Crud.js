@@ -1,6 +1,6 @@
 let button = document.querySelectorAll(".delete");
 let pNameInput = document.querySelector("#puname");
-let wholePriceInput = document.querySelector("#puprice");
+let priceInput = document.querySelector("#puprice");
 let pNotesInput = document.querySelector("#punotes");
 let empname = document.getElementById("empname");
 let check = document.querySelector(".check");
@@ -181,7 +181,7 @@ function loading() {
       success: function (response) {
         console.log("Response:", response); // Debugging statement
         pNameInput.value = response.PNAME;
-        wholePriceInput.value = response.WHOLEPRICE;
+        priceInput.value = response.price;
         pNotesInput.value = response.PNOTES;
         $(".swal2-container").css("display", "none");
         $(".swal2-shown").css("overflow", "visible");
@@ -384,13 +384,13 @@ return false;
         success: function(data) {
           if (data.length > 0) {
             data.forEach(function(product) {
-              let price = product.WHOLEPRICE * 1.50;
+              let price = product.price * 1.50;
               let productRow = `
                 <tr class="productsdata">
                   <td>${product.PNAME}</td>
-                  <td>${product.WHOLEPRICE}</td>
+                  <td>${product.price}</td>
                   <td>${price}</td>
-                  <td>${price - product.WHOLEPRICE}</td>
+                  <td>${price - product.price}</td>
                   <td>${product.PNOTES}</td>
                   <td>${moment(product.updatedAt).format('LL')}</td>
                   <td>

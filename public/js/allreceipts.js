@@ -1,3 +1,7 @@
+const printBtn = document.querySelector(".print");
+printBtn.addEventListener("click",() =>{
+window.print()
+})
 document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("click", function(e) {
     if (e.target.closest(".delete")) {

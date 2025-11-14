@@ -154,7 +154,7 @@ app.get('/export/excel', authGuard.isAuth, managerGuard.isManager, async (req, r
 
     worksheet.columns = [
       { header: 'اسم المنتج', key: 'PNAME', width: 40 },
-      { header: 'سعر الجملة', key: 'WHOLEPRICE', width: 20 },
+      { header: 'السعر', key: 'price', width: 20 },
       { header: 'ملاحظات', key: 'PNOTES', width: 40 },
       {
         header: 'الباركود',
@@ -289,7 +289,7 @@ app.post("/storage/update/:id", async (req, res) => {
     // Create an object with the updated fields
     const updatedFields = {
       productName: req.body.productName !== originalProduct.productName ? req.body.productName : originalProduct.productName,
-      wholePrice: req.body.wholePrice !== originalProduct.wholePrice ? parseFloat(req.body.wholePrice) : originalProduct.wholePrice,
+      price: req.body.price !== originalProduct.price ? parseFloat(req.body.price) : originalProduct.price,
       quantity: req.body.quantity !== originalProduct.quantity ? req.body.quantity : originalProduct.quantity,
       unit: req.body.unit !== originalProduct.unit ? req.body.unit : originalProduct.unit,
       status: req.body.status !== originalProduct.status ? req.body.status : originalProduct.status,
@@ -318,8 +318,8 @@ app.post("/storage/update/:id", async (req, res) => {
          if(key == "quantity"){
           kk = "الكمية"
         }
-        if(key == "wholePrice"){
-          kk = "سعر الجملة"
+        if(key == "price"){
+          kk = "السعر"
         }
         if(key == "productName"){
           kk = "اسم المنتج"
@@ -350,7 +350,7 @@ app.post("/storage/update/:id", async (req, res) => {
 });
 app.post("/storage", authGuard.isAuth, adminGuard.isEmployee, (req, res) => {
   console.log(req.body);
-  Storage.storageProduct(req.body.productName, req.body.quantity, req.body.unit, req.body.wholePrice, req.body.status, req.session.username).then(() => {
+  Storage.storageProduct(req.body.productName, req.body.quantity, req.body.unit, req.body.price, req.body.status, req.session.username).then(() => {
     res.redirect("/storage");
   });
 });
@@ -476,7 +476,7 @@ app.post("/productSearch", async (req, res) => {
 
     // Check if searchText is a valid number
     if (!isNaN(searchText)) {
-      searchConditions.push({ WHOLEPRICE: Number(searchText) });
+      searchConditions.push({ price: Number(searchText) });
     }
 
     const products = await Info.Info.find({ $or: searchConditions });
@@ -514,7 +514,7 @@ console.log(employeeFilter);
     receipts = await Sales.Sale.find().sort({ createdAt: -1 }).lean();
   }
 
- res.render('./receipts/allReceipts.ejs', { receipts, employees, selectedEmployee: employeeFilter || 'all' , moment: moment});
+ res.render('./receipts/allReceipts.ejs', { receipts, employees, selectedEmployee: employeeFilter || 'all' , moment: moment, nonce: res.locals.nonce});
 
   
 })
@@ -615,7 +615,7 @@ app.post("/productAdd", authGuard.isAuth, adminGuard.isEmployee, async (req, res
     // Create new product
     const createdProduct = await Info.createNewProduct(
       req.body.PNAME,
-      req.body.WHOLEPRICE,
+      req.body.price,
       req.body.PNOTES,
       req.body.barcode,
       req.session.username,
@@ -639,7 +639,7 @@ app.post("/productAdd", authGuard.isAuth, adminGuard.isEmployee, async (req, res
       req.session.username,
       {
         PNAME: req.body.PNAME,
-        WHOLEPRICE: req.body.WHOLEPRICE,
+        price: req.body.price,
         PNOTES: req.body.PNOTES,
       }
     );
@@ -664,7 +664,7 @@ app.delete("/crud/delete/:id",authGuard.isAuth,adminGuard.isEmployee, async (req
       await logAction("حذف منتج", req.session.userId, req.session.username,
         {
         PNAME: deleted.PNAME,
-        WHOLEPRICE: deleted.WHOLEPRICE,
+        price: deleted.price,
         PNOTES: deleted.PNOTES,
     }
       );
@@ -717,7 +717,7 @@ app.post("/crud/update/:id",authGuard.isAuth,adminGuard.isEmployee, async (req, 
     // Create an object with the updated fields
     const updatedFields = {
       PNAME: req.body.PNAME !== originalProduct.PNAME ? req.body.PNAME : originalProduct.PNAME,
-      WHOLEPRICE: req.body.WHOLEPRICE !== originalProduct.WHOLEPRICE ? parseFloat(req.body.WHOLEPRICE) : originalProduct.WHOLEPRICE,
+      price: req.body.price !== originalProduct.price ? parseFloat(req.body.price) : originalProduct.price,
       PNOTES: req.body.PNOTES !== originalProduct.PNOTES ? req.body.PNOTES : originalProduct.PNOTES,
     };
 
@@ -751,8 +751,8 @@ app.post("/crud/update/:id",authGuard.isAuth,adminGuard.isEmployee, async (req, 
         if(key == "PNAME"){
           kk = "اسم المنتج"
         }
-        if(key == "WHOLEPRICE"){
-          kk = "سعر الجملة"
+        if(key == "price"){
+          kk = "السعر"
         }
         let ss = await Log.create({
           action: "تعديل" + " " + `${kk}`,
@@ -760,7 +760,7 @@ app.post("/crud/update/:id",authGuard.isAuth,adminGuard.isEmployee, async (req, 
           username: req.session.username,
           details: {
             PNAME: req.body.PNAME,
-            WHOLEPRICE: req.body.WHOLEPRICE,
+            price: req.body.price,
             PNOTES: req.body.PNOTES,
           },
           update: logDetails,
