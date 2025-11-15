@@ -45,7 +45,7 @@
   <div class="mb-3">
     <label for="employeeFilter" class="form-label">Filter by Employee:</label>
     <select id="employeeFilter" class="form-select">
-      <option value="">All Employees</option>
+      <option value="all">All Employees</option>
       <% employees.forEach(function(emp) { %>
         <% if (selectedEmployee === emp.username) { %>
           <option value="<%= emp.username %>" selected><%= emp.username %></option>

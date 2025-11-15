@@ -599,13 +599,16 @@ app.post("/deleteCollection", managerGuard.isManager, express.json(), async (req
 });
 
 app.post("/productAdd", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
+     if (!req.body.PNAME || !req.body.price) {
+    req.flash("error", "Product Name and Price are required");
+    return res.redirect("/crud");
+  }
   let searchObj = { PNAME: req.body.PNAME };
   if (Number(req.body.barcode) > 0) {
     searchObj.barcode = req.body.barcode; // Fix: Assign to object property
   }
 
   try {
-    // Check for existing product
     const existingProduct = await Info.Info.findOne({ $or: [searchObj] });
     if (existingProduct) {
       req.flash("error", `${existingProduct.PNAME} already exists`);
