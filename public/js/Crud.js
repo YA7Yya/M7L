@@ -357,7 +357,7 @@ reset.addEventListener("click", async () => {
 
 
   $(document).ready(function() {
-        let offset = 3;
+        let offset = 5;
     let isLoading = false;
     if (page === "crud") {
     $(window).on('scroll', function() {
@@ -407,7 +407,7 @@ return false;
               `;
               $('#tableBody').append(productRow);
             });
-            offset += 3;
+            offset += 5;
             isLoading = false;
           } else {
             $(window).off('scroll');

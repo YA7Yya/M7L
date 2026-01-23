@@ -78,7 +78,6 @@ const scannerContainer = document.querySelector("#scanner-container");
     } else {
       let form = document.querySelector("#myForm");
       data.forEach(function(product) {
-        let price = product.price * 1.50;
 
         // Check if product already exists in scannedProducts
         let existingProductIndex = scannedProducts.findIndex(
@@ -94,18 +93,16 @@ const scannerContainer = document.querySelector("#scanner-container");
           $(`.hidden-quantity[data-index="${existingProductIndex}"]`).val(
             scannedProducts[existingProductIndex].QUANTITY
           );
-          totalPrice += price;
+          totalPrice += product.price;
         } else {
           // New product, add to scannedProducts and table
           let productRow = `
             <tr class="productsdata">
               <td>${product.PNAME}</td>
-              <td>${product.price.toFixed(2)}</td>
-              <td>${price.toFixed(2)}</td>
               <td>
-                <input type="number" class="form-control quantity-input" value="1" min="1" step="1" style="width: 70px;" data-index="${scannedProducts.length}">
+              <input type="number" class="form-control quantity-input" value="1" min="1" step="1" style="width: 70px;" data-index="${scannedProducts.length}">
               </td>
-              <td class="profit-cell">${(price - product.price).toFixed(2)}</td>
+              <td>${product.price.toFixed(2)}</td>
               <td>${product.PNOTES}</td>
               <td>${moment(product.updatedAt).format('LL')}</td>
             </tr>
@@ -113,7 +110,7 @@ const scannerContainer = document.querySelector("#scanner-container");
           scannedProducts.push({
             PNAME: product.PNAME,
             QUANTITY: 1,
-            PRICE: price,
+            PRICE: product.price.toFixed(2),
             PNOTES: product.PNOTES
           });
           $('#tableBody').append(productRow);
@@ -121,11 +118,11 @@ const scannerContainer = document.querySelector("#scanner-container");
             <div style="display: none;">
               <input type="text" value="${product.PNAME}" name="products[${scannedProducts.length - 1}][PNAME]">
               <input type="number" value="1" class="hidden-quantity" data-index="${scannedProducts.length - 1}" name="products[${scannedProducts.length - 1}][QUANTITY]">
-              <input type="number" value="${price}" name="products[${scannedProducts.length - 1}][PRICE]">
+              <input type="number" value="${product.price.toFixed(2)}" name="products[${scannedProducts.length - 1}][PRICE]">
               <input type="text" value="${product.PNOTES}" name="products[${scannedProducts.length - 1}][PNOTES]">
             </div>
           `);
-          totalPrice += price;
+          totalPrice += product.price;
         }
 
         // Update quantity input event listener
@@ -136,7 +133,7 @@ const scannerContainer = document.querySelector("#scanner-container");
           const index = $(this).data('index');
           const previousQuantity = parseInt(quantityInput.data('previous-quantity'), 10) || 1;
 
-          totalPrice = totalPrice - (price * previousQuantity) + (price * quantity);
+          totalPrice = totalPrice - (product.price.toFixed(2) * previousQuantity) + (product.price.toFixed(2) * quantity);
           scannedProducts[index].QUANTITY = quantity;
           $(`.hidden-quantity[data-index="${index}"]`).val(quantity);
 

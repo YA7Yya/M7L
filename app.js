@@ -255,7 +255,7 @@ app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
     const updateVisitCount = await Employee.Employee.findByIdAndUpdate(id, { $inc: { visits: 1 } }).lean();
     await io.emit("visitsUpdate", updateVisitCount.visits);
 
-    const fetchProducts = Info.Info.find().sort({ updatedAt: -1 }).limit(3).lean();
+    const fetchProducts = Info.Info.find().sort({ updatedAt: -1 }).limit(5).lean();
 
     const [updateResult, allProducts] = await Promise.all([updateVisitCount, fetchProducts]);
 
@@ -355,7 +355,7 @@ app.post("/storage", authGuard.isAuth, adminGuard.isEmployee, (req, res) => {
   });
 });
 app.get("/storage", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
-  await Storage.Storage.find().sort({ updatedAt: -1 }).limit(3).then((storedProducts) => {
+  await Storage.Storage.find().sort({ updatedAt: -1 }).limit(5).then((storedProducts) => {
     res.render("./storage.ejs", {
       product: storedProducts,
       moment: moment,
@@ -365,7 +365,7 @@ app.get("/storage", authGuard.isAuth, adminGuard.isEmployee, async (req, res) =>
 app.get("/loadMoreProducts", authGuard.isAuth, async (req, res) => {
   try {
     const offset = parseInt(req.query.offset) || 0;
-    const limit = 3;
+    const limit = 5;
 
     const moreProducts = await Info.Info.find().sort({ updatedAt: -1 }).skip(offset).limit(limit).lean();
 
@@ -378,7 +378,7 @@ app.get("/loadMoreProducts", authGuard.isAuth, async (req, res) => {
 app.get("/loadMoreStorageProducts", authGuard.isAuth, async (req, res) => {
   try {
     const offset = parseInt(req.query.offset) || 0;
-    const limit = 3;
+    const limit = 5;
 
     const moreProducts = await Storage.Storage.find().sort({ updatedAt: -1 }).skip(offset).limit(limit).lean();
 
@@ -862,12 +862,12 @@ app.post("/login", async (req, res) => {
 });
 
 
-app.post("/sale/add", (req, res) => {
+app.post("/sale/add",adminGuard.isEmployee, (req, res) => {
     Sales.Sale.estimatedDocumentCount().then(async(countedDoc) => {
       const products = req.body.products || []; // Expecting array of products
       await Sales.newSale(products,req.body.TOTAL, countedDoc + 1, req.session.username, req.session.username).then((result) => {
         console.log(result);
-        res.redirect(`/receipts/${result._id}`);
+        return res.redirect(`/receipts/${result._id}`);
       }).catch((err) => {
         console.error(err);
         res.status(500).send("Error saving receipt.");

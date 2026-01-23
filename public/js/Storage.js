@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
     $(document).ready(function() {
-        let offset = 3;
+        let offset = 5;
         let isLoading = false; // Flag to track loading state
       
         $(window).on('scroll', function() {
@@ -192,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   `;
                   $('#tableBody').append(productRow);
                 });
-                offset += 3; // Increase the offset for the next batch
+                offset += 5; // Increase the offset for the next batch
                 isLoading = false; // Reset loading state after content is loaded
               } else {
                 // No more products to load, you can remove the scroll event listener or handle it differently
