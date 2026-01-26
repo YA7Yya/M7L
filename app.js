@@ -523,6 +523,31 @@ Sales.Sale.findById({_id: req.params.id}).lean().then((receipt) =>{
   res.render("./receipts/receipt.ejs", {receipt: receipt, moment: moment})
 })
 })
+app.post("/receipts/filter/all", async (req, res) => {
+  try {
+
+  
+
+    const receipts = await Sales.Sale.find().sort({createdAt: -1}).lean(); // Use .lean() to avoid circular refs
+
+    // Format the data if needed
+    const filtered = receipts.map(receipt => {
+  console.log(receipt);
+      return {
+        _id: receipt._id,
+        RECEIPTID: receipt.RECEIPTID,
+        createdAt: receipt.createdAt,
+        createdBy: receipt.createdBy || "N/A",
+        TOTAL: receipt.TOTAL || 0
+      };
+    });
+    res.json(filtered);
+    
+  } catch (err) {
+    console.error("Filter error:", err);
+    res.status(500).json({ error: "Server error filtering receipts" });
+  }
+});
 app.post("/receipts/filter/:createdBy", async (req, res) => {
   try {
     const createdBy = req.params.createdBy;
@@ -795,7 +820,9 @@ app.get("/storage/update/:id", async (req, res) => {
     res.status(200).json(value);
   });
 });
-app.get("/", (req, res) => res.redirect("/crud"));
+app.get("/", (req, res) => {
+  res.render()
+});
 
 app.get("/createEmployee", managerGuard.isManager, (req, res) => {
   res.render("./auth/createEmployee.ejs");
