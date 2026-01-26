@@ -821,7 +821,7 @@ app.get("/storage/update/:id", async (req, res) => {
   });
 });
 app.get("/", (req, res) => {
-  res.render()
+  res.render("main.ejs")
 });
 
 app.get("/createEmployee", managerGuard.isManager, (req, res) => {
