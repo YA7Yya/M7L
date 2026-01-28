@@ -1,7 +1,4 @@
-let button = document.querySelectorAll(".delete");
-let pNameInput = document.querySelector("#puname");
-let priceInput = document.querySelector("#puprice");
-let pNotesInput = document.querySelector("#punotes");
+
 let empname = document.getElementById("empname");
 let check = document.querySelector(".check");
 let getEmp = document.querySelector(".getEmp");
@@ -43,102 +40,25 @@ async function fetchEmployeeData() {
   }
 }
 
-getEmp.addEventListener("click", (e) => {
-  if (!hasFetchedData) {
-    fetchEmployeeData();
-  }
-});
+// getEmp.addEventListener("click", (e) => {
+//   if (!hasFetchedData) {
+//     fetchEmployeeData();
+//   }
+// });
 
-check.addEventListener("click", (e) => {
-  const selectedUsername = selectElement.value;
-  if (selectedUsername) {
-    location.href = `/dashboard/${selectedUsername}`;
-  }
-});
-reloadEmployees.addEventListener("click", (e) => {
-fetchEmployeeData()
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  document.addEventListener("click", function(e) {
-    if (e.target.closest(".delete")) {
-      let deleteId = e.target.closest(".delete").getAttribute("data-idlink");
-      if (!deleteId) {
-        console.error("No delete ID found.");
-        return;
-      }
-      const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-          confirmButton: "btn btn-success",
-          cancelButton: "btn btn-danger",
-        },
-        buttonsStyling: false,
-      });
-
-      swalWithBootstrapButtons
-        .fire({
-          title: "Are you sure?",
-          text: "لن تستطيع الرجوع عن ذلك !",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonText: "نعم متأكد في حذف ذلك",
-          cancelButtonText: "لا تراجع في الامر",
-          reverseButtons: true,
-        })
-        .then((result) => {
-          if (result.isConfirmed) {
-            loading();
-            $.ajax({
-              url: `/crud/delete/${deleteId}`,
-              type: "DELETE",
-              success: function (result) {
-                Swal.mixin({
-                  toast: true,
-                  position: "top-end",
-                  showConfirmButton: false,
-                  timer: 1000,
-                  timerProgressBar: false,
-                  background: "#07bc0c",
-                }).fire({ icon: "success", title: `تم حذف المنتج بنجاح` });
-                setTimeout(() => {
-                  window.location.reload();
-                }, 2000);
-              },
-              error: function (err) {
-                console.log(err); // Debugging statement
-                Swal.fire({
-                  title: "Error",
-                  text: "Error While Deleting Product ...",
-                  icon: "error",
-                });
-              },
-            });
-          } else if (result.dismiss === Swal.DismissReason.cancel) {
-            swalWithBootstrapButtons.fire({
-              title: "Cancelled",
-              text: "لم يتم حذف المنتج !",
-              icon: "error",
-            });
-          }
-        });
-    }
-  });
-});
+// check.addEventListener("click", (e) => {
+//   const selectedUsername = selectElement.value;
+//   if (selectedUsername) {
+//     location.href = `/dashboard/${selectedUsername}`;
+//   }
+// });
+// reloadEmployees.addEventListener("click", (e) => {
+// fetchEmployeeData()
+// });
 
 
-function search_animal() {
-  let input = document.getElementById("searchbar").value;
-  input = input.toLowerCase();
-  let x = document.getElementsByClassName("productsdata");
 
-  for (i = 0; i < x.length; i++) {
-    if (!x[i].innerHTML.toLowerCase().includes(input)) {
-      x[i].style.display = "none";
-    } else {
-      x[i].style.display = "block";
-    }
-  }
-}
+
 function loading() {
   
   let timerInterval;
@@ -160,71 +80,13 @@ function loading() {
   });
 }
 
- document.addEventListener("DOMContentLoaded", () => {
-  document.addEventListener("click", function(e) {
-    if (e.target.closest(".update")) {
-      let updateId = e.target.closest(".update").getAttribute("data-updateid");
-      console.log("Update ID:", updateId); // Debugging statement
-      updateP(updateId);
-    }
-  });
 
-  function updateP(updateId) {
-    if (!updateId) {
-      alert("Error While Getting updateid");
-      return;
-    }
-    loading();
-    $.ajax({
-      url: `/crud/update/${updateId}`,
-      type: "GET",
-      success: function (response) {
-        console.log("Response:", response); // Debugging statement
-        pNameInput.value = response.PNAME;
-        priceInput.value = response.price;
-        pNotesInput.value = response.PNOTES;
-        $(".swal2-container").css("display", "none");
-        $(".swal2-shown").css("overflow", "visible");
-        document.querySelector(".addingForm").style.display =
-          "none";
-        document.querySelector(
-          "#updateForm"
-        ).style.display = "block";
-          document.querySelector(
-            "#updateBtn"
-          ).style.display = "block";
-        document.querySelector(
-          "#addBtn"
-        ).style.display = "none";
-        document.getElementById(
-          "updateForm"
-        ).action = `/crud/update/${updateId}`;
-      },
 
-      error: function (err) {
-        console.log(err);
-        Swal.fire({
-          title: "Error",
-          text: "Error While Getting Product Data !",
-          icon: "error",
-        });
-      },
-    });
-  }
-});
 
- $(document).ready(function() {
-    $('#searchInput').on('keyup', function() {
-      var value = $(this).val().toLowerCase();
-      $('#tableBody tr').filter(function() {
-        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-      });
-    });
-  });
   const scannerContainer = document.querySelector("#scanner-container");
   const barcodeResult = document.querySelector("#barcode");
   const barcodeContainer = document.querySelector("#barcodeContainer");
-  const start = document.querySelector(".start");
+  const start = document.querySelector(".start.add");
   const search = document.querySelector(".search");
   const stopScanning = document.querySelector(".stop");
   const reset = document.querySelector(".reset");
@@ -239,11 +101,11 @@ function loading() {
     currentScannerMode = mode;
     if (start.style.display !== "none") {
       start.style.display = "none";
-      search.style.display = "none";
+      // search.style.display = "none";
       stopScanning.style.display = "block";
       reset.style.display = "block";
       barcodeResult.style.display = "block";
-      barcodeContainer.style.display = "block";
+      // barcodeContainer.style.display = "block";
       scannerContainer.style.display = "block";
       Quagga.init({
         inputStream: {
@@ -334,8 +196,8 @@ reset.addEventListener("click", async () => {
     videoTrack = null;
     stopScanning.style.display = "none";
     reset.style.display = "none";
-    start.style.display = "block";
-    search.style.display = "block";
+    start.style.display = "inline";
+    // search.style.display = "block";
     scannerContainer.style.display = "none";
     currentScannerMode = "";
   }
@@ -347,131 +209,102 @@ reset.addEventListener("click", async () => {
     }
   });
 
-  document.querySelector(".search").addEventListener("click", () => {
-    if(currentScannerMode === ''){
-      startScanner("search");
-    }
-  });
-  const page = document.body.dataset.page;
+  // document.querySelector(".search").addEventListener("click", () => {
+  //   if(currentScannerMode === ''){
+  //     startScanner("search");
+  //   }
+  // });
 
 
 
-  $(document).ready(function() {
-        let offset = 5;
-    let isLoading = false;
-    if (page === "crud") {
-    $(window).on('scroll', function() {
-      if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
-        if (!isLoading) {
-          loadMoreProducts();
-        }
-      }
-    });
-} else {
-return false;
+  
+const costPrice = document.querySelector("#costPrice");
+const price = document.querySelector("#price"); // صححت الـ ID لأنه في HTML بتاعك اسمه sellPrice
+const profit = document.querySelector("#profit");
+
+// حدث لكل تغيير في السعر أو تكلفة الشراء
+function updateProfit() {
+  const cost = parseFloat(costPrice.value) || 0; // لو فاضي اعتبره 0
+  const selling = parseFloat(price.value) || 0;
+  if(selling > cost){
+    const calculatedProfit = selling - cost;
+  profit.value = calculatedProfit.toFixed(2) + " جنيه"; // يظهر مع وحده وجنيه
+  } else {
+    profit.value = 0 + " جنيه"
+  }
+
 }
 
+// استمع لتغير القيمة في أي مكان
+costPrice.addEventListener("input", updateProfit);
+price.addEventListener("input", updateProfit);
 
+const totalQuantity = document.querySelector("#totalQuantity");
+const displayedQuantity = document.querySelector("#displayedQuantity");
+const storedQuantity = document.querySelector("#storedQuantity");
 
+function updateQuantity() {
+  const total = parseInt(totalQuantity.value) || 0;
+  const displayed = parseInt(displayedQuantity.value) || 0;
 
+  const calculatedQuantity = total - displayed;
+  
+  storedQuantity.value = calculatedQuantity >= 0 ? calculatedQuantity : 0; // منع السالب
+}
 
-    function loadMoreProducts() {
-      isLoading = true;
-      $.ajax({
-        url: "/loadMoreProducts",
-        method: "GET",
-        data: { offset: offset },
-        success: function(data) {
-          if (data.length > 0) {
-            data.forEach(function(product) {
-              let price = product.price * 1.50;
-              let productRow = `
-                <tr class="productsdata">
-                  <td>${product.PNAME}</td>
-                  <td>${product.price}</td>
-                  <td>${price}</td>
-                  <td>${price - product.price}</td>
-                  <td>${product.PNOTES}</td>
-                  <td>${moment(product.updatedAt).format('LL')}</td>
-                  <td>
-                    <button class="btn btn-outline-warning update" data-updateid="${product._id}">
-                      <i class="fa fa-edit"></i>
-                    </button>
-                  </td>
-                  <td class="delete">
-                    <button class="btn btn-outline-danger delete" data-idlink="${product._id}">
-                      <i class="fa fa-trash"></i>
-                    </button>
-                  </td>
-                </tr>
-              `;
-              $('#tableBody').append(productRow);
-            });
-            offset += 5;
-            isLoading = false;
-          } else {
-            $(window).off('scroll');
-          }
-        },
-        error: function(err) {
-          console.error("Error loading more products:", err);
-          isLoading = false;
-        }
-      });
-    }
-  });
+// استمع لتغير القيمة في أي مكان
+totalQuantity.addEventListener("input", updateQuantity);
+displayedQuantity.addEventListener("input", updateQuantity);
+  //  document.getElementById("trigger-delete").addEventListener("click", async function () {
+  //   const { value: collection } = await Swal.fire({
+  //     title: 'Select Collection to Delete',
+  //     input: 'select',
+  //     inputOptions: {
+  //       sales: 'Sales',
+  //       logs: 'Logs',
+  //       products: 'Products',
+  //       employees: 'Employees',
+  //       sessions:"Sessions",
+  //       storages: "Storages"
+  //     },
+  //     inputPlaceholder: 'Select a collection',
+  //     showCancelButton: true,
+  //     confirmButtonText: 'Delete',
+  //     confirmButtonColor: '#d33',
+  //     cancelButtonColor: '#3085d6',
+  //     inputValidator: (value) => {
+  //       return !value && 'You need to select a collection!';
+  //     }
+  //   });
 
+  //   if (collection) {
+  //     const confirmResult = await Swal.fire({
+  //       title: `Are you sure?`,
+  //       text: `This will permanently delete the "${collection}" collection!`,
+  //       icon: 'warning',
+  //       showCancelButton: true,
+  //       confirmButtonText: 'Yes, delete it!',
+  //       confirmButtonColor: '#d33',
+  //       cancelButtonText: 'Cancel',
+  //       cancelButtonColor: '#3085d6',
+  //     });
 
-   document.getElementById("trigger-delete").addEventListener("click", async function () {
-    const { value: collection } = await Swal.fire({
-      title: 'Select Collection to Delete',
-      input: 'select',
-      inputOptions: {
-        sales: 'Sales',
-        logs: 'Logs',
-        products: 'Products',
-        employees: 'Employees',
-        sessions:"Sessions",
-        storages: "Storages"
-      },
-      inputPlaceholder: 'Select a collection',
-      showCancelButton: true,
-      confirmButtonText: 'Delete',
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      inputValidator: (value) => {
-        return !value && 'You need to select a collection!';
-      }
-    });
-
-    if (collection) {
-      const confirmResult = await Swal.fire({
-        title: `Are you sure?`,
-        text: `This will permanently delete the "${collection}" collection!`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, delete it!',
-        confirmButtonColor: '#d33',
-        cancelButtonText: 'Cancel',
-        cancelButtonColor: '#3085d6',
-      });
-
-      if (confirmResult.isConfirmed) {
-        fetch("/deleteCollection", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ collection })
-        }).then(res => {
-          if (res.redirected) {
-            window.location.href = res.url;
-          } else {
-            Swal.fire("Error", "Something went wrong.", "error");
-          }
-        }).catch(() => {
-          window.location.href = "/crud"
-        });
-      }
-    }
-  });
+  //     if (confirmResult.isConfirmed) {
+  //       fetch("/deleteCollection", {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json"
+  //         },
+  //         body: JSON.stringify({ collection })
+  //       }).then(res => {
+  //         if (res.redirected) {
+  //           window.location.href = res.url;
+  //         } else {
+  //           Swal.fire("Error", "Something went wrong.", "error");
+  //         }
+  //       }).catch(() => {
+  //         window.location.href = "/crud"
+  //       });
+  //     }
+  //   }
+  // });

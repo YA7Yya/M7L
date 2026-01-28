@@ -41,30 +41,31 @@ app.use((req, res, next) => {
   res.locals.nonce = crypto.randomBytes(16).toString('base64');
   next();
 });
-app.use(helmet());
-app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      imgSrc: [
-        "'self'",
-        "data:",
-        "https://logopond.com",
-        "https://img.freepik.com",
-      ],
-      workerSrc: ["'self'", "blob:"],
-      scriptSrc: [
-        "'self'",
-        "https://cdnjs.cloudflare.com",
-        "https://cdn.jsdelivr.net",
-        "https://code.jquery.com",
-        "https://cdn.datatables.net",
-        "https://stackpath.bootstrapcdn.com",
-        (req, res) => `'nonce-${res.locals.nonce}'`,
-      ],
-    },
-  })
-);
+// app.use(helmet());
+// app.use(
+//   helmet.contentSecurityPolicy({
+//     directives: {
+//       defaultSrc: ["'self'"],
+//       imgSrc: [
+//         "'self'",
+//         "data:",
+//         "https://logopond.com",
+//         "https://img.freepik.com",
+//       ],
+//       workerSrc: ["'self'", "blob:"],
+//       scriptSrc: [
+//         "'self'",
+//         "https://cdnjs.cloudflare.com",
+//         "https://cdn.jsdelivr.net",
+//         "https://code.jquery.com",
+//         "https://cdn.datatables.net",
+//         "https://stackpath.bootstrapcdn.com",
+        
+//         (req, res) => `'nonce-${res.locals.nonce}'`,
+//       ],
+//     },
+//   })
+// );
 
 app.use(compression());
 require('./node_modules/moment/locale/ar-sa.js'); // Load Arabic locale
@@ -246,7 +247,19 @@ app.get('/export/excel', authGuard.isAuth, managerGuard.isManager, async (req, r
 
 
 
-
+app.get("/products",authGuard.isAuth,adminGuard.isEmployee, (req,res) =>{
+  Info.Info.find().lean().sort({updatedAt: -1}).then((result) =>{
+    res.render("./products/products.ejs", {
+      allProducts: result,
+      isUser: req.session.userId,
+      req: req,
+      isManager: req.session.role === "Manager",
+      Dev: req.session.role === "Developer",
+      nonce: res.locals.nonce,
+      moment: moment,
+    })
+  })
+}) 
 
 app.get("/crud", authGuard.isAuth, adminGuard.isEmployee, async (req, res) => {
   const id = req.session.userId;
@@ -643,8 +656,14 @@ app.post("/productAdd", authGuard.isAuth, adminGuard.isEmployee, async (req, res
     // Create new product
     const createdProduct = await Info.createNewProduct(
       req.body.PNAME,
+      req.body.costPrice,
       req.body.price,
+      req.body.profit,
+      req.body.unit,
       req.body.PNOTES,
+      req.body.totalQuantity,
+      req.body.displayedQuantity,
+      req.body.storedQuantity,
       req.body.barcode,
       req.session.username,
       "Not Updated Yet"
@@ -673,7 +692,7 @@ app.post("/productAdd", authGuard.isAuth, adminGuard.isEmployee, async (req, res
     );
 
     req.flash("success", `Product ${createdProduct.PNAME} has been created successfully`);
-    return res.redirect("/crud");
+    return res.redirect("/products");
   } catch (error) {
     console.error("Error in productAdd:", error);
     req.flash("error", "An error occurred while adding the product");
@@ -689,12 +708,11 @@ app.delete("/crud/delete/:id",authGuard.isAuth,adminGuard.isEmployee, async (req
   });
   await Promise.all([deleted,updateD])
     .then(async (body) => {
+      console.log(deleted);
       await logAction("حذف منتج", req.session.userId, req.session.username,
-        {
-        PNAME: deleted.PNAME,
-        price: deleted.price,
-        PNOTES: deleted.PNOTES,
-    }
+        
+       deleted
+    
       );
       res.status(200).json("Done");
     })
@@ -743,11 +761,18 @@ app.post("/crud/update/:id",authGuard.isAuth,adminGuard.isEmployee, async (req, 
     }
 
     // Create an object with the updated fields
-    const updatedFields = {
-      PNAME: req.body.PNAME !== originalProduct.PNAME ? req.body.PNAME : originalProduct.PNAME,
-      price: req.body.price !== originalProduct.price ? parseFloat(req.body.price) : originalProduct.price,
-      PNOTES: req.body.PNOTES !== originalProduct.PNOTES ? req.body.PNOTES : originalProduct.PNOTES,
-    };
+  const updatedFields = { 
+  PNAME: req.body.PNAME !== originalProduct.PNAME ? req.body.PNAME : originalProduct.PNAME,
+  price: req.body.price !== originalProduct.price ? parseFloat(req.body.price) : originalProduct.price,
+  PNOTES: req.body.PNOTES !== originalProduct.PNOTES ? req.body.PNOTES : originalProduct.PNOTES,
+  profit: req.body.price !== originalProduct.price ? parseFloat(req.body.price) - originalProduct.costPrice : originalProduct.profit,
+  costPrice: req.body.costPrice,
+  unit: req.body.unit,
+  totalQuantity: req.body.totalQuantity,
+  displayedQuantity: req.body.displayedQuantity,
+  storedQuantity: req.body.storedQuantity,
+  barcode: req.body.barcode
+};
 
     // Update the document
     const updatedProduct =  await Info.Info.findByIdAndUpdate(

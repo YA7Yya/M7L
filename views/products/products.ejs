@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5.0.16/dark.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.js" integrity="sha512-3PL7jW3xI1EjF2Hfqwv5u6nKG/BnUbWytnJDhsY/q5CbIB5XzoHNhJvgmFeVD7xgC9DbKDm+gPP9uDAAfLAZUA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link rel="stylesheet" href="../CSS/ui.css" />
+  <title>Kalmata Store - المنتجات</title>
+</head>
+<body data-theme="light">
+   <center>
+  <% const successMessages = req.flash('success'); %>
+  <% if (successMessages.length > 0) { %>
+ <script nonce="<%= nonce %>">
+ const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+  background: "#07bc0c",
+  didOpen: (toast) => {
+    toast.onmouseenter = Swal.stopTimer;
+    toast.onmouseleave = Swal.resumeTimer;
+  }
+});
+Toast.fire({
+  icon: "success",
+  title: `<%= successMessages[0] %>`
+});
+ </script>
+  <% } %>
+</center>
+  <button class="theme-toggle" id="themeToggle">
+    <i class="fa fa-moon"></i>
+    <i class="fa fa-sun"></i>
+  </button>
+
+  <a href="/" class="back-btn" title="الرئيسية">
+    <i class="fa fa-home"></i>
+  </a>
+
+  <div class="container">
+    <div class="store-header">
+      <h1>📦 المنتجات</h1>
+      <p class="subtitle">عرض وإدارة جميع المنتجات</p>
+    </div>
+
+    <div class="card-box mb-4">
+      <div class="row align-items-center">
+        <div class="col-md-8 mb-3">
+          <input type="text" id="searchInput" name="search" class="form-control" placeholder="🔍 ابحث عن منتج...">
+        </div>
+        <div class="col-md-4 mb-3 text-center">
+          <a href="/crud" class="btn btn-success">
+            <i class="fa fa-plus"></i> إضافة منتج
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>اسم المنتج</th>
+            <th>سعر الشراء</th>
+            <th>سعر البيع</th>
+            <th>الربح</th>
+            <th>الوحدة</th>
+            <th>الكمية الكلية</th>
+            <th>المعروضة</th>
+            <th>المخزنة</th>
+            <th>ملاحظات</th>
+            <th>تعديل</th>
+            <th>حذف</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- البيانات هتتحمل هنا من الـ Backend -->
+          <% allProducts.forEach(product => { %>
+          <tr>
+            <td><strong><%= product.PNAME %></strong></td>
+            <td><%= product.costPrice %></td>
+            <td><%= product.price %></td>
+            <td><%= product.profit %></td>
+            <td><%= product.unit %></td>
+            <td><%= product.totalQuantity %></td>
+            <td><%= product.displayedQuantity %></td>
+            <td><%= product.storedQuantity %></td>
+            <td><%= product.PNOTES %></td>
+            <td>
+              <button class="btn btn-outline-warning btn-sm update" type="button" data-updateid="<%= product._id %>"  data-modal-id="123">
+                <i class="fa fa-edit" data-updateid="<%= product._id %>"></i>
+              </button>
+            </td>
+            <td>
+              <button class="btn btn-outline-danger btn-sm delete" type="button" data-idlink="<%= product._id %>">
+                <i class="fa fa-trash delete" data-idlink="<%= product._id %>"></i>
+              </button>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+
+  </div>
+<div class="modal-overlay editModal" data-modal-id="123">
+
+      
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">تعديل المنتج</h5>
+        <button type="button" class="btn-close closeModal" id="closeModal">&times;</button>
+      </div>
+ <form id="updateForm" action="" method="POST" >
+        <div class="modal-body">
+          <input type="hidden" id="editId" name="id" />
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label>اسم المنتج :</label>
+              <input type="text" class="form-control" id="editName" name="PNAME" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>الباركود :</label>
+              <input type="text" class="form-control" id="editBarcode" name="barcode" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label>سعر الشراء :</label>
+              <input type="number" class="form-control" id="editCostPrice" name="costPrice" step="0.01" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>سعر البيع :</label>
+              <input type="number" class="form-control" id="price" name="price" step="0.01" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3 mb-3">
+              <label>وحدة القياس :</label>
+              <select class="form-control" id="editUnit" name="unit">
+                <option value="قطعة">قطعة / عدد</option>
+                <option value="كيلو">كيلو جرام</option>
+                <option value="جرام">جرام</option>
+              </select>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label>الكمية الكلية :</label>
+              <input type="number" class="form-control" id="editTotalQuantity" name="totalQuantity" step="0.01" />
+            </div>
+            <div class="col-md-3 mb-3">
+              <label>الكمية المعروضة :</label>
+              <input type="number" class="form-control" id="editDisplayedQuantity" name="displayedQuantity" step="0.01" />
+            </div>
+            <div class="col-md-3 mb-3">
+              <label>الكمية المخزنة :</label>
+              <input type="number" class="form-control" id="editStoredQuantity" name="storedQuantity" readonly />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label>ملاحظات :</label>
+            <textarea class="form-control" id="editNotes" name="PNOTES"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary cancelEdit" id="cancelEdit">إلغاء</button>
+          <button type="submit" class="btn btn-primary" id="updateBtn">تعديل</button>
+        </div>
+      </form>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/locale/ar.min.js"></script>
+<script src="../js/theme.js"></script>
+<script src="../js/products.js"></script>
+
+</body>
+</html>

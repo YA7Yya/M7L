@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- SweetAlert2 CSS and JS -->
+  <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5.0.16/dark.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.js" integrity="sha512-3PL7jW3xI1EjF2Hfqwv5u6nKG/BnUbWytnJDhsY/q5CbIB5XzoHNhJvgmFeVD7xgC9DbKDm+gPP9uDAAfLAZUA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+  <!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../CSS/style.css" type="text/css" />
+  <script src="https://cdn.jsdelivr.net/npm/quagga/dist/quagga.min.js"></script>
+
+  <title>Smart Price</title>
+  <!-- Browser logo -->
+  <link rel="icon" type="image/png" sizes="32x32" href="https://logopond.com/logos/70a5a28358a0f80718ac4f6737f018ae.png" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      padding-top: 20px;
+    }
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      display: none;
+    }
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    .loading-overlay p {
+      color: #fff;
+      font-size: 18px;
+      margin-top: 10px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .btn-circle.btn-lg {
+      width: 50px;
+      height: 50px;
+      padding: 10px 16px;
+      font-size: 19px;
+      line-height: 1.33;
+      border-radius: 25px;
+    }
+    .text-center {
+      text-align: center;
+    }
+    .text-right {
+      text-align: right;
+    }
+    .container {
+      max-width: 100%;
+    }
+    .shadow-lg {
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    .bg-light {
+      background-color: #fff;
+    }
+    .table {
+      width: 100%;
+      margin-bottom: 1rem;
+      background-color: #fff;
+    }
+    .table th,
+    .table td {
+      vertical-align: middle;
+    }
+    .table-hover tbody tr:hover {
+      background-color: rgba(0, 0, 0, 0.075);
+    }
+    .form-control {
+      width: 100%;
+      border: 1px solid #ced4da;
+      border-radius: 0.25rem;
+      padding: 0.375rem 0.75rem;
+      line-height: 1.5;
+    }
+    .btn {
+      cursor: pointer;
+    }
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+    .btn-primary:hover {
+      background-color: #0069d9;
+      border-color: #0062cc;
+    }
+    .btn-danger {
+      background-color: #dc3545;
+      border-color: #dc3545;
+    }
+    .btn-danger:hover {
+      background-color: #c82333;
+      border-color: #bd2130;
+    }
+    @media (max-width: 768px) {
+      .form-control {
+        width: 100%;
+      }
+    }
+    label {
+      display: flex;
+      justify-content: center;
+    }
+    .spinner-option::before {
+      content: "";
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      border: 2px solid #ccc;
+      border-top: 2px solid #000;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    .embed-container {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+    }
+    .embed-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body data-page="crud">
+<div class="position-relative">
+  <a href="/storage" class="position-absolute top-1 start-0 m-0" >
+    <i class="material-icons" style="font-size: 35px; color: #ff8800; margin-left: 32px; margin-top: 20px;">inventory_2</i>
+  </a>
+</div>
+<% if(isUser){ %>
+  <div class="text-center mt-3">
+    <a href="/logout" class="btn btn-danger btn-circle btn-lg">
+      <i class="fa fa-sign-out" aria-hidden="true"></i>
+    </a>
+  </div>
+<% } %>
+
+<div class="modal fade modal-dialog modal-dialog-centered" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">اختر موظفاَ</h1>
+        <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <label for="price"><strong>: Employee Name</strong></label>
+        <select class="sel form-control">
+          <option class="opt" disabled selected></option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success check w-100">Check</button>
+        <br>
+        <button type="button" class="btn btn-info reload w-100">Reload List</button>
+      </div>
+    </div>
+  </div>
+</div>
+<form action="" method="post" id="updateForm" class="shadow-lg p-4 bg-light mb-5 position-relative" style="display: none;">
+  <% if(isManager || Dev){ %>
+    <a href="/logs" class="position-absolute top-0 start-0 m-4">
+      <i class="fa fa-history fa-2x" aria-hidden="true"></i>
+    </a>
+  <% } %>
+  <h1 class="fw-bolder text-uppercase text-center mb-4">Update Product</h1>
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label for="puname">اسم المنتج :</label>
+      <input type="text" class="form-control" id="puname" name="PNAME" />
+    </div>
+    <div class="col-md-6 mb-3">
+      <label for="uprice">السعر :</label>
+      <input type="number" class="form-control" id="puprice" name="price" />
+    </div>
+  </div>
+  <div class="mb-3">
+    <label>ملاحظات المنتج :</label>
+    <textarea class="form-control" id="punotes" name="PNOTES"></textarea>
+  </div>
+  <input type="submit" class="btn btn-primary w-100" id="updateBtn" value="تعديل المنتج" />
+</form>
+<div class="container mt-5">
+  <form action="/productAdd" method="post" class="shadow-lg p-4 bg-light mb-5 addingForm position-relative">
+    <% if(isManager || Dev){ %>
+      <a href="/logs" class="position-absolute top-0 start-0 m-4">
+        <i class="fa fa-history fa-2x" aria-hidden="true"></i>
+      </a>
+    <% } %>
+    <h1 class="fw-bolder text-uppercase text-center mb-4">Smart Price</h1>
+    <% if(isManager || Dev){ %>
+      <a class="position-absolute top-0 start-4 m-4" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <i class="fa fa-user fa-2x getEmp" aria-hidden="true"></i>
+      </a>
+    <% } %>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="pname">اسم المنتج :</label>
+        <input type="text" class="form-control" id="pname" name="PNAME" />
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="price">السعر :</label>
+        <input type="number" class="form-control" id="price" name="price" step="0.1" />
+      </div>
+    </div>
+    <div class="mb-3" style="display: none;" id="barcodeContainer">
+      <label for="barcode" id="barcodeLabel">الباركود:</label>
+      <input type="number" class="form-control" id="barcode" name="barcode" style="text-align: center;" />
+    </div>
+    <div class="mb-3">
+      <label>ملاحظات المنتج :</label>
+      <textarea class="form-control" id="notes" name="PNOTES"></textarea>
+      <center>
+       
+        <button class="start add btn btn-success" type="button">Start Adding Scanner</button>
+        <button class="btn btn-success search" type="button">Start Searching Scanner</button>
+      </center>
+      <center>
+        <% let messages = req.flash('error'); %>
+        <% if (messages && messages.length > 0) { %>
+             <script nonce="<%= nonce %>">
+ const err = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.onmouseenter = Swal.stopTimer;
+    toast.onmouseleave = Swal.resumeTimer;
+  }
+});
+err.fire({
+  icon: "error",
+  title: `<%= messages[0] %>`
+});
+ </script>
+        <% } %>
+      </center>
+   <center>
+  <% const successMessages = req.flash('success'); %>
+  <% if (successMessages.length > 0) { %>
+ <script nonce="<%= nonce %>">
+ const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+  background: "#07bc0c",
+  didOpen: (toast) => {
+    toast.onmouseenter = Swal.stopTimer;
+    toast.onmouseleave = Swal.resumeTimer;
+  }
+});
+Toast.fire({
+  icon: "success",
+  title: `<%= successMessages[0] %>`
+});
+ </script>
+  <% } %>
+</center>
+    </div>
+    <div class="col-12 col-md-6 mb-3">
+      <div id="scanner-container" class="w-100" style="height: 200px; display: none;">
+        <canvas id="scanner-canvas" style="display: none;"></canvas>
+      </div>
+      <div class="d-flex justify-content-between mt-2">
+        <button class="btn btn-danger stop scnbtns flex-grow-1 me-2" style="display: none;"type="reset">
+          Stop Scanner
+        </button>
+        <button class="btn btn-primary reset scnbtns flex-grow-1" style="display: none;" type="reset">
+          Restart Scanner
+        </button>
+      </div>
+    </div>
+    <input type="submit" class="btn btn-primary w-100" id="addBtn" value="إضافة المنتج" />
+  </form>
+</div>
+<section class="container mt-4">
+  <div class="card shadow-sm border-0">
+    <div class="card-body text-center">
+      <h5 class="mb-4 fw-bold text-secondary">Available Actions</h5>
+      <div class="d-flex flex-wrap justify-content-center gap-3">
+        <a href="/sell">
+           <button class="btn btn-outline-success px-4" type="button">
+          💲 Sell Product
+        </button>
+        </a>
+       
+        <% if(isManager || Dev){ %>
+                <a href="/allreceipts" class="btn btn-outline-info px-4">
+          📜 View All Receipts
+        </a>
+        <% } %>
+        <% if(isManager || Dev){ %>
+          <a href="/export/excel" class="btn btn-outline-primary">
+            📁 Export to Excel
+          </a>
+        <% } %>
+        <% if (Dev) { %>
+<button id="trigger-delete" class="btn btn-outline-danger px-4">
+  🗑 Delete Collection
+</button>
+
+        <% } %>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container mt-5">
+  <form action="/productSearch" method="post">
+    <div class="row mb-3">
+      <div class="col-md-12">
+        <input type="text" id="searchInput" class="form-control" name="productSearch" placeholder="Search for products...">
+      </div>
+    </div>
+  </form>
+  <div class="table-responsive">
+    <table class="table table-hover bg-light">
+      <thead>
+        <tr>
+          <th>اسم المنتج</th>
+          <th>السعر</th>
+          <th>ملاحظات</th>
+          <th>اخر تعديل</th>
+          <th>تعديل المنتج</th>
+          <th>حذف</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <% allProducts.forEach(product => { %>
+          <tr class="productsdata">
+            <td><%= product.PNAME %></td>
+            <td><%= product.price %></td>
+            <td><%= product.PNOTES %></td>
+            <td><%= moment(product.updatedAt).format('LL') %></td>
+            <td>
+              <button class="btn btn-outline-warning update" id="fire" data-updateid="<%= product._id %>">
+                <i class="fa fa-edit"></i>
+              </button>
+            </td>
+            <td>
+              <button class="btn btn-outline-danger delete" data-idlink="<%= product._id %>">
+                <i class="fa fa-trash delete" data-idlink="<%= product._id %>"></i>
+              </button>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/locale/ar.min.js"></script>
+
+<script src="../js/Crud.js"></script>
+</body>
+</html>
