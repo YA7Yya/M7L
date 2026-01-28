@@ -62,6 +62,10 @@ app.use(
         "https://stackpath.bootstrapcdn.com",
         (req, res) => `'nonce-${res.locals.nonce}'`,
       ],
+      connectSrc: [
+        "'self'",
+        "https://vitals.vercel-insights.com",
+      ],
     },
   })
 );
@@ -190,7 +194,7 @@ app.get('/export/excel', authGuard.isAuth, managerGuard.isManager, async (req, r
     products.forEach((product, index) => {
       // Fix barcode formatting
       if (!product.barcode || product.barcode === '') {
-        product.barcode = "لا يوجد باركود";
+        product.barcode = "لا ��وجد باركود";
       } else if (typeof product.barcode !== 'string') {
         product.barcode = `'${product.barcode.toString()}`;
       }
